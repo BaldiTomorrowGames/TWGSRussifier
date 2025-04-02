@@ -45,7 +45,7 @@
 1. Visual Studio 2022
 2. .NET Standard 2.1
 
-Необходимые библиотеки (должны быть помещены в папку `Dependencies` в корне проекта):
+Необходимые библиотеки (есть в папке с игрой и должны быть помещены в папку `Dependencies` в корне проекта):
 - 0Harmony.dll
 - Assembly-CSharp.dll
 - BepInEx.dll
