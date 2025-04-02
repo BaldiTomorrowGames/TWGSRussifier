@@ -1,4 +1,4 @@
-# Baldi's Basics Plus Russifier (Руссификатор)
+# TomorrowGames Baldi's Basics Plus Russifier
 
 ![Версия](https://img.shields.io/badge/Версия-0.0.0.1-blue)
 ![Статус разработки](https://img.shields.io/badge/Статус-90%25-yellow)
@@ -33,10 +33,34 @@
 - Baldi's Basics Plus версии 0.9
 - BepInEx
 - MTM101BaldAPI
+- CyrillicPlus
 
 ## 🛠 Для разработчиков
 
 Проект разрабатывается на C# с использованием API игры и BepInEx. Вклад в развитие проекта приветствуется!
+
+## 💻 Компиляция
+
+Для компиляции проекта вам потребуется:
+
+1. Visual Studio 2022
+2. .NET Standard 2.1
+
+Необходимые библиотеки (должны быть помещены в папку `Dependencies` в корне проекта):
+- 0Harmony.dll
+- Assembly-CSharp.dll
+- BepInEx.dll
+- BepInEx.Harmony.dll
+- HarmonyXInterop.dll
+- MTM101BaldAPI.dll
+- Newtonsoft.Json.dll
+- UnityEngine.dll
+- UnityEngine.CoreModule.dll
+- UnityEngine.UI.dll
+- UnityEngine.TextRenderingModule.dll
+- UnityEngine.AudioModule.dll
+- UnityEngine.AssetBundleModule.dll
+- UnityEngine.IMGUIModule.dll
 
 ## 📋 Известные проблемы
 
