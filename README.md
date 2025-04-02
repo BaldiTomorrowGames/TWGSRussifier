@@ -24,7 +24,7 @@
 1. Установите [BepInEx](https://github.com/BepInEx/BepInEx) для игры
 2. Скачайте последнюю версию мода со [страницы релизов](https://github.com/BaldiTomorrowGames/TWGSRussifier/releases)
 3. Скачайте необходимые ассеты (текстуры, звуки) со [страницы релизов](https://github.com/BaldiTomorrowGames/TWGSRussifier/releases)
-4. Распакуйте содержимое архива в папку игры, следуя инструкции в архиве
+4. Распакуйте содержимое архива в папку игры, следуя инструкции в релизе
 5. Запустите игру
 
 ## ⚙️ Требования
