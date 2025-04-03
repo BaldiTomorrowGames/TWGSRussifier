@@ -29,10 +29,10 @@
 
 ## ⚙️ Требования
 
-- Baldi's Basics Plus версии 0.9
-- BepInEx
-- MTM101BaldAPI
-- CyrillicPlus
+- [Baldi's Basics Plus](https://www.basicallygames.com/baldis-basics-plus) <sub><sup>(0.9)</sub></sup>
+- [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest)
+- [MTM101BaldAPI](https://gamebanana.com/mods/383711)
+- [CyrillicPlus](https://gamebanana.com/mods/524258)
 
 ## 🛠 Для разработчиков
 
