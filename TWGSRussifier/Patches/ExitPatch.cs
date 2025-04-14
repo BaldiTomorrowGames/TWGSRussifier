@@ -11,15 +11,31 @@ namespace TWGSRussifier.Patches
     {
         static void Postfix(MainMenu __instance)
         {
-            FieldInfo source = AccessTools.Field(typeof(MainMenu), "audioSource");
-            AudioSource audioSource = (AudioSource)source.GetValue(__instance);
-            AudioClip rusClip = LanguageManager.instance.GetClip(audioSource.clip.name);
-            if (rusClip != null)
+            try
             {
-                audioSource.clip = rusClip;
-
+                if (LanguageManager.instance == null)
+                {
+                    Debug.Log("Skipping ExitPatch: LanguageManager not initialized");
+                    return;
+                }
+                FieldInfo audManField = AccessTools.Field(typeof(MainMenu), "audMan");
+                if (audManField == null)
+                {
+                    Debug.LogWarning("ExitPatch: audMan field not found in MainMenu class");
+                    return;
+                }
+                
+                AudioManager audioManager = (AudioManager)audManField.GetValue(__instance);
+                if (audioManager == null)
+                {
+                    Debug.LogWarning("ExitPatch: audMan is null");
+                    return;
+                }
             }
-            audioSource.Play();
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"ExitPatch error: {ex.Message}");
+            }
         }
     }
 }

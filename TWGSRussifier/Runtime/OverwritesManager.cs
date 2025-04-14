@@ -45,11 +45,11 @@ namespace TWGSRussifier.Runtime
                 try
                 {
                     Directory.CreateDirectory(directoryPath);
-                    Debug.Log("Создана директория: " + directoryPath);
+                    Debug.Log("Directory created: " + directoryPath);
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Ошибка при создании директории: " + directoryPath);
+                    Debug.LogError("Error creating directory: " + directoryPath);
                     Debug.LogException(e);
                 }
             }

@@ -1,6 +1,5 @@
 ﻿using TWGSRussifier.API;
 using HarmonyLib;
-using MTM101BaldAPI.AssetTools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -93,7 +92,7 @@ namespace TWGSRussifier.Runtime
             GameUtils.InsertDirectory(audiosPath);
             GameUtils.InsertDirectory(texturesPath);
 
-            Debug.Log("Loading data (отсутствие Subtitles_Russian.json приведёт к пустым данным)");
+            Debug.Log("Loading data (missing Subtitles_Russian.json will result in empty data)");
             LoadLanguageAudio(audiosPath);
             LoadLanguageSubtitles(basePath);
         }
@@ -125,18 +124,40 @@ namespace TWGSRussifier.Runtime
         private void LoadLanguageSubtitles(string baseFolder)
         {
             string subtitle = Path.Combine(Application.streamingAssetsPath, "Modded", RussifierTemp.ModGUID, RussifierTemp.SubtitilesFile);
-            if (File.Exists(subtitle))
+            try
             {
-                string fileData = File.ReadAllText(subtitle);
-                LocalizationData rawJson = JsonUtility.FromJson<LocalizationData>(fileData);
-                for (int i = 0; i < rawJson.items.Length; i++)
+                if (File.Exists(subtitle))
                 {
-                    languageData[rawJson.items[i].key] = rawJson.items[i].value;
+                    string fileData = File.ReadAllText(subtitle);
+                    LocalizationData rawJson = JsonUtility.FromJson<LocalizationData>(fileData);
+                    for (int i = 0; i < rawJson.items.Length; i++)
+                    {
+                        languageData[rawJson.items[i].key] = rawJson.items[i].value;
+                    }
+                }
+                else
+                {
+                    LocalizationData emptyData = new LocalizationData();
+                    emptyData.items = new LocalizationItem[]
+                    {
+                        new LocalizationItem { key = "TWGS_Menu_TestMapText", value = "Тестовая локация" },
+                        new LocalizationItem { key = "TWGS_Menu_EndlessMapText", value = "Бесконечный режим" },
+                        new LocalizationItem { key = "TWGS_Menu_WinChallengeText", value = "Вы победили!" }
+                    };
+                    
+                    string jsonData = JsonUtility.ToJson(emptyData, true);
+                    File.WriteAllText(subtitle, jsonData);
+                    Debug.Log($"Created default localization file: {subtitle}");
+                    
+                    for (int i = 0; i < emptyData.items.Length; i++)
+                    {
+                        languageData[emptyData.items[i].key] = emptyData.items[i].value;
+                    }
                 }
             }
-            else
+            catch (System.Exception ex)
             {
-                Debug.LogError($"{subtitle} not found!");
+                Debug.LogError($"Error loading subtitles: {ex.Message}");
             }
         }
 

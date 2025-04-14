@@ -127,6 +127,11 @@ namespace TWGSRussifier.Patches
             { "CoreGameManager(Clone)/PauseMenuScreens/PauseScreen/Main/PauseLabel", "TWGS_Pause_PauseLabel" },
             { "CoreGameManager(Clone)/PauseMenuScreens/PauseScreen/Main/SeedLabel", "TWGS_Pause_SeedButton" },
 
+            { "PlusInfo/ScreenAnchor/Screen1/TMP_Upper", "TWGS_PlusInfo_Upper" },
+            { "PlusInfo/ScreenAnchor/Screen1/TMP_Lower", "TWGS_PlusInfo_Lower" },
+
+
+
         };
 
         private bool isSaveErrorTextUpdated = false;

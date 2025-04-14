@@ -2,11 +2,11 @@
 
 namespace TWGSRussifier.Patches
 {
-    [HarmonyPatch(typeof(AudioManager), "QueueAudio", new System.Type[] { typeof(SoundObject), typeof(bool) })]
+    [HarmonyPatch(typeof(AudioManager), "QueueAudio", new System.Type[] { typeof(SoundObject) })]
     public static class AudioManagerPatch
     {
         [HarmonyPrefix]
-        static bool Prefix(SoundObject file, bool playImmediately)
+        static bool Prefix(SoundObject file)
         {
             if (file?.soundClip?.name == "NoL_Minutes")
             {

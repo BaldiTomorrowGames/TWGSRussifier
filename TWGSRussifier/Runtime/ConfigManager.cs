@@ -21,17 +21,34 @@ namespace TWGSRussifier.Runtime
 
             reLoadConfig();
         }
+        
         public void reLoadConfig()
         {
-            if (File.Exists(configPath))
+            try
             {
-                string jsonContent = File.ReadAllText(configPath);
-                config = JsonUtility.FromJson<LocalizationConfig>(jsonContent);
+                string directoryPath = Path.GetDirectoryName(configPath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                    Debug.Log($"Directory created: {directoryPath}");
+                }
+
+                if (File.Exists(configPath))
+                {
+                    string jsonContent = File.ReadAllText(configPath);
+                    config = JsonUtility.FromJson<LocalizationConfig>(jsonContent);
+                }
+                else
+                {
+                    config = new LocalizationConfig();
+                    string jsonContent = JsonUtility.ToJson(config, true);
+                    File.WriteAllText(configPath, jsonContent);
+                    Debug.Log($"Default config created: {configPath}");
+                }
             }
-            else
+            catch (System.Exception ex)
             {
-                string jsonContent = JsonUtility.ToJson(config, true);
-                File.WriteAllText(configPath, jsonContent);
+                Debug.LogError($"Error in reLoadConfig: {ex.Message}");
             }
         }
     }
