@@ -29,7 +29,7 @@
 
 ## ⚙️ Требования
 
-- [Baldi's Basics Plus](https://www.basicallygames.com/baldis-basics-plus) <sub><sup>(0.9)</sub></sup>
+- [Baldi's Basics Plus](https://www.basicallygames.com/baldis-basics-plus) <sub><sup>(0.10)</sub></sup>
 - [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest)
 - [MTM101BaldAPI](https://gamebanana.com/mods/383711)
 - [CyrillicPlus](https://gamebanana.com/mods/524258)
@@ -63,7 +63,8 @@
 
 ## 📋 Известные проблемы
 
-- ?
+- Оптимизация
+- Некоторые фиксы текса
 
 ## 📜 Лицензия
 
