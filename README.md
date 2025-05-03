@@ -29,9 +29,9 @@
 ## ⚙️ Требования
 
 - [Baldi's Basics Plus](https://www.basicallygames.com/baldis-basics-plus) <sub><sup>(0.10.2)</sub></sup>
-- [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest)
-- [MTM101BaldAPI](https://gamebanana.com/mods/383711)
-- [CyrillicPlus](https://gamebanana.com/mods/524258)
+- [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest) <sub><sup>(5.4.23.3+)</sub></sup>
+- [MTM101BaldAPI](https://gamebanana.com/mods/383711) <sub><sup>(7.0.0.0+)</sub></sup>
+- [CyrillicPlus](https://gamebanana.com/mods/524258) <sub><sup>(1.2.1)</sub></sup>
 
 ## 🛠 Для разработчиков
 
