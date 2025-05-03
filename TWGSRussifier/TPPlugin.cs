@@ -27,7 +27,6 @@ namespace TWGSRussifier
             }
 
             GameUtils.CreateInstance<AssetsReloader>();
-            GameUtils.CreateInstance<ConfigManager>();
             GameUtils.CreateInstance<ModSceneManager>();
             GameUtils.CreateInstance<PostersManager>();
             GameUtils.CreateInstance<RussifierController>();

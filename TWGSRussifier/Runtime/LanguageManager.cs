@@ -44,7 +44,6 @@ namespace TWGSRussifier.Runtime
 
         private void UpdateTexts()
         {
-            if (ConfigManager.instance?.config == null) return;
             if (languageData == null || languageData.Count == 0) return;
 
             if (Singleton<LocalizationManager>.Instance != null)
