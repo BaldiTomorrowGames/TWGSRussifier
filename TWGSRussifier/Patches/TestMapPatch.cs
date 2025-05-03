@@ -9,8 +9,6 @@ namespace TWGSRussifier.Patches
     [HarmonyPatch] 
     internal class TestMapPatch
     {
-        private static bool fixesApplied = false; 
-
         private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
         {
             { "StartTest", "TWGS_Menu_TestMapText" },     
@@ -68,17 +66,10 @@ namespace TWGSRussifier.Patches
             [HarmonyPostfix]
             private static void Postfix(GameObject __instance, bool value)
             {
-                if (__instance.name == "Menu") 
+                if (__instance.name == "Menu" && value) 
                 {
-                    if (value && !fixesApplied) 
-                    {
-                        ApplySizeChanges(__instance.transform);
-                        ApplyLocalization(__instance.transform);
-                        fixesApplied = true; 
-                    }
-                    else if (!value) 
-                    {
-                    }
+                    ApplySizeChanges(__instance.transform);
+                    ApplyLocalization(__instance.transform);
                 }
             }
         }
@@ -86,10 +77,7 @@ namespace TWGSRussifier.Patches
 
         private static void ApplySizeChanges(Transform rootTransform)
         {
-            if (rootTransform == null)
-            {
-                 return;
-            }
+            if (rootTransform == null) return;
             
             foreach (var target in SizeDeltaTargets)
             {
@@ -99,10 +87,8 @@ namespace TWGSRussifier.Patches
                     RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
-                        rectTransform.sizeDelta = target.Value;
-                    }
-                    else
-                    {
+                        if (rectTransform.sizeDelta != target.Value)
+                            rectTransform.sizeDelta = target.Value;
                     }
                 }
             }
@@ -110,10 +96,7 @@ namespace TWGSRussifier.Patches
 
         private static void ApplyLocalization(Transform rootTransform)
         {
-             if (rootTransform == null)
-            {
-                 return;
-            }
+             if (rootTransform == null) return;
             
             foreach (var entry in LocalizationKeys)
             {
@@ -140,13 +123,14 @@ namespace TWGSRussifier.Patches
                         if (localizer == null)
                         {
                             localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
+                            localizer.key = localizationKey;
+                            localizer.RefreshLocalization(); 
                         }
-                        
-                        localizer.key = localizationKey;
-                        localizer.RefreshLocalization(); 
-                    }
-                     else
-                    {
+                        else if (localizer.key != localizationKey)
+                        {
+                             localizer.key = localizationKey;
+                             localizer.RefreshLocalization();
+                        }
                     }
                 }
             }

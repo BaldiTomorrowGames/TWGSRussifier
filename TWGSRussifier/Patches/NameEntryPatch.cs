@@ -54,32 +54,21 @@ namespace TWGSRussifier
             [HarmonyPostfix]
             private static void Postfix(GameObject __instance, bool value)
             {
-                if (__instance.name == "ClipboardScreen" && value)
-                {
-                    NameManager nameManager = NameManager.nm;
-                    if (nameManager != null)
-                    {
-                        ApplyNewFileButtonFixes(nameManager);
-                    }
-                }
-                
                 if (__instance.name == "NameEntry")
                 {
-                     if (value && !localizationApplied)
+                     if (value)
                      {
-                         ApplyLocalization(__instance.transform);
-                         localizationApplied = true;
+                          if(!localizationApplied)
+                          {
+                              ApplyLocalization(__instance.transform);
+                              localizationApplied = true;
+                          }
                      }
-                     else if (!value) 
+                     else
                      {
                          localizationApplied = false;
                          buttonFixesApplied = false; 
                      }
-                }
-                
-                if (__instance.name == "Menu" && value)
-                {
-                    buttonFixesApplied = false;
                 }
             }
         }
@@ -91,6 +80,7 @@ namespace TWGSRussifier
             [HarmonyPostfix]
             private static void Postfix(NameManager __instance)
             {
+                buttonFixesApplied = false;
                 ApplyNewFileButtonFixes(__instance);
             }
         }
@@ -102,6 +92,7 @@ namespace TWGSRussifier
             [HarmonyPostfix]
             private static void Postfix(NameManager __instance)
             {
+                buttonFixesApplied = false; 
                 ApplyNewFileButtonFixes(__instance);
             }
         }
@@ -125,17 +116,13 @@ namespace TWGSRussifier
                     textRect.anchoredPosition = new Vector2(1f, 0f);
                     textRect.sizeDelta = new Vector2(150f, 32f);
                     
-                    buttonFixesApplied = true;
+                    buttonFixesApplied = true; 
                 }
             }
         }
         private static void ApplyLocalization(Transform rootTransform)
         {
-             if (rootTransform == null)
-            {
-                 return;
-            }
-
+             if (rootTransform == null) return;
             foreach (var entry in LocalizationKeys)
             {
                 string relativePath = entry.Key;
@@ -160,28 +147,8 @@ namespace TWGSRussifier
                     {
                     }
                 }
-            }
-        }
-        
-        
-        [HarmonyPatch(typeof(NameManager), "Update")]
-        private static class UpdatePatch
-        {
-            private static int frameCount = 0;
-            private static readonly int MAX_ATTEMPTS = 5;
-            
-            [HarmonyPostfix]
-            private static void Postfix(NameManager __instance)
-            {
-                if (!buttonFixesApplied && frameCount < MAX_ATTEMPTS)
+                 else
                 {
-                    frameCount++;
-                    ApplyNewFileButtonFixes(__instance);
-                }
-                
-                if (buttonFixesApplied)
-                {
-                    frameCount = 0;
                 }
             }
         }
