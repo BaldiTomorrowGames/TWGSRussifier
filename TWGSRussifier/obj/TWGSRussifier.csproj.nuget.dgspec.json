@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Kanoyo\\Desktop\\TWGSRussifier — копия\\TWGSRussifier\\TWGSRussifier.csproj": {}
+    "C:\\Users\\treff\\Desktop\\TWGSRussifier-main\\TWGSRussifier\\TWGSRussifier.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Kanoyo\\Desktop\\TWGSRussifier — копия\\TWGSRussifier\\TWGSRussifier.csproj": {
+    "C:\\Users\\treff\\Desktop\\TWGSRussifier-main\\TWGSRussifier\\TWGSRussifier.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Kanoyo\\Desktop\\TWGSRussifier — копия\\TWGSRussifier\\TWGSRussifier.csproj",
+        "projectUniqueName": "C:\\Users\\treff\\Desktop\\TWGSRussifier-main\\TWGSRussifier\\TWGSRussifier.csproj",
         "projectName": "TWGSRussifier",
-        "projectPath": "C:\\Users\\Kanoyo\\Desktop\\TWGSRussifier — копия\\TWGSRussifier\\TWGSRussifier.csproj",
-        "packagesPath": "C:\\Users\\Kanoyo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Kanoyo\\Desktop\\TWGSRussifier — копия\\TWGSRussifier\\obj\\",
+        "projectPath": "C:\\Users\\treff\\Desktop\\TWGSRussifier-main\\TWGSRussifier\\TWGSRussifier.csproj",
+        "packagesPath": "C:\\Users\\treff\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\treff\\Desktop\\TWGSRussifier-main\\TWGSRussifier\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Kanoyo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\treff\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -61,7 +61,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }
