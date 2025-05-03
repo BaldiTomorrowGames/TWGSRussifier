@@ -35,8 +35,6 @@ namespace TWGSRussifier
             {
                 for (int i = 0; i < 5; i++)
                     yield return null;
-
-                Debug.Log("[PauseMenuPatch] Подготавливаю компоненты локализации для меню паузы");
                 
                 bool originalState = manager.pauseScreen.activeSelf;
                 
@@ -74,7 +72,6 @@ namespace TWGSRussifier
             {
                 if (openScreen && ___paused && !initialized)
                 {
-                    Debug.Log("[PauseMenuPatch] Принудительная инициализация локализации");
                     PrepareLocalizationComponents();
                     initialized = true;
                 }

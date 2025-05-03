@@ -33,22 +33,22 @@ namespace TWGSRussifier.Patches
                         {
                             TextLocalizer localizer = textTransform.gameObject.AddComponent<TextLocalizer>();
                             localizer.key = "TWGS_Tutorial_DefaultCanvas";
-                            Debug.Log("Localizer applied to tutorial text");
+                            // Debug.Log("Localizer applied to tutorial text");
                         }
                     }
                     else
                     {
-                        Debug.LogWarning("TextMeshProUGUI component not found on tutorial text");
+                        // Debug.LogWarning("TextMeshProUGUI component not found on tutorial text");
                     }
                 }
                 else
                 {
-                    Debug.LogWarning("Tutorial text not found at expected path DefaultCanvas/Text");
+                    // Debug.LogWarning("Tutorial text not found at expected path DefaultCanvas/Text");
                 }
             }
             else
             {
-                Debug.LogWarning("TutorialGameManager(Clone) not found");
+                // Debug.LogWarning("TutorialGameManager(Clone) not found");
             }
         }
     }

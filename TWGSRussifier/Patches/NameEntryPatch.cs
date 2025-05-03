@@ -67,7 +67,6 @@ namespace TWGSRussifier
                 if (buttonRect != null)
                 {
                     buttonRect.sizeDelta = new Vector2(158f, 30f);
-                    Debug.Log("[NameEntryPatch] Изменен размер кнопки NewFileButton");
                 }
                 
                 Transform textComponent = nameManager.newFileButton.transform.Find("Text (TMP)");
@@ -79,7 +78,6 @@ namespace TWGSRussifier
                         textRect.anchoredPosition = new Vector2(1f, 0f);
                         textRect.sizeDelta = new Vector2(150f, 32f);
                         
-                        Debug.Log("[NameEntryPatch] Применены исправления для текста кнопки NewFileButton");
                         fixesApplied = true;
                     }
                 }
