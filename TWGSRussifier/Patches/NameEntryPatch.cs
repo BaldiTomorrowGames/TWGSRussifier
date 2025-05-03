@@ -10,16 +10,51 @@ namespace TWGSRussifier
 {
     internal class NameEntryPatch
     {
-        private static bool fixesApplied = false;
+        private static bool buttonFixesApplied = false;
+        private static bool localizationApplied = false;
         
-        
+        private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
+        {
+            { "SaveError/Text (TMP)", "TWGS_Menu_SaveErrorText" } 
+        };
+
+        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        {
+            var children = parent.GetComponentsInChildren<Transform>(true); 
+            foreach (var child in children)
+            {
+                if (child == parent) continue;
+                if (DoesPathMatch(parent, child, path))
+                {
+                    return child;
+                }
+            }
+            return null;
+        }
+
+        private static bool DoesPathMatch(Transform parent, Transform target, string expectedPath)
+        {
+            if (target == null || parent == null || target == parent) return false;
+            StringBuilder pathBuilder = new StringBuilder();
+            Transform current = target;
+            while (current != null && current != parent)
+            {
+                if (pathBuilder.Length > 0)
+                    pathBuilder.Insert(0, "/");
+                pathBuilder.Insert(0, current.name);
+                current = current.parent;
+            }
+            if (current != parent) return false;
+            return pathBuilder.ToString() == expectedPath;
+        }
+
         [HarmonyPatch(typeof(GameObject), "SetActive")]
-        private static class ClipboardScreenSetActivePatch
+        private static class SetActivePatch
         {
             [HarmonyPostfix]
             private static void Postfix(GameObject __instance, bool value)
             {
-                if (value && __instance.name == "ClipboardScreen")
+                if (__instance.name == "ClipboardScreen" && value)
                 {
                     NameManager nameManager = NameManager.nm;
                     if (nameManager != null)
@@ -28,9 +63,23 @@ namespace TWGSRussifier
                     }
                 }
                 
+                if (__instance.name == "NameEntry")
+                {
+                     if (value && !localizationApplied)
+                     {
+                         ApplyLocalization(__instance.transform);
+                         localizationApplied = true;
+                     }
+                     else if (!value) 
+                     {
+                         localizationApplied = false;
+                         buttonFixesApplied = false; 
+                     }
+                }
+                
                 if (__instance.name == "Menu" && value)
                 {
-                    fixesApplied = false;
+                    buttonFixesApplied = false;
                 }
             }
         }
@@ -59,26 +108,56 @@ namespace TWGSRussifier
         
         private static void ApplyNewFileButtonFixes(NameManager nameManager)
         {
-            if (nameManager == null || fixesApplied) return;
+            if (nameManager == null || nameManager.newFileButton == null || buttonFixesApplied) return;
             
-            if (nameManager.newFileButton != null)
+            RectTransform buttonRect = nameManager.newFileButton.GetComponent<RectTransform>();
+            if (buttonRect != null)
             {
-                RectTransform buttonRect = nameManager.newFileButton.GetComponent<RectTransform>();
-                if (buttonRect != null)
+                buttonRect.sizeDelta = new Vector2(158f, 30f);
+            }
+            
+            Transform textComponentTransform = nameManager.newFileButton.transform.Find("Text (TMP)");
+            if (textComponentTransform != null)
+            {
+                RectTransform textRect = textComponentTransform.GetComponent<RectTransform>();
+                if (textRect != null)
                 {
-                    buttonRect.sizeDelta = new Vector2(158f, 30f);
+                    textRect.anchoredPosition = new Vector2(1f, 0f);
+                    textRect.sizeDelta = new Vector2(150f, 32f);
+                    
+                    buttonFixesApplied = true;
                 }
-                
-                Transform textComponent = nameManager.newFileButton.transform.Find("Text (TMP)");
-                if (textComponent != null)
+            }
+        }
+        private static void ApplyLocalization(Transform rootTransform)
+        {
+             if (rootTransform == null)
+            {
+                 return;
+            }
+
+            foreach (var entry in LocalizationKeys)
+            {
+                string relativePath = entry.Key;
+                string localizationKey = entry.Value;
+
+                Transform targetTransform = FindInChildrenIncludingInactive(rootTransform, relativePath);
+                if (targetTransform != null)
                 {
-                    RectTransform textRect = textComponent.GetComponent<RectTransform>();
-                    if (textRect != null)
+                    TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
+                    if (textComponent != null)
                     {
-                        textRect.anchoredPosition = new Vector2(1f, 0f);
-                        textRect.sizeDelta = new Vector2(150f, 32f);
+                        TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                        if (localizer == null)
+                        {
+                            localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
+                        }
                         
-                        fixesApplied = true;
+                        localizer.key = localizationKey;
+                        localizer.RefreshLocalization(); 
+                    }
+                     else
+                    {
                     }
                 }
             }
@@ -94,13 +173,13 @@ namespace TWGSRussifier
             [HarmonyPostfix]
             private static void Postfix(NameManager __instance)
             {
-                if (!fixesApplied && frameCount < MAX_ATTEMPTS)
+                if (!buttonFixesApplied && frameCount < MAX_ATTEMPTS)
                 {
                     frameCount++;
                     ApplyNewFileButtonFixes(__instance);
                 }
                 
-                if (fixesApplied)
+                if (buttonFixesApplied)
                 {
                     frameCount = 0;
                 }
