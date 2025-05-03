@@ -13,7 +13,7 @@ namespace TWGSRussifier
     public class TPPlugin : BaseUnityPlugin
     {
         private Harmony harmonyInstance;
-        private const string expectedGameVersion = "0.9"; 
+        private const string expectedGameVersion = "0.10.42"; 
 
         public void Awake()
         {
@@ -22,7 +22,7 @@ namespace TWGSRussifier
 
             if (Application.version != expectedGameVersion)
             {
-                string warningMessage = $"<color=red>Внимание!</color> Версия игры ({Application.version}) не соответствует требуемой версии ({expectedGameVersion}). Мод может работать некорректно.";
+                string warningMessage = $"Версия игры ({Application.version}) не соответствует требуемой версии ({expectedGameVersion}). Мод может работать некорректно.";
                 MTM101BaldiDevAPI.AddWarningScreen(warningMessage, false);
             }
 
@@ -32,7 +32,6 @@ namespace TWGSRussifier
             GameUtils.CreateInstance<OverwritesManager>();
             GameUtils.CreateInstance<RussifierController>();
             GameUtils.CreateInstance<LanguageManager>();
-            TextFixes.Init();
         }
         public void OnDestroy()
         {
