@@ -21,7 +21,6 @@ namespace TWGSRussifier
             {
                 if (value && __instance.name == "ClipboardScreen")
                 {
-                    // Находим NameManager
                     NameManager nameManager = NameManager.nm;
                     if (nameManager != null)
                     {

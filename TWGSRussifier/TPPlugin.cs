@@ -13,7 +13,7 @@ namespace TWGSRussifier
     public class TPPlugin : BaseUnityPlugin
     {
         private Harmony harmonyInstance;
-        private const string expectedGameVersion = "0.10.42"; 
+        private const string expectedGameVersion = "dev"; 
 
         public void Awake()
         {
@@ -29,7 +29,7 @@ namespace TWGSRussifier
             GameUtils.CreateInstance<AssetsReloader>();
             GameUtils.CreateInstance<ConfigManager>();
             GameUtils.CreateInstance<ModSceneManager>();
-            GameUtils.CreateInstance<OverwritesManager>();
+            GameUtils.CreateInstance<PostersManager>();
             GameUtils.CreateInstance<RussifierController>();
             GameUtils.CreateInstance<LanguageManager>();
         }
