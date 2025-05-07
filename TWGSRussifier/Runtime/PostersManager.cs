@@ -31,15 +31,8 @@ namespace TWGSRussifier.Runtime
             GameUtils.InsertDirectory(postersPath);
             
             ModSceneManager.instance.onMenuSceneLoadOnce += LoadAndUpdatePosters;
-            AssetsReloader.Instance.onAssetsReload += ReloadAssets;
             
             Debug.Log($"PostersManager initialized at path: {postersPath}");
-        }
-
-        public void ReloadAssets()
-        {
-            initialized = false;
-            LoadAndUpdatePosters();
         }
 
         public void LoadAndUpdatePosters()

@@ -26,7 +26,6 @@ namespace TWGSRussifier
                 MTM101BaldiDevAPI.AddWarningScreen(warningMessage, false);
             }
 
-            GameUtils.CreateInstance<AssetsReloader>();
             GameUtils.CreateInstance<ModSceneManager>();
             GameUtils.CreateInstance<PostersManager>();
             GameUtils.CreateInstance<RussifierController>();

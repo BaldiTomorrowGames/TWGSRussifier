@@ -3,17 +3,15 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
-using System; 
 
 namespace TWGSRussifier.Patches
 {
-    [HarmonyPatch]
+    [HarmonyPatch(typeof(ElevatorScreen))]
     internal class ElevatorScreenPatch
     {
         private static bool fixesApplied = false;
-        private static bool errorLocalizationApplied = false; 
         
-        private static readonly Dictionary<string, string> ResultLocalizationKeys = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
         {
             { "ResultsText", "TWGS_Elevator_ResultsText" },
             { "TimeText", "TWGS_Elevator_TimeText" },
@@ -25,11 +23,6 @@ namespace TWGSRussifier.Patches
             { "GradeBonusText", "TWGS_Elevator_GradeBonusText" },
             { "TimeBonusValue", "TWGS_Elevator_TimeBonusValue" },
             { "GradeBonusValue", "TWGS_Elevator_GradeBonusValue" }
-        };
-        
-        private static readonly Dictionary<string, string> ErrorLocalizationKeys = new Dictionary<string, string>()
-        {
-            { "errorText", "TWGS_GeneratorError_Text" }
         };
         
         private static readonly List<KeyValuePair<string, Vector2>> AnchoredPositionTargets = new List<KeyValuePair<string, Vector2>>
@@ -55,73 +48,22 @@ namespace TWGSRussifier.Patches
             new KeyValuePair<string, Vector2>("GradeBonusText", new Vector2(103f, 30f))
         };
         
-        [HarmonyPatch(typeof(ElevatorScreen), "Start")]
+        [HarmonyPatch("Start")]
         [HarmonyPostfix]
-        static void ElevatorScreenStartPostfix(ElevatorScreen __instance)
+        static void StartPostfix(ElevatorScreen __instance)
         {
             fixesApplied = false;
-            errorLocalizationApplied = false;
             
-            BigScreen bigScreen = __instance.GetComponentInChildren<BigScreen>(true);
-
-            if (bigScreen != null)
-            {
-                ApplyPatchesToBigScreen(__instance, bigScreen);
-            }
-            else
-            {
-            }
+            __instance.OnLoadReady += () => {
+                ApplyPatchesToBigScreen(__instance);
+            };
         }
         
-        [HarmonyPatch(typeof(ElevatorScreen), "StartGame")]
+        [HarmonyPatch("StartGame")]
         [HarmonyPrefix]
-        static void ElevatorScreenStartGamePrefix()
+        static void StartGamePrefix()
         {
             fixesApplied = false;
-            errorLocalizationApplied = false;
-        }
-        
-        [HarmonyPatch(typeof(Animator), "Play", new Type[] { typeof(string), typeof(int), typeof(float) })]
-        private static class AnimatorPlayPatch
-        {
-            [HarmonyPostfix]
-            private static void Postfix(Animator __instance, string stateName)
-            {
-                ElevatorScreen elevatorScreen = __instance.GetComponentInParent<ElevatorScreen>();
-                
-                if (elevatorScreen != null && __instance == AccessTools.Field(typeof(ElevatorScreen), "buttonAnimator").GetValue(elevatorScreen) as Animator)
-                {
-                    if (stateName == "ButtonRise" && 
-                        Singleton<CoreGameManager>.Instance != null && 
-                        Singleton<CoreGameManager>.Instance.levelGenError && 
-                        !errorLocalizationApplied)
-                    {
-                        bool isErrorStateActive = (bool)AccessTools.Field(typeof(ElevatorScreen), "error").GetValue(elevatorScreen);
-                        
-                        ApplyErrorLocalization(elevatorScreen);
-                        errorLocalizationApplied = true;
-                    }
-                }
-            }
-        }
-
-        private static void ApplyErrorLocalization(ElevatorScreen instance)
-        {
-            try
-            {
-                TMP_Text errorText = AccessTools.Field(typeof(ElevatorScreen), "errorText").GetValue(instance) as TMP_Text;
-
-                if (errorText != null)
-                {
-                     AddOrUpdateLocalizer(errorText.gameObject, ErrorLocalizationKeys["errorText"]);
-                }
-                else 
-                {
-                }
-            }
-            catch (System.Exception ex)
-            {
-            }
         }
         
         private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
@@ -154,12 +96,15 @@ namespace TWGSRussifier.Patches
             return pathBuilder.ToString() == expectedPath;
         }
         
-        private static void ApplyPatchesToBigScreen(ElevatorScreen elevatorScreen, BigScreen bigScreen)
+        private static void ApplyPatchesToBigScreen(ElevatorScreen elevatorScreen)
         {
-            if (fixesApplied || bigScreen == null) return;
+            if (fixesApplied) return;
+            
+            BigScreen bigScreen = elevatorScreen.GetComponentInChildren<BigScreen>(true);
+            if (bigScreen == null) return;
             
             ApplyChanges(bigScreen.transform);
-            ApplyResultLocalization(bigScreen.transform);
+            ApplyLocalization(bigScreen.transform);
             
             fixesApplied = true;
         }
@@ -191,9 +136,9 @@ namespace TWGSRussifier.Patches
             }
         }
         
-        private static void ApplyResultLocalization(Transform bigScreenTransform)
+        private static void ApplyLocalization(Transform bigScreenTransform)
         {
-            foreach (var entry in ResultLocalizationKeys)
+            foreach (var entry in LocalizationKeys)
             {
                 string elementName = entry.Key;
                 string localizationKey = entry.Value;
@@ -205,35 +150,92 @@ namespace TWGSRussifier.Patches
                 }
                 
                 if (elementTransform != null)
-                {   
-                    AddOrUpdateLocalizer(elementTransform.gameObject, localizationKey);
+                {
+                    TextMeshProUGUI textComponent = elementTransform.GetComponent<TextMeshProUGUI>();
+                    if (textComponent != null)
+                    {
+                        if (elementName == "TimeBonusValue" || elementName == "GradeBonusValue")
+                        {
+                            string originalText = textComponent.text;
+                            
+                            Component[] components = elementTransform.GetComponents<Component>();
+                            foreach (Component component in components)
+                            {
+                                if (component != null && component.GetType().Name == "TextLocalizer" && component.GetType() != typeof(TextLocalizer))
+                                {
+                                    Object.Destroy(component);
+                                }
+                            }
+                            
+                            CustomTextLocalizer customLocalizer = textComponent.gameObject.AddComponent<CustomTextLocalizer>();
+                            customLocalizer.key = localizationKey;
+                            customLocalizer.originalText = "YTPs";
+                            customLocalizer.localizedText = "ОТМ";
+                        }
+                        else
+                        {
+                            Component[] components = elementTransform.GetComponents<Component>();
+                            foreach (Component component in components)
+                            {
+                                if (component != null && component.GetType().Name == "TextLocalizer" && component.GetType() != typeof(TextLocalizer))
+                                {
+                                    Object.Destroy(component);
+                                }
+                            }
+                            
+                            TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                            if (localizer == null)
+                            {
+                                localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
+                                localizer.key = localizationKey;
+                            }
+                            else if (localizer.key != localizationKey)
+                            {
+                                localizer.key = localizationKey;
+                                localizer.RefreshLocalization();
+                            }
+                        }
+                    }
                 }
             }
         }
         
-        private static void AddOrUpdateLocalizer(GameObject targetObject, string localizationKey)
+        private class CustomTextLocalizer : MonoBehaviour
         {
-             if (targetObject == null) return;
-
-             TextMeshProUGUI textComponent = targetObject.GetComponent<TextMeshProUGUI>();
-             if (textComponent != null)
-             {
-                 TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
-                 if (localizer == null)
-                 {
-                     localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
-                     localizer.key = localizationKey;
-                     localizer.RefreshLocalization(); 
-                 }
-                 else if (localizer.key != localizationKey)
-                 {
-                     localizer.key = localizationKey;
-                     localizer.RefreshLocalization();
-                 }
-             }
-             else
-             {
-             }
+            public string key;
+            public string originalText;
+            public string localizedText;
+            
+            private TextMeshProUGUI textComponent;
+            
+            private void Awake()
+            {
+                textComponent = GetComponent<TextMeshProUGUI>();
+            }
+            
+            private void Start()
+            {
+                if (textComponent != null)
+                {
+                    ReplaceText();
+                }
+            }
+            
+            private void Update()
+            {
+                if (textComponent != null && textComponent.text.Contains(originalText))
+                {
+                    ReplaceText();
+                }
+            }
+            
+            private void ReplaceText()
+            {
+                if (!string.IsNullOrEmpty(textComponent.text))
+                {
+                    textComponent.text = textComponent.text.Replace(originalText, localizedText);
+                }
+            }
         }
     }
 } 
