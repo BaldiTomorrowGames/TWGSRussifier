@@ -32,39 +32,42 @@ namespace TWGSRussifier.Patches
 
             try
             {
-                Texture2D loadedTexture = AssetLoader.TextureFromFile(filePath);
+                Texture2D originalTexture = Resources.FindObjectsOfTypeAll<Texture2D>().FirstOrDefault(t => t.name == textureName);
+                
+                if (originalTexture == null)
+                {
+                    return;
+                }
+                
+                Texture2D loadedTexture = AssetLoader.TextureFromFile(filePath, originalTexture.format);
                 if (loadedTexture == null)
                 {
                     return;
                 }
-                loadedTexture.name = textureName + "_Loaded"; 
+                loadedTexture.name = textureName + "_Loaded";
 
-                Texture2D originalTexture = Resources.FindObjectsOfTypeAll<Texture2D>().FirstOrDefault(t => t.name == textureName);
-
-                if (originalTexture == null)
+                if (loadedTexture.format == originalTexture.format)
                 {
-                    UnityEngine.Object.Destroy(loadedTexture); 
-                    return;
+                    Graphics.CopyTexture(loadedTexture, originalTexture);
+                    textureReplaced = true;
+                    UnityEngine.Object.Destroy(loadedTexture);
                 }
-
-                Texture2D convertedTexture = AssetLoader.AttemptConvertTo(loadedTexture, originalTexture.format);
-
-                if (convertedTexture != null)
+                else
                 {
+                    Texture2D convertedTexture = new Texture2D(loadedTexture.width, loadedTexture.height, originalTexture.format, false);
+                    convertedTexture.SetPixels(loadedTexture.GetPixels());
+                    convertedTexture.Apply();
+                    
                     Graphics.CopyTexture(convertedTexture, originalTexture);
-                    textureReplaced = true; 
+                    textureReplaced = true;
                     
                     UnityEngine.Object.Destroy(loadedTexture);
-                    if(convertedTexture != loadedTexture) 
-                         UnityEngine.Object.Destroy(convertedTexture);
-                }
-                else 
-                {
-                     UnityEngine.Object.Destroy(loadedTexture);
+                    UnityEngine.Object.Destroy(convertedTexture);
                 }
             }
             catch (System.Exception ex)
             {
+                Debug.LogError($"[{RussifierTemp.ModGUID}] Error replacing credits texture: {ex.Message}");
             }
         }
     }
