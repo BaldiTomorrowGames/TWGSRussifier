@@ -106,6 +106,8 @@ namespace TWGSRussifier.Patches
             ApplyChanges(bigScreen.transform);
             ApplyLocalization(bigScreen.transform);
             
+            LocalizeErrorText(elevatorScreen.transform);
+            
             fixesApplied = true;
         }
         
@@ -195,6 +197,38 @@ namespace TWGSRussifier.Patches
                                 localizer.RefreshLocalization();
                             }
                         }
+                    }
+                }
+            }
+        }
+        
+        private static void LocalizeErrorText(Transform elevatorScreenTransform)
+        {
+            Transform errorTransform = FindInChildrenIncludingInactive(elevatorScreenTransform, "ElevatorTransission/Error");
+            if (errorTransform != null)
+            {
+                TextMeshProUGUI textComponent = errorTransform.GetComponent<TextMeshProUGUI>();
+                if (textComponent != null)
+                {
+                    Component[] components = errorTransform.GetComponents<Component>();
+                    foreach (Component component in components)
+                    {
+                        if (component != null && component.GetType().Name == "TextLocalizer" && component.GetType() != typeof(TextLocalizer))
+                        {
+                            Object.Destroy(component);
+                        }
+                    }
+                    
+                    TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                    if (localizer == null)
+                    {
+                        localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
+                        localizer.key = "TWGS_GeneratorError_Text";
+                    }
+                    else if (localizer.key != "TWGS_GeneratorError_Text")
+                    {
+                        localizer.key = "TWGS_GeneratorError_Text";
+                        localizer.RefreshLocalization();
                     }
                 }
             }
