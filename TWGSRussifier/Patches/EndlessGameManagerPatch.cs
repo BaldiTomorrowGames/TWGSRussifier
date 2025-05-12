@@ -18,6 +18,12 @@ namespace TWGSRussifier.Patches
             { "Medium_EndlessGameManager(Clone)/Score/Text", "TWGS_Endless_Text" },
             { "Medium_EndlessGameManager(Clone)/Score/Congrats", "TWGS_Endless_Score" }
         };
+        
+        private static readonly string[] rankPaths = new string[]
+        {
+            "EndlessGameManager(Clone)/Score/Rank",
+            "Medium_EndlessGameManager(Clone)/Score/Rank"
+        };
 
         [HarmonyPatch("RestartLevel")]
         [HarmonyPostfix]
@@ -36,6 +42,23 @@ namespace TWGSRussifier.Patches
                 yield return null;
                 
             PrepareLocalizationComponents();
+            AdjustRankPositions();
+        }
+        
+        private static void AdjustRankPositions()
+        {
+            foreach (string rankPath in rankPaths)
+            {
+                GameObject rankObject = GameObject.Find(rankPath);
+                if (rankObject != null)
+                {
+                    RectTransform rectTransform = rankObject.GetComponent<RectTransform>();
+                    if (rectTransform != null)
+                    {
+                        rectTransform.anchoredPosition = new Vector2(-21f, -14f);
+                    }
+                }
+            }
         }
 
         [HarmonyPatch(typeof(CoreGameManager), "ReturnToMenu")]

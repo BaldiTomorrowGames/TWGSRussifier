@@ -34,6 +34,7 @@ namespace TWGSRussifier
             new KeyValuePair<string, Vector2>("Graphics/FullScreenToggle/HotSpot", new Vector2(265f, 32f)),
             new KeyValuePair<string, Vector2>("ControlsTemp/MapperButton/MapperButton", new Vector2(400f, 32f)),
             new KeyValuePair<string, Vector2>("ControlsTemp/SteamButton/SteamInputButton", new Vector2(360f, 32f)),
+            new KeyValuePair<string, Vector2>("ControlsTemp/SteamButton", new Vector2(355f, 32f)),
             new KeyValuePair<string, Vector2>("ControlsTemp/SteamButton/SteamDesc", new Vector2(340f, 128f))
         };
 
