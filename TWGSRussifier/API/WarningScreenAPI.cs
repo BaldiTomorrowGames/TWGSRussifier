@@ -2,9 +2,9 @@ using System;
 using TWGSRussifier.Patches;
 using UnityEngine;
 
-namespace MTM101BaldAPI
+namespace TWGSRussifier.API
 {
-    public static class MTM101BaldiDevAPI
+    public static class WarningScreenAPI
     {
         public static void AddWarningScreen(string text, bool fatal)
         {

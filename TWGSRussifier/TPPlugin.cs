@@ -3,7 +3,6 @@ using TWGSRussifier.API;
 using TWGSRussifier.Runtime;
 using TWGSRussifier.Patches;
 using HarmonyLib;
-using MTM101BaldAPI;
 using UnityEngine;
 
 namespace TWGSRussifier
@@ -20,11 +19,7 @@ namespace TWGSRussifier
             harmonyInstance = new Harmony(RussifierTemp.ModGUID);
             harmonyInstance.PatchAll();
 
-            if (Application.version != expectedGameVersion)
-            {
-                string warningMessage = $"Версия игры ({Application.version}) не соответствует требуемой версии ({expectedGameVersion}). Мод может работать некорректно.";
-                MTM101BaldiDevAPI.AddWarningScreen(warningMessage, false);
-            }
+            VersionCheck.CheckGameVersion(expectedGameVersion);
 
             GameUtils.CreateInstance<ModSceneManager>();
             GameUtils.CreateInstance<PostersManager>();
