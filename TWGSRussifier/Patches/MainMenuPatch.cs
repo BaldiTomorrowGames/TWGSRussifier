@@ -7,12 +7,13 @@ using TMPro;
 namespace TWGSRussifier.Patches
 {
     [HarmonyPatch] 
-    internal class TestMapPatch
+    internal class MainMenuPatch
     {
         private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
         {
             { "StartTest", "TWGS_Menu_TestMapText" },     
-            { "StartTest_1", "TWGS_Menu_TestMapText_1" }
+            { "StartTest_1", "TWGS_Menu_TestMapText_1" },
+            { "Reminder", "TWGS_Menu_Reminder" }
         };
 
         private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
