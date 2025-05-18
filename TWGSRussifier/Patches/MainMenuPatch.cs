@@ -99,6 +99,7 @@ namespace TWGSRussifier.Patches
             if (rectTransform != null)
             {
                 rectTransform.sizeDelta = new Vector2(118f, 50f);
+                rectTransform.offsetMin = new Vector2(-239f, 160f);
             }
 
             TextMeshProUGUI textComponent = modInfo.GetComponent<TextMeshProUGUI>();
