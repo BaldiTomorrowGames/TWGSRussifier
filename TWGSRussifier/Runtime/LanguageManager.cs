@@ -62,7 +62,7 @@ namespace TWGSRussifier.Runtime
             SoundObject[] allSounds = Resources.FindObjectsOfTypeAll<SoundObject>();
             foreach (SoundObject soundObject in allSounds)
             {
-                Debug.Log("Resource Loaded: " + soundObject.soundClip.name);
+                API.Logger.Info("Загружен звук: " + soundObject.soundClip.name);
                 AudioClip newClip = GetClip(soundObject.soundClip.name);
                 RussifierTemp.UpdateClipData(soundObject, newClip);
             }
@@ -81,7 +81,7 @@ namespace TWGSRussifier.Runtime
             basePath = Path.Combine(Application.streamingAssetsPath, "Modded", RussifierTemp.ModGUID);
             GameUtils.InsertDirectory(basePath);
             LoadLanguageData();
-            Debug.Log($"Загружены данные языка из {basePath}");
+            API.Logger.Info($"Загружены данные языка из {basePath}");
         }
 
         private void LoadLanguageData()
@@ -91,7 +91,7 @@ namespace TWGSRussifier.Runtime
             GameUtils.InsertDirectory(audiosPath);
             GameUtils.InsertDirectory(texturesPath);
 
-            Debug.Log("Загрузка данных (отсутствие Subtitles_Russian.json приведёт к пустым данным)");
+            API.Logger.Info("Загрузка данных (отсутствие Subtitles_Russian.json приведёт к пустым данным)");
             LoadLanguageAudio(audiosPath);
             LoadLanguageSubtitles(basePath);
         }
@@ -109,12 +109,12 @@ namespace TWGSRussifier.Runtime
                 if (File.Exists(clip))
                 {
                     string clipName = Path.GetFileNameWithoutExtension(clip);
-                    Debug.Log($"Loaded Custom {clipName}");
+                    API.Logger.Info($"Загружен звук: {clipName}!");
                     AudioClip fileClip = AssetLoader.AudioClipFromFile(clip);
                     if (fileClip != null)
                     {
                         audioClips[clipName] = fileClip;
-                        Debug.Log($"Loaded {clipName}!");
+                        API.Logger.Info($"Загружен звук: {clipName}!");
                     }
                 }
             }
@@ -134,7 +134,7 @@ namespace TWGSRussifier.Runtime
             }
             else
             {
-                Debug.LogError($"{subtitle} не найден!");
+                API.Logger.Error($"{subtitle} не найден!");
             }
         }
 
@@ -150,7 +150,7 @@ namespace TWGSRussifier.Runtime
 
                 if (targetTex == null)
                 {
-                    Debug.LogWarning($"Не найдена соответствующая текстура для: {nameToSearch}");
+                    API.Logger.Warning($"Не найдена соответствующая текстура для: {nameToSearch}");
                     continue;
                 }
                 Texture2D generatedTex = AssetLoader.AttemptConvertTo(AssetLoader.TextureFromFile(pngPath), targetTex.format);
@@ -158,11 +158,11 @@ namespace TWGSRussifier.Runtime
                 if (!textureAssets.ContainsKey(targetTex.GetHashCode()))
                 {
                     textureAssets[targetTex.GetHashCode()] = generatedTex;
-                    Debug.Log($"Загружена текстура: {targetTex.name}");
+                    API.Logger.Info($"Загружена текстура: {targetTex.name}");
                 }
                 else
                 {
-                    Debug.LogWarning($"Текстура {targetTex.name} уже загружена.");
+                    API.Logger.Warning($"Текстура {targetTex.name} уже загружена.");
                 }
             }
         }
@@ -180,10 +180,10 @@ namespace TWGSRussifier.Runtime
                 }
                 else
                 {
-                    Debug.LogWarning($"Не найдена целевая текстура для ключа {kvp.Key}");
+                    API.Logger.Warning($"Не найдена целевая текстура для ключа {kvp.Key}");
                 }
             }
-            Debug.Log($"Копировано {textureAssets.Count} текстур.");
+            API.Logger.Info($"Копировано {textureAssets.Count} текстур.");
         }
 
         internal void RegisterClip(string clipName, AudioClip loadedClip)

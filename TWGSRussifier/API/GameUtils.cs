@@ -45,7 +45,7 @@ namespace TWGSRussifier.API
             {
                 T newInstance = GameObject.Instantiate(new GameObject()).AddComponent<T>();
                 newInstance.name = typeof(T).Name;
-                Debug.Log($"Создан {newInstance.name}");
+                Logger.Info($"Создан {newInstance.name}");
             }
             else
             {
@@ -59,7 +59,7 @@ namespace TWGSRussifier.API
             {
                 T newInstance = GameObject.Instantiate(new GameObject()).AddComponent<T>();
                 newInstance.name = typeof(T).Name;
-                Debug.Log($"Создан {newInstance.name}");
+                Logger.Info($"Создан {newInstance.name}");
                 return newInstance;
             }
             else

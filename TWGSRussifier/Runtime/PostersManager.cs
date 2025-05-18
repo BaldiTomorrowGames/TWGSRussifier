@@ -31,7 +31,7 @@ namespace TWGSRussifier.Runtime
             
             ModSceneManager.instance.onMenuSceneLoadOnce += LoadAndUpdatePosters;
             
-            Debug.Log($"PostersManager инициализирован по пути: {postersPath}");
+            API.Logger.Info($"PostersManager инициализирован по пути: {postersPath}");
         }
 
         public void LoadAndUpdatePosters()
@@ -40,7 +40,7 @@ namespace TWGSRussifier.Runtime
             {
                 initialized = true;
                 loadedPosters = Resources.FindObjectsOfTypeAll<PosterObject>().ToList();
-                Debug.Log($"Найдено {loadedPosters.Count} плакатов в ресурсах игры");
+                API.Logger.Info($"Найдено {loadedPosters.Count} плакатов в ресурсах игры");
             }
 
             foreach (PosterObject poster in loadedPosters)
@@ -67,14 +67,14 @@ namespace TWGSRussifier.Runtime
             string json = JsonUtility.ToJson(posterData, true);
             File.WriteAllText(filePath, json);
             
-            Debug.Log($"Загружены данные плаката: {poster.name}");
+            API.Logger.Info($"Загружены данные плаката: {poster.name}");
         }
 
         public void ReplaceJsonData(PosterObject poster)
         {
             if (!PosterExists(poster))
             {
-                Debug.LogWarning($"Плакат {poster.name} не существует в папке modded");
+                API.Logger.Warning($"Плакат {poster.name} не существует в папке modded");
                 return;
             }
 
@@ -96,11 +96,11 @@ namespace TWGSRussifier.Runtime
                     sourceData.color = modifiedData.color;
                 }
                 
-                Debug.Log($"Обновлен плакат: {poster.name} с локализованными данными");
+                API.Logger.Info($"Обновлен плакат: {poster.name} с локализованными данными");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Ошибка замены данных плаката для {poster.name}: {ex.Message}");
+                API.Logger.Error($"Ошибка замены данных плаката для {poster.name}: {ex.Message}");
             }
         }
 

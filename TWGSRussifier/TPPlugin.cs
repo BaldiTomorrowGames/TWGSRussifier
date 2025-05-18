@@ -16,6 +16,8 @@ namespace TWGSRussifier
 
         public void Awake()
         {
+            API.Logger.Init(this.Logger);
+            API.Logger.Info($"Плагин {RussifierTemp.ModName} инициализирован.");
             harmonyInstance = new Harmony(RussifierTemp.ModGUID);
             harmonyInstance.PatchAll();
 

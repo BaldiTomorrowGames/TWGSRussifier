@@ -17,7 +17,7 @@ namespace TWGSRussifier.API
             }
             else
             {
-             Debug.LogWarning($"Одинаковый ключ {key} уже найден! \n Используйте language_LANGCODENAME.config для настройки того, что нужно сделать, замените ключи и значения на новые или пропустите.");
+             Logger.Warning($"Одинаковый ключ {key} уже найден! \n Используйте language_LANGCODENAME.config для настройки того, что нужно сделать, замените ключи и значения на новые или пропустите.");
             }
         }
         public bool ContainsKey(string key)
