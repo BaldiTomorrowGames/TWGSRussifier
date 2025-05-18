@@ -68,7 +68,7 @@ namespace TWGSRussifier
             {
                 if (__instance != null && __instance.name == "About")
                 {
-                    // Debug.Log("[AboutMenuPatch] About button pressed, resetting fixesApplied");
+                    // Debug.Log("[AboutMenuPatch] Кнопка About нажата, сброс fixesApplied");
                     fixesApplied = false;
                 }
             }
@@ -87,7 +87,7 @@ namespace TWGSRussifier
                 
                 if (__instance.name == "About" && value && !fixesApplied)
                 {
-                    // Debug.Log("[AboutMenuPatch] About menu activated, applying localization");
+                    // Debug.Log("[AboutMenuPatch] Меню About активировано, применяется локализация");
                     ApplyLocalization(__instance.transform);
                     ApplySizeDeltaChanges(__instance.transform);
                     fixesApplied = true;
@@ -99,7 +99,7 @@ namespace TWGSRussifier
         
         private static void ForceRefreshLocalization(Transform aboutTransform)
         {
-            // Debug.Log("[AboutMenuPatch] Force refreshing localization");
+            // Debug.Log("[AboutMenuPatch] Принудительная перезагрузка локализации");
             foreach (var entry in LocalizationKeys)
             {
                 string relativePath = entry.Key;
@@ -115,14 +115,14 @@ namespace TWGSRussifier
                 }
                 else
                 {
-                   // Debug.LogWarning($"[AboutMenuPatch] Could not find path {relativePath} in About menu");
+                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {relativePath} в меню About");
                 }
             }
         }
         
         private static void ApplySizeDeltaChanges(Transform aboutTransform)
         {
-           // Debug.Log("[AboutMenuPatch] Applying size delta changes");
+           // Debug.Log("[AboutMenuPatch] Применение изменений размеров");
             
             foreach (var target in SizeDeltaTargets)
             {
@@ -136,23 +136,23 @@ namespace TWGSRussifier
                     if (rectTransform != null)
                     {
                         rectTransform.sizeDelta = sizeDelta;
-                       // Debug.Log($"[AboutMenuPatch] Applied sizeDelta {sizeDelta} to {relativePath}");
+                       // Debug.Log($"[AboutMenuPatch] Применено изменение размеров {sizeDelta} к {relativePath}");
                     }
                     else
                     {
-                       // Debug.LogWarning($"[AboutMenuPatch] RectTransform component not found on {relativePath}");
+                       // Debug.LogWarning($"[AboutMenuPatch] RectTransform компонент не найден на {relativePath}");
                     }
                 }
                 else
                 {
-                   // Debug.LogWarning($"[AboutMenuPatch] Could not find path {relativePath} in About menu");
+                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {relativePath} в меню About");
                 }
             }
         }
         
         private static void ApplyLocalization(Transform aboutTransform)
         {
-           // Debug.Log("[AboutMenuPatch] Applying localization to About menu");
+           // Debug.Log("[AboutMenuPatch] Применение локализации к меню About");
             foreach (var entry in LocalizationKeys)
             {
                 string relativePath = entry.Key;
@@ -178,23 +178,23 @@ namespace TWGSRussifier
                         {
                             localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
                             localizer.key = localizationKey;
-                           // Debug.Log($"[AboutMenuPatch] Added TextLocalizer to {relativePath} with key {localizationKey}");
+                           // Debug.Log($"[AboutMenuPatch] Добавлен TextLocalizer к {relativePath} с ключом {localizationKey}");
                         }
                         else if (localizer.key != localizationKey)
                         {
                             localizer.key = localizationKey;
                             localizer.RefreshLocalization();
-                           // Debug.Log($"[AboutMenuPatch] Updated TextLocalizer key for {relativePath} to {localizationKey}");
+                           // Debug.Log($"[AboutMenuPatch] Обновлен ключ TextLocalizer для {relativePath} на {localizationKey}");
                         }
                     }
                     else
                     {
-                      //  Debug.LogWarning($"[AboutMenuPatch] TextMeshProUGUI component not found on {relativePath}");
+                      //  Debug.LogWarning($"[AboutMenuPatch] TextMeshProUGUI компонент не найден на {relativePath}");
                     }
                 }
                 else
                 {
-                   // Debug.LogWarning($"[AboutMenuPatch] Could not find path {relativePath} in About menu");
+                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {relativePath} в меню About");
                 }
             }
         }

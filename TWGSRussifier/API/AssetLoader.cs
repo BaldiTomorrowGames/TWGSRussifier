@@ -23,7 +23,7 @@ namespace TWGSRussifier.API
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error loading texture from {path}: {ex.Message}");
+                Debug.LogError($"Ошибка загрузки текстуры из {path}: {ex.Message}");
             }
             return null;
         }
@@ -144,7 +144,7 @@ namespace TWGSRussifier.API
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error converting texture format: {ex.Message}");
+                Debug.LogError($"Ошибка преобразования формата текстуры: {ex.Message}");
                 return toConvert;
             }
         }

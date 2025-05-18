@@ -31,7 +31,7 @@ namespace TWGSRussifier.Runtime
             
             ModSceneManager.instance.onMenuSceneLoadOnce += LoadAndUpdatePosters;
             
-            Debug.Log($"PostersManager initialized at path: {postersPath}");
+            Debug.Log($"PostersManager инициализирован по пути: {postersPath}");
         }
 
         public void LoadAndUpdatePosters()
@@ -40,7 +40,7 @@ namespace TWGSRussifier.Runtime
             {
                 initialized = true;
                 loadedPosters = Resources.FindObjectsOfTypeAll<PosterObject>().ToList();
-                Debug.Log($"Found {loadedPosters.Count} posters in game resources");
+                Debug.Log($"Найдено {loadedPosters.Count} плакатов в ресурсах игры");
             }
 
             foreach (PosterObject poster in loadedPosters)
@@ -67,14 +67,14 @@ namespace TWGSRussifier.Runtime
             string json = JsonUtility.ToJson(posterData, true);
             File.WriteAllText(filePath, json);
             
-            Debug.Log($"Dumped poster data: {poster.name}");
+            Debug.Log($"Загружены данные плаката: {poster.name}");
         }
 
         public void ReplaceJsonData(PosterObject poster)
         {
             if (!PosterExists(poster))
             {
-                Debug.LogWarning($"Poster {poster.name} does not exist in modded folder");
+                Debug.LogWarning($"Плакат {poster.name} не существует в папке modded");
                 return;
             }
 
@@ -96,11 +96,11 @@ namespace TWGSRussifier.Runtime
                     sourceData.color = modifiedData.color;
                 }
                 
-                Debug.Log($"Updated poster: {poster.name} with localized data");
+                Debug.Log($"Обновлен плакат: {poster.name} с локализованными данными");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error replacing poster data for {poster.name}: {ex.Message}");
+                Debug.LogError($"Ошибка замены данных плаката для {poster.name}: {ex.Message}");
             }
         }
 

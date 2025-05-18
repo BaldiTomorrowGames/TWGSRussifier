@@ -45,11 +45,11 @@ namespace TWGSRussifier.API
             {
                 T newInstance = GameObject.Instantiate(new GameObject()).AddComponent<T>();
                 newInstance.name = typeof(T).Name;
-                Debug.Log($"Created {newInstance.name}");
+                Debug.Log($"Создан {newInstance.name}");
             }
             else
             {
-                throw new System.Exception($"Class {typeof(T).Name} is already exists!");
+                throw new System.Exception($"Класс {typeof(T).Name} уже существует!");
             }
            
         }
@@ -59,12 +59,12 @@ namespace TWGSRussifier.API
             {
                 T newInstance = GameObject.Instantiate(new GameObject()).AddComponent<T>();
                 newInstance.name = typeof(T).Name;
-                Debug.Log($"Created {newInstance.name}");
+                Debug.Log($"Создан {newInstance.name}");
                 return newInstance;
             }
             else
             {
-                throw new System.Exception($"Class {typeof(T).Name} is already exists!");
+                throw new System.Exception($"Класс {typeof(T).Name} уже существует!");
             }
             return null;
         }
