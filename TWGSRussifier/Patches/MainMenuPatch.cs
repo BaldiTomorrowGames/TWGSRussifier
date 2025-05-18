@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using UnityEngine.Events;
 
 namespace TWGSRussifier.Patches
 {
@@ -13,7 +14,8 @@ namespace TWGSRussifier.Patches
         {
             { "StartTest", "TWGS_Menu_TestMapText" },     
             { "StartTest_1", "TWGS_Menu_TestMapText_1" },
-            { "Reminder", "TWGS_Menu_Reminder" }
+            { "Reminder", "TWGS_Menu_Reminder" },
+            { "ModInfo", "TWGS_Menu_ModInfo" }
         };
 
         private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
@@ -71,10 +73,60 @@ namespace TWGSRussifier.Patches
                 {
                     ApplySizeChanges(__instance.transform);
                     ApplyLocalization(__instance.transform);
+                    CreateModInfoButton(__instance.transform);
                 }
             }
         }
 
+        private static void CreateModInfoButton(Transform rootTransform)
+        {
+            if (rootTransform == null) return;
+
+            Transform reminderTransform = rootTransform.Find("Reminder");
+            if (reminderTransform == null) return;
+
+            Transform existingModInfo = rootTransform.Find("ModInfo");
+            if (existingModInfo != null) return;
+
+            GameObject modInfo = GameObject.Instantiate(reminderTransform.gameObject, rootTransform);
+            modInfo.name = "ModInfo";
+
+            modInfo.transform.localPosition = new Vector3(-180f, 155f, 0f);
+            
+            modInfo.transform.SetSiblingIndex(15);
+            
+            RectTransform rectTransform = modInfo.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                rectTransform.sizeDelta = new Vector2(118f, 50f);
+            }
+
+            TextMeshProUGUI textComponent = modInfo.GetComponent<TextMeshProUGUI>();
+            if (textComponent != null)
+            {
+                textComponent.raycastTarget = true;
+
+                TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                if (localizer == null)
+                {
+                    localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
+                }
+                
+                localizer.key = "TWGS_Menu_ModInfo";
+                localizer.RefreshLocalization();
+
+                StandardMenuButton button = textComponent.gameObject.AddComponent<StandardMenuButton>();
+                button.OnPress = new UnityEvent();
+                button.OnHighlight = new UnityEvent();
+                button.OnRelease = new UnityEvent();
+                button.OffHighlight = new UnityEvent();
+                button.underlineOnHigh = true;
+                button.text = textComponent;
+                button.gameObject.tag = "Button";
+
+                button.OnPress.AddListener(() => { Application.OpenURL("https://t.me/translate_balda"); });
+            }
+        }
 
         private static void ApplySizeChanges(Transform rootTransform)
         {
