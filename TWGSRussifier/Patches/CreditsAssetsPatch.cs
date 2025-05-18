@@ -66,7 +66,7 @@ namespace TWGSRussifier.Patches
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"[{RussifierTemp.ModGUID}] Error replacing credits texture: {ex.Message}");
+                Debug.LogError($"[{RussifierTemp.ModGUID}] Ошибка замены текстуры в титрах: {ex.Message}");
             }
         }
     }

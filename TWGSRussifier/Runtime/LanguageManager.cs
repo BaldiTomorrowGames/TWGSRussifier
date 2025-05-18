@@ -81,7 +81,7 @@ namespace TWGSRussifier.Runtime
             basePath = Path.Combine(Application.streamingAssetsPath, "Modded", RussifierTemp.ModGUID);
             GameUtils.InsertDirectory(basePath);
             LoadLanguageData();
-            Debug.Log($"Loaded language data from {basePath}");
+            Debug.Log($"Загружены данные языка из {basePath}");
         }
 
         private void LoadLanguageData()
@@ -91,7 +91,7 @@ namespace TWGSRussifier.Runtime
             GameUtils.InsertDirectory(audiosPath);
             GameUtils.InsertDirectory(texturesPath);
 
-            Debug.Log("Loading data (отсутствие Subtitles_Russian.json приведёт к пустым данным)");
+            Debug.Log("Загрузка данных (отсутствие Subtitles_Russian.json приведёт к пустым данным)");
             LoadLanguageAudio(audiosPath);
             LoadLanguageSubtitles(basePath);
         }
@@ -134,7 +134,7 @@ namespace TWGSRussifier.Runtime
             }
             else
             {
-                Debug.LogError($"{subtitle} not found!");
+                Debug.LogError($"{subtitle} не найден!");
             }
         }
 
@@ -150,7 +150,7 @@ namespace TWGSRussifier.Runtime
 
                 if (targetTex == null)
                 {
-                    Debug.LogWarning($"No matching texture found for: {nameToSearch}");
+                    Debug.LogWarning($"Не найдена соответствующая текстура для: {nameToSearch}");
                     continue;
                 }
                 Texture2D generatedTex = AssetLoader.AttemptConvertTo(AssetLoader.TextureFromFile(pngPath), targetTex.format);
@@ -158,11 +158,11 @@ namespace TWGSRussifier.Runtime
                 if (!textureAssets.ContainsKey(targetTex.GetHashCode()))
                 {
                     textureAssets[targetTex.GetHashCode()] = generatedTex;
-                    Debug.Log($"Loaded texture: {targetTex.name}");
+                    Debug.Log($"Загружена текстура: {targetTex.name}");
                 }
                 else
                 {
-                    Debug.LogWarning($"Texture {targetTex.name} is already loaded.");
+                    Debug.LogWarning($"Текстура {targetTex.name} уже загружена.");
                 }
             }
         }
@@ -180,10 +180,10 @@ namespace TWGSRussifier.Runtime
                 }
                 else
                 {
-                    Debug.LogWarning($"No target texture found for key {kvp.Key}");
+                    Debug.LogWarning($"Не найдена целевая текстура для ключа {kvp.Key}");
                 }
             }
-            Debug.Log($"Copied {textureAssets.Count} textures.");
+            Debug.Log($"Копировано {textureAssets.Count} текстур.");
         }
 
         internal void RegisterClip(string clipName, AudioClip loadedClip)

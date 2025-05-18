@@ -43,11 +43,11 @@ namespace TWGSRussifier.Patches
                     {
                         sound.soundKey = minute.key;
                         audMinutesField.SetValue(__instance, sound);
-                       // Debug.Log($"Set sound key to: {minute.key} for minute {minute.num}");
+                       // Debug.Log($"Установлен ключ звука: {minute.key} для минуты {minute.num}");
                     }
                     else
                     {
-                       // Debug.LogWarning("SoundObject is null!");
+                       // Debug.LogWarning("SoundObject не найден!");
                     }
 
                     break;
