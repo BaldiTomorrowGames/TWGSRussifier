@@ -42,7 +42,7 @@
 1. Visual Studio 2022
 2. .NET Standard 2.1
 
-Необходимые библиотеки (есть в релизе и должны быть помещены в папку `Dependencies` в корне проекта):
+Необходимые библиотеки (есть в [релизе](https://github.com/BaldiTomorrowGames/TWGSRussifier/releases/tag/dependencies) и должны быть помещены в папку `Dependencies` в корне проекта):
 - 0Harmony.dll
 - Assembly-CSharp.dll
 - BepInEx.dll
