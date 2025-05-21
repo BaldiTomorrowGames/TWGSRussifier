@@ -83,10 +83,7 @@ namespace TWGSRussifier.Runtime
             basePath = RussifierTemp.GetBasePath();
             GameUtils.InsertDirectory(basePath);
             LoadLanguageData();
-<<<<<<< HEAD
-            
-=======
->>>>>>> 08991287b8852218390ff5196f7a2ae603f1a2eb
+
             API.Logger.Info($"Загружены данные языка из {basePath}");
         }
 

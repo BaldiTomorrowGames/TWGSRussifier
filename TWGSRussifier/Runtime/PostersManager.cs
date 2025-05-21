@@ -74,11 +74,9 @@ namespace TWGSRussifier.Runtime
         {
             if (!PosterExists(poster))
             {
-<<<<<<< HEAD
                 API.Logger.Warning($"Плакат {poster.name} не существует в папке");
-=======
                 API.Logger.Warning($"Плакат {poster.name} не существует в папке modded");
->>>>>>> 08991287b8852218390ff5196f7a2ae603f1a2eb
+                API.Logger.Warning($"Плакат {poster.name} не существует в папке modded");
                 return;
             }
 
