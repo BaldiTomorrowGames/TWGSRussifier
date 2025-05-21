@@ -177,9 +177,22 @@ namespace TWGSRussifier.Runtime
 
             foreach (var kvp in textureAssets)
             {
+                if (kvp.Value == null)
+                {
+                    API.Logger.Warning($"Текстура для ключа {kvp.Key} имеет значение null, пропускаем");
+                    continue;
+                }
+                
                 if (textureLookup.TryGetValue(kvp.Key, out Texture2D targetTexture))
                 {
-                    Graphics.CopyTexture(kvp.Value, targetTexture);
+                    if (targetTexture != null)
+                    {
+                        Graphics.CopyTexture(kvp.Value, targetTexture);
+                    }
+                    else
+                    {
+                        API.Logger.Warning($"Целевая текстура для ключа {kvp.Key} является null");
+                    }
                 }
                 else
                 {

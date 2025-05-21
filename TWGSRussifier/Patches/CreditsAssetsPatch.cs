@@ -18,6 +18,11 @@ namespace TWGSRussifier.Patches
             {
                 return;
             }
+            
+            if (!ConfigManager.AreTexturesEnabled())
+            {
+                return;
+            }
 
             string textureName = "AwaitingSubmission";
             string fileName = textureName + ".png";
@@ -42,8 +47,10 @@ namespace TWGSRussifier.Patches
                 Texture2D loadedTexture = AssetLoader.TextureFromFile(filePath, originalTexture.format);
                 if (loadedTexture == null)
                 {
+                    API.Logger.Warning($"Не удалось загрузить текстуру из {filePath}");
                     return;
                 }
+                
                 loadedTexture.name = textureName + "_Loaded";
 
                 if (loadedTexture.format == originalTexture.format)
@@ -55,6 +62,13 @@ namespace TWGSRussifier.Patches
                 else
                 {
                     Texture2D convertedTexture = new Texture2D(loadedTexture.width, loadedTexture.height, originalTexture.format, false);
+                    if (convertedTexture == null)
+                    {
+                        API.Logger.Warning($"Не удалось создать преобразованную текстуру");
+                        UnityEngine.Object.Destroy(loadedTexture);
+                        return;
+                    }
+                    
                     convertedTexture.SetPixels(loadedTexture.GetPixels());
                     convertedTexture.Apply();
                     
