@@ -1,7 +1,8 @@
-﻿using TWGSRussifier.Runtime;
+using TWGSRussifier.Runtime;
 using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
 {
@@ -11,6 +12,11 @@ namespace TWGSRussifier.Patches
     {
         static void Postfix(NameManager __instance)
         {
+            if (!ConfigManager.AreSoundsEnabled())
+            {
+                return;
+            }
+            
             FieldInfo welcome = AccessTools.Field(typeof(NameManager), "audWelcome");
             FieldInfo source = AccessTools.Field(typeof(NameManager), "audSource");
             AudioClip oldClip = (AudioClip)welcome.GetValue(__instance);
