@@ -21,6 +21,9 @@ namespace TWGSRussifier
             ConfigManager.Initialize(this, this.Logger);
             
             API.Logger.Info($"Плагин {RussifierTemp.ModName} инициализирован.");
+            API.Logger.Info($"Текстуры: {(ConfigManager.AreTexturesEnabled() ? "Включены" : "Отключены")}, " +
+                           $"Звуки: {(ConfigManager.AreSoundsEnabled() ? "Включены" : "Отключены")}, " +
+                           $"Логирование: {(ConfigManager.IsLoggingEnabled() ? "Включено" : "Отключено")}");
             
             CreateModDirectories();
             harmonyInstance = new Harmony(RussifierTemp.ModGUID);
