@@ -10,6 +10,12 @@ namespace TWGSRussifier.API
     {
         public static Texture2D TextureFromFile(string path, TextureFormat format)
         {
+            if (!ConfigManager.AreTexturesEnabled())
+            {
+                Logger.Info($"Загрузка текстуры отключена в конфигурации: {path}");
+                return null;
+            }
+            
             try
             {
                 if (File.Exists(path))
@@ -67,6 +73,12 @@ namespace TWGSRussifier.API
 
         public static AudioClip AudioClipFromFile(string path)
         {
+            if (!ConfigManager.AreSoundsEnabled())
+            {
+                Logger.Info($"Загрузка звуков отключена в конфигурации: {path}");
+                return null;
+            }
+            
             if (!File.Exists(path))
             {
                 Logger.Error($"Файл не найден: {path}");
@@ -84,6 +96,11 @@ namespace TWGSRussifier.API
 
         public static AudioClip AudioClipFromFile(string path, AudioType type)
         {
+            if (!ConfigManager.AreSoundsEnabled())
+            {
+                return null;
+            }
+            
             try
             {
                 AudioClip clip = null;

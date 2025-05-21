@@ -27,6 +27,8 @@ namespace TWGSRussifier.API
 
         public static void Debug(string message)
         {
+            if (!IsLoggingEnabled()) return;
+            
             string msg = FormatMessage("DEBUG", message);
             if (_bepLogger != null)
                 _bepLogger.Log(BepInEx.Logging.LogLevel.Debug, msg);
@@ -36,6 +38,8 @@ namespace TWGSRussifier.API
 
         public static void Info(string message)
         {
+            if (!IsLoggingEnabled()) return;
+            
             string msg = FormatMessage("INFO", message);
             if (_bepLogger != null)
                 _bepLogger.Log(BepInEx.Logging.LogLevel.Info, msg);
@@ -45,6 +49,8 @@ namespace TWGSRussifier.API
 
         public static void Warning(string message)
         {
+            if (!IsLoggingEnabled()) return;
+            
             string msg = FormatMessage("WARNING", message);
             if (_bepLogger != null)
                 _bepLogger.Log(BepInEx.Logging.LogLevel.Warning, msg);
@@ -54,11 +60,20 @@ namespace TWGSRussifier.API
 
         public static void Error(string message)
         {
+            if (!IsLoggingEnabled()) return;
+            
             string msg = FormatMessage("ERROR", message);
             if (_bepLogger != null)
                 _bepLogger.Log(BepInEx.Logging.LogLevel.Error, msg);
             else
                 UnityEngine.Debug.LogError(msg);
+        }
+        
+        private static bool IsLoggingEnabled()
+        {
+            if (ConfigManager.EnableLogging == null) return true;
+            
+            return ConfigManager.IsLoggingEnabled();
         }
     }
 } 

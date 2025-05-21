@@ -18,6 +18,8 @@ namespace TWGSRussifier
         public void Awake()
         {
             API.Logger.Init(this.Logger);
+            ConfigManager.Initialize(this, this.Logger);
+            
             API.Logger.Info($"Плагин {RussifierTemp.ModName} инициализирован.");
             
             CreateModDirectories();
