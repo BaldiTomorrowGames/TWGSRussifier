@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace TWGSRussifier.Patches
 {
@@ -17,6 +18,29 @@ namespace TWGSRussifier.Patches
             { "Reminder", "TWGS_Menu_Reminder" },
             { "ModInfo", "TWGS_Menu_ModInfo" }
         };
+        
+        private static readonly List<SocialMediaInfo> SocialMediaLinks = new List<SocialMediaInfo>()
+        {
+            new SocialMediaInfo("TelegramButton", "TWGS_Menu_Telegram", "https://t.me/translate_balda"),
+            new SocialMediaInfo("DiscordButton", "TWGS_Menu_Discord", "https://discord.gg/cGmxrmp5Tj"),
+            new SocialMediaInfo("GameBananaButton", "TWGS_Menu_GameBanana", "https://gamebanana.com/mods/595717"),
+            new SocialMediaInfo("YouTubeButton", "TWGS_Menu_YouTube", "https://www.youtube.com/@DragTors"),
+            new SocialMediaInfo("GithubButton", "TWGS_Menu_Github", "https://github.com/BaldiTomorrowGames/TWGSRussifier")
+        };
+        
+        private class SocialMediaInfo
+        {
+            public string ButtonName { get; private set; }
+            public string LocalizationKey { get; private set; }
+            public string Url { get; private set; }
+            
+            public SocialMediaInfo(string buttonName, string localizationKey, string url)
+            {
+                ButtonName = buttonName;
+                LocalizationKey = localizationKey;
+                Url = url;
+            }
+        }
 
         private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
         {
@@ -62,7 +86,6 @@ namespace TWGSRussifier.Patches
             return pathBuilder.ToString() == expectedPath;
         }
 
-
         [HarmonyPatch(typeof(GameObject), "SetActive")]
         private static class SetActivePatch
         {
@@ -78,6 +101,10 @@ namespace TWGSRussifier.Patches
             }
         }
 
+        private static GameObject socialLinksPanel = null;
+        private static bool dropdownVisible = false;
+        private static RectTransform dropdownArrow = null;
+        
         private static void CreateModInfoButton(Transform rootTransform)
         {
             if (rootTransform == null) return;
@@ -92,7 +119,6 @@ namespace TWGSRussifier.Patches
             modInfo.name = "ModInfo";
 
             modInfo.transform.localPosition = new Vector3(-180f, 155f, 0f);
-            
             modInfo.transform.SetSiblingIndex(15);
             
             RectTransform rectTransform = modInfo.GetComponent<RectTransform>();
@@ -113,6 +139,29 @@ namespace TWGSRussifier.Patches
                     localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
                 }
                 
+                GameObject arrowObject = new GameObject("DropdownArrow", typeof(RectTransform));
+                arrowObject.transform.SetParent(modInfo.transform, false);
+                
+                RectTransform arrowRect = arrowObject.GetComponent<RectTransform>();
+                arrowRect.anchorMin = new Vector2(1, 0.5f);
+                arrowRect.anchorMax = new Vector2(1, 0.5f);
+                arrowRect.pivot = new Vector2(0.5f, 0.5f);
+                arrowRect.anchoredPosition = new Vector2(0, 2.4f); 
+                arrowRect.sizeDelta = new Vector2(10f, 10f); 
+                
+                GameObject triangle = new GameObject("Triangle", typeof(RectTransform));
+                triangle.transform.SetParent(arrowObject.transform, false);
+                
+                RectTransform triangleRect = triangle.GetComponent<RectTransform>();
+                triangleRect.anchorMin = Vector2.zero;
+                triangleRect.anchorMax = Vector2.one;
+                triangleRect.sizeDelta = Vector2.zero;
+                
+                TriangleImage triangleUI = triangle.AddComponent<TriangleImage>();
+                triangleUI.color = new Color(0.5f, 0.5f, 0.5f, 1f);     
+                
+                dropdownArrow = arrowRect;
+                
                 localizer.key = "TWGS_Menu_ModInfo";
                 localizer.RefreshLocalization();
 
@@ -125,7 +174,109 @@ namespace TWGSRussifier.Patches
                 button.text = textComponent;
                 button.gameObject.tag = "Button";
 
-                button.OnPress.AddListener(() => { Application.OpenURL("https://t.me/translate_balda"); });
+                button.OnPress.AddListener(() => { ToggleSocialLinksDropdown(rootTransform, modInfo); });
+            }
+            
+            CreateSocialLinksPanel(rootTransform, modInfo);
+        }
+        
+        private static void CreateSocialLinksPanel(Transform rootTransform, GameObject modInfoButton)
+        {
+            GameObject panel = new GameObject("SocialLinksPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            panel.transform.SetParent(rootTransform, false);
+            
+            panel.transform.SetSiblingIndex(16);
+            
+            RectTransform panelRect = panel.GetComponent<RectTransform>();
+            panelRect.anchorMin = new Vector2(0, 1);
+            panelRect.anchorMax = new Vector2(0, 1);
+            
+            panelRect.anchoredPosition = new Vector2(145, -116);
+            
+            float buttonHeight = 35f;
+            float topBottomPadding = 20f;
+            float panelHeight = (SocialMediaLinks.Count * buttonHeight) + topBottomPadding;
+            
+            panelRect.sizeDelta = new Vector2(130f, panelHeight);
+            
+            Image panelImage = panel.GetComponent<Image>();
+            panelImage.color = new Color(0.1f, 0.1f, 0.1f, 0.9f);
+            
+            for (int i = 0; i < SocialMediaLinks.Count; i++)
+            {
+                SocialMediaInfo info = SocialMediaLinks[i];
+                CreateSocialButton(panel, info.ButtonName, info.Url, i);
+            }
+
+            panel.SetActive(false);
+            socialLinksPanel = panel;
+        }
+        
+        private static void CreateSocialButton(GameObject parent, string buttonName, string url, int index)
+        {
+            GameObject buttonObj = new GameObject(buttonName, typeof(RectTransform), typeof(TextMeshProUGUI));
+            buttonObj.transform.SetParent(parent.transform, false);
+            
+            RectTransform buttonRect = buttonObj.GetComponent<RectTransform>();
+            buttonRect.anchorMin = new Vector2(0, 1);
+            buttonRect.anchorMax = new Vector2(1, 1);
+            buttonRect.pivot = new Vector2(0.5f, 1);
+            buttonRect.anchoredPosition = new Vector3(0, -10 - (index * 35), 0);
+            buttonRect.sizeDelta = new Vector2(0, 30);
+            
+            TextMeshProUGUI textComponent = buttonObj.GetComponent<TextMeshProUGUI>();
+            textComponent.fontSize = 16;
+            textComponent.alignment = TextAlignmentOptions.Center;
+            textComponent.raycastTarget = true;
+            
+            TextLocalizer localizer = buttonObj.AddComponent<TextLocalizer>();
+            
+            string localizationKey = SocialMediaLinks.Find(x => x.ButtonName == buttonName)?.LocalizationKey;
+            if (string.IsNullOrEmpty(localizationKey))
+            {
+                localizationKey = buttonName;
+            }
+            
+            localizer.key = localizationKey;
+            localizer.RefreshLocalization();
+            
+            StandardMenuButton button = buttonObj.AddComponent<StandardMenuButton>();
+            button.OnPress = new UnityEvent();
+            button.OnHighlight = new UnityEvent();
+            button.OnRelease = new UnityEvent();
+            button.OffHighlight = new UnityEvent();
+            button.underlineOnHigh = true;
+            button.text = textComponent;
+            button.gameObject.tag = "Button";
+            
+            button.OnPress.AddListener(() => { 
+                Application.OpenURL(url);
+                ToggleSocialLinksDropdown(null, null); 
+            });
+        }
+        
+        private static void ToggleSocialLinksDropdown(Transform rootTransform, GameObject modInfoButton)
+        {
+            if (socialLinksPanel == null && rootTransform != null && modInfoButton != null)
+            {
+                CreateSocialLinksPanel(rootTransform, modInfoButton);
+            }
+            
+            if (socialLinksPanel != null)
+            {
+                dropdownVisible = !dropdownVisible;
+                socialLinksPanel.SetActive(dropdownVisible);
+                
+                if (dropdownArrow != null)
+                {
+                    dropdownArrow.rotation = Quaternion.Euler(0, 0, dropdownVisible ? -90f : 0f);
+                    
+                    TriangleImage triangleUI = dropdownArrow.GetComponentInChildren<TriangleImage>();
+                    if (triangleUI != null)
+                    {
+                        triangleUI.SetVerticesDirty();
+                    }
+                }
             }
         }
 
@@ -148,6 +299,32 @@ namespace TWGSRussifier.Patches
             }
         }
 
+        private class TriangleImage : UnityEngine.UI.Graphic
+        {
+            protected override void OnPopulateMesh(VertexHelper vh)
+            {
+                vh.Clear();
+                
+                Vector2 center = rectTransform.rect.center;
+                float width = rectTransform.rect.width;
+                float height = rectTransform.rect.height;
+                
+                UIVertex vert = UIVertex.simpleVert;
+                vert.color = color;
+                
+                vert.position = new Vector3(center.x + width/2, center.y, 0);
+                vh.AddVert(vert);
+                
+                vert.position = new Vector3(center.x - width/2, center.y + height/2, 0);
+                vh.AddVert(vert);
+                
+                vert.position = new Vector3(center.x - width/2, center.y - height/2, 0);
+                vh.AddVert(vert);
+                
+                vh.AddTriangle(0, 1, 2);
+            }
+        }
+        
         private static void ApplyLocalization(Transform rootTransform)
         {
              if (rootTransform == null) return;

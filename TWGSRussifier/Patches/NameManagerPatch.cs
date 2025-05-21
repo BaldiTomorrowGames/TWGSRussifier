@@ -1,4 +1,4 @@
-using TWGSRussifier.Runtime;
+﻿using TWGSRussifier.Runtime;
 using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
