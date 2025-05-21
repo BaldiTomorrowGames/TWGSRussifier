@@ -19,6 +19,11 @@ namespace TWGSRussifier.Patches
         [HarmonyPostfix]
         public static void Postfix(NoLateTeacher __instance)
         {
+            if (!ConfigManager.AreSoundsEnabled())
+            {
+                return;
+            }
+            
             TryLoadAudioClip();
             TryReplaceAudio(__instance);
         }
@@ -26,6 +31,11 @@ namespace TWGSRussifier.Patches
         private static void TryLoadAudioClip()
         {
             if (audioLoaded && loadedClip != null) return;
+            
+            if (!ConfigManager.AreSoundsEnabled())
+            {
+                return;
+            }
 
             string basePath = RussifierTemp.GetAudioPath();
             
@@ -59,6 +69,11 @@ namespace TWGSRussifier.Patches
         private static void TryReplaceAudio(NoLateTeacher teacher)
         {
             if (!audioLoaded || loadedClip == null) return;
+            
+            if (!ConfigManager.AreSoundsEnabled())
+            {
+                return;
+            }
 
             try
             {
@@ -99,6 +114,11 @@ namespace TWGSRussifier.Patches
         [HarmonyPrefix]
         public static void BeforeInTime(NoLateTeacher __instance)
         {
+            if (!ConfigManager.AreSoundsEnabled())
+            {
+                return;
+            }
+            
             if (!audioLoaded || loadedClip == null) TryLoadAudioClip();
             if (audioLoaded && loadedClip != null)
             {
