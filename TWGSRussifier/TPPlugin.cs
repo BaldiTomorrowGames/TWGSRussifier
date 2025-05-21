@@ -4,6 +4,7 @@ using TWGSRussifier.Runtime;
 using TWGSRussifier.Patches;
 using HarmonyLib;
 using UnityEngine;
+using System.IO;
 
 namespace TWGSRussifier
 {
@@ -16,6 +17,14 @@ namespace TWGSRussifier
 
         public void Awake()
         {
+            API.Logger.Init(this.Logger);
+            API.Logger.Info($"Плагин {RussifierTemp.ModName} инициализирован.");
+<<<<<<< HEAD
+            
+            CreateModDirectories();
+            
+=======
+>>>>>>> 08991287b8852218390ff5196f7a2ae603f1a2eb
             harmonyInstance = new Harmony(RussifierTemp.ModGUID);
             harmonyInstance.PatchAll();
 
@@ -26,6 +35,19 @@ namespace TWGSRussifier
             GameUtils.CreateInstance<RussifierController>();
             GameUtils.CreateInstance<LanguageManager>();
         }
+        
+        private void CreateModDirectories()
+        {
+            string basePath = RussifierTemp.GetBasePath();
+            GameUtils.InsertDirectory(basePath);
+            
+            GameUtils.InsertDirectory(RussifierTemp.GetAudioPath());
+            GameUtils.InsertDirectory(RussifierTemp.GetTexturePath());
+            GameUtils.InsertDirectory(RussifierTemp.GetPostersPath());
+            
+            API.Logger.Info($"Созданы директории для ассетов мода в: {basePath}");
+        }
+        
         public void OnDestroy()
         {
             if (harmonyInstance != null)

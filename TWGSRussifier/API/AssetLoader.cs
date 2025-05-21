@@ -23,7 +23,7 @@ namespace TWGSRussifier.API
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Ошибка загрузки текстуры из {path}: {ex.Message}");
+                Logger.Error($"Ошибка загрузки текстуры из {path}: {ex.Message}");
             }
             return null;
         }
@@ -52,7 +52,7 @@ namespace TWGSRussifier.API
                 }
             }
 
-            Debug.LogError($"Неподдерживаемый формат аудио: {extension}");
+            Logger.Error($"Неподдерживаемый формат аудио: {extension}");
             return AudioType.UNKNOWN;
         }
 
@@ -69,7 +69,7 @@ namespace TWGSRussifier.API
         {
             if (!File.Exists(path))
             {
-                Debug.LogError($"Файл не найден: {path}");
+                Logger.Error($"Файл не найден: {path}");
                 return null;
             }
 
@@ -108,7 +108,7 @@ namespace TWGSRussifier.API
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogWarning($"Ошибка при попытке загрузить аудио с префиксом {fallback}: {ex.Message}");
+                        Logger.Warning($"Ошибка при попытке загрузить аудио с префиксом {fallback}: {ex.Message}");
                     }
                     finally
                     {
@@ -119,12 +119,12 @@ namespace TWGSRussifier.API
                     }
                 }
                 
-                Debug.LogError($"Не удалось загрузить аудио: {path}");
+                Logger.Error($"Не удалось загрузить аудио: {path}");
                 return null;
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Ошибка загрузки аудио из {path}: {ex.Message}");
+                Logger.Error($"Ошибка загрузки аудио из {path}: {ex.Message}");
                 return null;
             }
         }
@@ -144,7 +144,7 @@ namespace TWGSRussifier.API
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Ошибка преобразования формата текстуры: {ex.Message}");
+                Logger.Error($"Ошибка преобразования формата текстуры: {ex.Message}");
                 return toConvert;
             }
         }

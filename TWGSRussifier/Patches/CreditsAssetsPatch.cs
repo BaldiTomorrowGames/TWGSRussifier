@@ -21,7 +21,8 @@ namespace TWGSRussifier.Patches
 
             string textureName = "AwaitingSubmission";
             string fileName = textureName + ".png";
-            string texturesPath = Path.Combine(Application.streamingAssetsPath, "Modded", RussifierTemp.ModGUID, "Textures");
+            
+            string texturesPath = RussifierTemp.GetTexturePath();
             string filePath = Path.Combine(texturesPath, fileName);
 
             if (!File.Exists(filePath))
@@ -66,7 +67,7 @@ namespace TWGSRussifier.Patches
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"[{RussifierTemp.ModGUID}] Ошибка замены текстуры в титрах: {ex.Message}");
+                API.Logger.Error($"[{RussifierTemp.ModGUID}] Ошибка замены текстуры в титрах: {ex.Message}");
             }
         }
     }

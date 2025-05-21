@@ -27,32 +27,33 @@ namespace TWGSRussifier.Patches
         {
             if (audioLoaded && loadedClip != null) return;
 
-            string[] basePaths = new string[]
+            string basePath = RussifierTemp.GetAudioPath();
+            
+            if (!Directory.Exists(basePath))
             {
-                Path.Combine(Application.streamingAssetsPath, "Mods", RussifierTemp.ModGUID, "Audios"),
-                Path.Combine(Application.streamingAssetsPath, "Modded", RussifierTemp.ModGUID, "Audios"),
-                Path.Combine(BepInEx.Paths.PluginPath, RussifierTemp.ModGUID, "Audios"),
-                Path.Combine(Application.dataPath, "..", "Mods", RussifierTemp.ModGUID, "Audios")
-            };
-
-            foreach (string basePath in basePaths)
+                GameUtils.InsertDirectory(basePath);
+                API.Logger.Warning($"Директория для аудио не найдена, создана: {basePath}");
+                return;
+            }
+            
+            foreach (string ext in supportedExtensions)
             {
-                foreach (string ext in supportedExtensions)
+                string fullPath = Path.Combine(basePath, $"{audioFileName}.{ext}");
+                
+                if (File.Exists(fullPath))
                 {
-                    string fullPath = Path.Combine(basePath, $"{audioFileName}.{ext}");
+                    loadedClip = AssetLoader.AudioClipFromFile(fullPath);
                     
-                    if (File.Exists(fullPath))
+                    if (loadedClip != null)
                     {
-                        loadedClip = AssetLoader.AudioClipFromFile(fullPath);
-                        
-                        if (loadedClip != null)
-                        {
-                            audioLoaded = true;
-                            return;
-                        }
+                        audioLoaded = true;
+                        API.Logger.Info($"Успешно загружен аудиоклип {audioFileName} из пути: {fullPath}");
+                        return;
                     }
                 }
             }
+            
+            API.Logger.Warning($"Не удалось найти аудиоклип {audioFileName} в {basePath}");
         }
 
         private static void TryReplaceAudio(NoLateTeacher teacher)
@@ -88,8 +89,9 @@ namespace TWGSRussifier.Patches
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                API.Logger.Error($"Ошибка при замене аудио Just In Time: {ex.Message}");
             }
         }
         
