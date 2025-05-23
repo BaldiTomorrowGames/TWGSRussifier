@@ -146,8 +146,8 @@ namespace TWGSRussifier.Patches
                 arrowRect.anchorMin = new Vector2(1, 0.5f);
                 arrowRect.anchorMax = new Vector2(1, 0.5f);
                 arrowRect.pivot = new Vector2(0.5f, 0.5f);
-                arrowRect.anchoredPosition = new Vector2(0, 2.4f); 
-                arrowRect.sizeDelta = new Vector2(10f, 10f); 
+                arrowRect.anchoredPosition = new Vector2(2, 2.4f); 
+                arrowRect.sizeDelta = new Vector2(8f, 8f);
                 
                 GameObject triangle = new GameObject("Triangle", typeof(RectTransform));
                 triangle.transform.SetParent(arrowObject.transform, false);
