@@ -55,7 +55,7 @@ namespace TWGSRussifier.Patches
                 
                 GameObject.DontDestroyOnLoad(dummyReminder);
                 
-                //API.Logger.Info("Создан фиктивный объект DummyReminder для MTM101BaldAPI");
+                // API.Logger.Info("Создан фиктивный объект DummyReminder для MTM101BaldAPI");
             }
             
             dummyReminder.transform.SetParent(parent, false);
