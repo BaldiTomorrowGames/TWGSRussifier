@@ -13,7 +13,7 @@ namespace TWGSRussifier
     public class TPPlugin : BaseUnityPlugin
     {
         private Harmony harmonyInstance;
-        private const string expectedGameVersion = "0.10.2"; 
+        private const string expectedGameVersion = "Experimental"; 
 
         public void Awake()
         {

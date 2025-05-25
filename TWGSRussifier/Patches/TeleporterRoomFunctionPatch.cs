@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using System.Text;
 using System.Collections.Generic;
+using System;
 
 namespace TWGSRussifier
 {
@@ -50,8 +51,60 @@ namespace TWGSRussifier
         }
     }
 
-    [HarmonyPatch(typeof(TeleporterRoomFunction), "Initialize")]
-    internal class TeleporterRoomFunctionPatch
+    [HarmonyPatch]
+    internal class TeleporterRoomFunctionPatchInitializer
+    {
+        [HarmonyPrepare]
+        private static bool Prepare()
+        {
+            try
+            {
+                Version gameVersion = new Version(Application.version);
+                Version minimumVersion = new Version("0.10.0");
+                
+                bool isCompatible = gameVersion >= minimumVersion;
+                if (!isCompatible)
+                {
+                    API.Logger.Info($"TeleporterRoomFunctionPatch не будет применен: версия игры {Application.version} ниже требуемой 0.10.0");
+                    return false;
+                }
+                
+                Type teleporterType = Type.GetType("TeleporterRoomFunction, Assembly-CSharp");
+                if (teleporterType == null)
+                {
+                    teleporterType = AccessTools.TypeByName("TeleporterRoomFunction");
+                    if (teleporterType == null)
+                    {
+                        API.Logger.Warning("Тип TeleporterRoomFunction не найден");
+                        return false;
+                    }
+                }
+                
+                Harmony harmony = new Harmony("com.baldimods.twgsrussifier.teleporterpatches");
+                var original = AccessTools.Method(teleporterType, "Initialize");
+                var postfix = AccessTools.Method(typeof(TeleporterRoomFunctionPatchHelper), "Initialize_Postfix");
+                
+                if (original != null && postfix != null)
+                {
+                    harmony.Patch(original, postfix: new HarmonyMethod(postfix));
+                    API.Logger.Info("TeleporterRoomFunctionPatch успешно применен");
+                    return true;
+                }
+                else
+                {
+                    API.Logger.Warning("Не удалось найти методы для патча TeleporterRoomFunction");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                API.Logger.Error($"Ошибка при инициализации TeleporterRoomFunctionPatch: {ex.Message}");
+                return false;
+            }
+        }
+    }
+    
+    internal static class TeleporterRoomFunctionPatchHelper
     {
         private static Transform FindInChildrenIncludingInactive(Transform parent, string name)
         {
@@ -89,60 +142,70 @@ namespace TWGSRussifier
             return result;
         }
 
-        [HarmonyPostfix]
-        private static void Initialize_Postfix(TeleporterRoomFunction __instance, RoomController room)
+        public static void Initialize_Postfix(object __instance, object room)
         {
-            if (room == null || room.ec == null) return;
-            
-            if (room.ec.name.Contains("Laboratory_Lvl4") || room.ec.name.Contains("Laboratory_Lvl5"))
+            try
             {
-                Transform functionBase = FindInChildrenIncludingInactive(room.transform, "TeleporterRoomFunctionObjectBase");
+                MonoBehaviour roomController = room as MonoBehaviour;
+                if (roomController == null || roomController.GetComponent<MonoBehaviour>() == null) return;
                 
-                if (functionBase == null) return;
+                MonoBehaviour ec = AccessTools.Field(roomController.GetType(), "ec")?.GetValue(roomController) as MonoBehaviour;
+                if (ec == null) return;
                 
-                List<Transform> labelObjects = new List<Transform>();
-                for (int i = 0; i < 4; i++)
+                if (ec.name.Contains("Laboratory_Lvl4") || ec.name.Contains("Laboratory_Lvl5"))
                 {
-                    Transform label = FindInChildrenIncludingInactive(functionBase, "RoomLabels_" + i);
-                    if (label != null)
-                    {
-                        labelObjects.Add(label);
-                    }
-                }
-                
-                if (labelObjects.Count == 0) return;
-                
-                for (int i = 0; i < labelObjects.Count; i++)
-                {
-                    Transform textTransform = FindInChildrenIncludingInactive(labelObjects[i], "Text (TMP)");
+                    Transform functionBase = FindInChildrenIncludingInactive(roomController.transform, "TeleporterRoomFunctionObjectBase");
                     
-                    if (textTransform != null)
+                    if (functionBase == null) return;
+                    
+                    List<Transform> labelObjects = new List<Transform>();
+                    for (int i = 0; i < 4; i++)
                     {
-                        TextMeshPro textComponent = textTransform.GetComponent<TextMeshPro>();
-                        if (textComponent != null)
+                        Transform label = FindInChildrenIncludingInactive(functionBase, "RoomLabels_" + i);
+                        if (label != null)
                         {
-                            string localizationKey = "TWGS_RoomLabel_" + i;
-                            
-                            TeleporterTextLocalizer localizer = textComponent.GetComponent<TeleporterTextLocalizer>();
-                            if (localizer == null)
+                            labelObjects.Add(label);
+                        }
+                    }
+                    
+                    if (labelObjects.Count == 0) return;
+                    
+                    for (int i = 0; i < labelObjects.Count; i++)
+                    {
+                        Transform textTransform = FindInChildrenIncludingInactive(labelObjects[i], "Text (TMP)");
+                        
+                        if (textTransform != null)
+                        {
+                            TextMeshPro textComponent = textTransform.GetComponent<TextMeshPro>();
+                            if (textComponent != null)
                             {
-                                TextLocalizer oldLocalizer = textComponent.GetComponent<TextLocalizer>();
-                                if (oldLocalizer != null)
-                                {
-                                    Object.Destroy(oldLocalizer);
-                                }
+                                string localizationKey = "TWGS_RoomLabel_" + i;
                                 
-                                localizer = textComponent.gameObject.AddComponent<TeleporterTextLocalizer>();
-                                localizer.key = localizationKey;
-                            }
-                            else if (localizer.key != localizationKey)
-                            {
-                                localizer.key = localizationKey;
-                                localizer.RefreshLocalization();
+                                TeleporterTextLocalizer localizer = textComponent.GetComponent<TeleporterTextLocalizer>();
+                                if (localizer == null)
+                                {
+                                    TextLocalizer oldLocalizer = textComponent.GetComponent<TextLocalizer>();
+                                    if (oldLocalizer != null)
+                                    {
+                                        UnityEngine.Object.Destroy(oldLocalizer);
+                                    }
+                                    
+                                    localizer = textComponent.gameObject.AddComponent<TeleporterTextLocalizer>();
+                                    localizer.key = localizationKey;
+                                }
+                                else if (localizer.key != localizationKey)
+                                {
+                                    localizer.key = localizationKey;
+                                    localizer.RefreshLocalization();
+                                }
                             }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                API.Logger.Error($"Ошибка в Initialize_Postfix: {ex.Message}");
             }
         }
     }

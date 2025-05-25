@@ -119,7 +119,7 @@ namespace TWGSRussifier.Patches
             modInfo.name = "ModInfo";
 
             modInfo.transform.localPosition = new Vector3(-180f, 155f, 0f);
-            modInfo.transform.SetSiblingIndex(15);
+            modInfo.transform.SetSiblingIndex(10);
             
             RectTransform rectTransform = modInfo.GetComponent<RectTransform>();
             if (rectTransform != null)
@@ -185,7 +185,7 @@ namespace TWGSRussifier.Patches
             GameObject panel = new GameObject("SocialLinksPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             panel.transform.SetParent(rootTransform, false);
             
-            panel.transform.SetSiblingIndex(16);
+            panel.transform.SetSiblingIndex(11);
             
             RectTransform panelRect = panel.GetComponent<RectTransform>();
             panelRect.anchorMin = new Vector2(0, 1);

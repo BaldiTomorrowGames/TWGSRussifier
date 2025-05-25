@@ -4,26 +4,91 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Reflection;
 
 namespace TWGSRussifier
 {
+    internal static class PicnicPanicInitializer
+    {
+        private static bool initialized = false;
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void Initialize()
+        {
+            if (initialized) return;
+            initialized = true;
+            
+            try
+            {
+                Version gameVersion;
+                try
+                {
+                    gameVersion = new Version(Application.version);
+                }
+                catch
+                {
+                    API.Logger.Error($"Не удалось распознать версию игры: {Application.version}");
+                    return;
+                }
+                
+                Version minimumVersion = new Version("0.7.0");
+                
+                if (gameVersion < minimumVersion)
+                {
+                    API.Logger.Info($"PicnicPanicPatch не будет применен: версия игры {Application.version} ниже требуемой 0.7.0");
+                    return;
+                }
+                
+                Type minigameType = AccessTools.TypeByName("MinigameBase");
+                if (minigameType == null)
+                {
+                    API.Logger.Warning("PicnicPanicPatch не применен: тип MinigameBase не найден");
+                    return;
+                }
+                
+                MethodInfo method = AccessTools.Method(minigameType, "StartMinigame");
+                if (method == null)
+                {
+                    API.Logger.Warning("PicnicPanicPatch не применен: метод StartMinigame не найден в типе MinigameBase");
+                    return;
+                }
+                
+                Harmony harmony = new Harmony("com.baldimods.twgsrussifier.picnicpanicpatch");
+                harmony.Patch(
+                    method,
+                    postfix: new HarmonyMethod(typeof(PicnicPanicPatch).GetMethod("StartMinigame_Postfix", BindingFlags.Static | BindingFlags.Public))
+                );
+                
+                API.Logger.Info("PicnicPanicPatch успешно применен");
+            }
+            catch (Exception ex)
+            {
+                API.Logger.Error($"Ошибка при инициализации PicnicPanicPatch: {ex.Message}");
+            }
+        }
+    }
+
     internal class PicnicPanicPatch
     {
         private static bool patchApplied = false;
         
-        [HarmonyPatch(typeof(MinigameBase), "StartMinigame")]
-        private static class StartMinigamePatch
+        public static void StartMinigame_Postfix(MonoBehaviour __instance)
         {
-            static void Postfix(MinigameBase __instance)
+            try
             {
                 if (__instance != null && __instance.name.Contains("Picnic"))
                 {
                     __instance.StartCoroutine(ApplyPatchWithDelay(__instance));
                 }
             }
+            catch (Exception ex)
+            {
+                API.Logger.Error($"Ошибка в StartMinigame_Postfix: {ex.Message}");
+            }
         }
         
-        private static IEnumerator ApplyPatchWithDelay(MinigameBase minigameBase)
+        private static IEnumerator ApplyPatchWithDelay(MonoBehaviour minigameBase)
         {
             yield return new WaitForSeconds(0.5f);
             ApplyPatchForScoreIndicator();
@@ -47,7 +112,7 @@ namespace TWGSRussifier
                 GameObject minigameObj = GameObject.Find("Minigame_PicnicPanic(Clone)");
                 if (minigameObj == null)
                 {
-                    GameObject[] allObjects = Object.FindObjectsOfType<GameObject>();
+                    GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
                     foreach (GameObject obj in allObjects)
                     {
                         if (obj.name.Contains("Minigame_PicnicPanic"))
@@ -112,8 +177,9 @@ namespace TWGSRussifier
                 
                 patchApplied = true;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                API.Logger.Error($"Ошибка в ApplyPatchForScoreIndicator: {ex.Message}");
             }
         }
     }
