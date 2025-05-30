@@ -23,7 +23,7 @@ namespace TWGSRussifier.Patches
         {
             new SocialMediaInfo("TelegramButton", "TWGS_Menu_Telegram", "https://t.me/translate_balda"),
             new SocialMediaInfo("DiscordButton", "TWGS_Menu_Discord", "https://discord.gg/cGmxrmp5Tj"),
-            new SocialMediaInfo("GameBananaButton", "TWGS_Menu_GameBanana", "https://gamebanana.com/mods/595717"),
+            new SocialMediaInfo("GameBananaButton", "TWGS_Menu_GameBanana", "https://gamebanana.com/mods/597541"),
             new SocialMediaInfo("YouTubeButton", "TWGS_Menu_YouTube", "https://www.youtube.com/@DragTors"),
             new SocialMediaInfo("GithubButton", "TWGS_Menu_Github", "https://github.com/BaldiTomorrowGames/TWGSRussifier")
         };

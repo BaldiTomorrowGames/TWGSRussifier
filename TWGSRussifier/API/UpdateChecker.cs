@@ -10,7 +10,7 @@ namespace TWGSRussifier.API
     {
         private const string RepoOwner = "BaldiTomorrowGames";
         private const string RepoName = "TWGSRussifier";
-        private const string UpdateUrl = "https://gamebanana.com/mods/updates/595717"; 
+        private const string UpdateUrl = "https://gamebanana.com/mods/updates/597541"; 
 
         public static bool IsUpdateAvailable { get; private set; } = false;
         public static string LatestVersionString { get; private set; } = string.Empty;
