@@ -61,7 +61,6 @@ namespace TWGSRussifier.Patches
             {
                 RestoreAudio();
                 audioRestoredOnGameStart = true;
-                API.Logger.Info("Озвучка восстановлена при первом запуске игры");
             }
             
             __instance.OnLoadReady += () => {
