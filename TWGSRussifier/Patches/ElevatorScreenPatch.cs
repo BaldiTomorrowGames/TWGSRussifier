@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using TWGSRussifier.Runtime;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
 {
@@ -10,6 +12,7 @@ namespace TWGSRussifier.Patches
     internal class ElevatorScreenPatch
     {
         private static bool fixesApplied = false;
+        private static bool audioRestoredOnGameStart = false;
         
         private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
         {
@@ -53,6 +56,13 @@ namespace TWGSRussifier.Patches
         static void StartPostfix(ElevatorScreen __instance)
         {
             fixesApplied = false;
+            
+            if (!audioRestoredOnGameStart)
+            {
+                RestoreAudio();
+                audioRestoredOnGameStart = true;
+                API.Logger.Info("Озвучка восстановлена при первом запуске игры");
+            }
             
             __instance.OnLoadReady += () => {
                 ApplyPatchesToBigScreen(__instance);
@@ -269,6 +279,14 @@ namespace TWGSRussifier.Patches
                 {
                     textComponent.text = textComponent.text.Replace(originalText, localizedText);
                 }
+            }
+        }
+        
+        private static void RestoreAudio()
+        {
+            if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
+            {
+                LanguageManager.instance.UpdateAudio();
             }
         }
     }

@@ -2,6 +2,8 @@ using HarmonyLib;
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using TWGSRussifier.Runtime;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
 {
@@ -12,7 +14,40 @@ namespace TWGSRussifier.Patches
         [HarmonyPostfix]
         public static void Postfix(TutorialGameManager __instance)
         {
+            // Сразу восстанавливаем озвучку перед всеми остальными операциями
+            RestoreAudio(__instance);
+            
+            // Затем запускаем корутину для работы с текстом
             __instance.StartCoroutine(ApplyLocalizationWithDelay());
+        }
+        
+        // Метод для немедленного восстановления озвучки
+        private static void RestoreAudio(TutorialGameManager instance)
+        {
+            if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
+            {
+                // Обновляем все звуки для восстановления озвучки без задержки
+                LanguageManager.instance.UpdateAudio();
+                API.Logger.Info("Озвучка восстановлена при входе в Туториал (немедленно)");
+                
+                // Дополнительно запускаем корутину с минимальной задержкой для перестраховки
+                instance.StartCoroutine(RestoreAudioAfterMinimalDelay());
+            }
+        }
+        
+        // Метод для восстановления озвучки с минимальной задержкой
+        private static IEnumerator RestoreAudioAfterMinimalDelay()
+        {
+            // Используем минимальную задержку, чтобы подождать остальную инициализацию
+            yield return new WaitForSeconds(0.1f);
+            
+            // Восстанавливаем озвучку, если она включена в настройках
+            if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
+            {
+                // Обновляем все звуки для восстановления озвучки
+                LanguageManager.instance.UpdateAudio();
+                API.Logger.Info("Озвучка восстановлена при входе в Туториал (с минимальной задержкой)");
+            }
         }
 
         private static IEnumerator ApplyLocalizationWithDelay()
