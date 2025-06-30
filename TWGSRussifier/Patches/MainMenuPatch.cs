@@ -156,7 +156,7 @@ namespace TWGSRussifier.Patches
             RectTransform rectTransform = modInfo.GetComponent<RectTransform>();
             if (rectTransform != null)
             {
-                rectTransform.sizeDelta = new Vector2(118f, 50f);
+                rectTransform.sizeDelta = new Vector2(150f, 50f);
                 rectTransform.offsetMin = new Vector2(-239f, 160f);
             }
 
