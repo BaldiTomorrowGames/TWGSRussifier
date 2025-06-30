@@ -9,11 +9,11 @@ using System.IO;
 namespace TWGSRussifier
 {
     [BepInPlugin(RussifierTemp.ModGUID, RussifierTemp.ModName, RussifierTemp.ModVersion)]
-    [BepInProcess("Baldi.exe")]
+    [BepInProcess("BALDI.exe")]
     public class TPPlugin : BaseUnityPlugin
     {
         private Harmony harmonyInstance;
-        private const string expectedGameVersion = "0.10.2"; 
+        private const string expectedGameVersion = "0.11"; 
 
         public void Awake()
         {

@@ -15,7 +15,8 @@ namespace TWGSRussifier
         
         private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
         {
-            { "SaveError/Text (TMP)", "TWGS_Menu_SaveErrorText" } 
+            { "SaveError/Text (TMP)", "TWGS_Menu_SaveErrorText" },
+            { "Version Number", "TWGS_Menu_Version" }
         };
 
         private static Transform FindInChildrenIncludingInactive(Transform parent, string path)

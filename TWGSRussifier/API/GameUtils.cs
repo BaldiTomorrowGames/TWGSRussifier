@@ -66,7 +66,6 @@ namespace TWGSRussifier.API
             {
                 throw new System.Exception($"Класс {typeof(T).Name} уже существует!");
             }
-            return null;
         }
     }
 }

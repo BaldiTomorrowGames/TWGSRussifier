@@ -68,7 +68,7 @@ namespace TWGSRussifier.API
                                         Logger.Info("Установлена последняя версия мода.");
                                     }
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
                                   //  Logger.Error($"Ошибка при сравнении версий: {ex.Message}");
                                 }
@@ -89,7 +89,7 @@ namespace TWGSRussifier.API
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Logger.Error($"Исключение при проверке обновлений: {ex.Message}\n{ex.StackTrace}");
             }

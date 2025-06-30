@@ -10,7 +10,6 @@ namespace TWGSRussifier.Patches
 {
     internal class ChallengeWinPatch
     {
-        private static bool initialized = false;
         private static readonly string[] challengeManagerPrefixes = new string[]
         {
             "SpeedyChallengeManager",
