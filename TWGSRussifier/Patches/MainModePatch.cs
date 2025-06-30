@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using TWGSRussifier.Runtime;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier
 {
@@ -74,6 +76,7 @@ namespace TWGSRussifier
                 if (__instance.name == "HideSeekMenu" && value && !fixesApplied)
                 {
                     ApplyButtonSizeFixes(__instance.transform);
+                    
                     fixesApplied = true;
                 }
             }
@@ -87,6 +90,7 @@ namespace TWGSRussifier
             if (hideSeekMenu != null)
             {
                 ApplyButtonSizeFixes(hideSeekMenu.transform);
+                
                 fixesApplied = true;
             }
         }

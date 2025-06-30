@@ -8,6 +8,38 @@ using UnityEngine.UI;
 
 namespace TWGSRussifier.Patches
 {
+    internal class ArrowPositioner : MonoBehaviour
+    {
+        private TextMeshProUGUI textComponent;
+        private RectTransform arrowRect;
+
+        public void Initialize(TextMeshProUGUI text, RectTransform arrow)
+        {
+            textComponent = text;
+            arrowRect = arrow;
+        }
+
+        void LateUpdate()
+        {
+            if (textComponent != null && arrowRect != null)
+            {
+                textComponent.ForceMeshUpdate();
+                var textInfo = textComponent.textInfo;
+
+                if (textInfo.characterCount > 0)
+                {
+                    var lastVisibleCharInfo = textInfo.characterInfo[textInfo.characterCount - 1];
+                    float textEdgeX = lastVisibleCharInfo.topRight.x;
+
+                    arrowRect.anchorMin = new Vector2(0.5f, 0.5f);
+                    arrowRect.anchorMax = new Vector2(0.5f, 0.5f);
+                    arrowRect.pivot = new Vector2(0.5f, 0.5f);
+                    arrowRect.anchoredPosition = new Vector2(textEdgeX + 5f, 2.4f);
+                }
+            }
+        }
+    }
+
     [HarmonyPatch] 
     internal class MainMenuPatch
     {
@@ -92,7 +124,7 @@ namespace TWGSRussifier.Patches
             [HarmonyPostfix]
             private static void Postfix(GameObject __instance, bool value)
             {
-                if (__instance.name == "Menu" && value) 
+                if (__instance.name == "Menu" && value)
                 {
                     ApplySizeChanges(__instance.transform);
                     ApplyLocalization(__instance.transform);
@@ -143,11 +175,13 @@ namespace TWGSRussifier.Patches
                 arrowObject.transform.SetParent(modInfo.transform, false);
                 
                 RectTransform arrowRect = arrowObject.GetComponent<RectTransform>();
-                arrowRect.anchorMin = new Vector2(1, 0.5f);
-                arrowRect.anchorMax = new Vector2(1, 0.5f);
-                arrowRect.pivot = new Vector2(0.5f, 0.5f);
-                arrowRect.anchoredPosition = new Vector2(2, 2.4f); 
+                // arrowRect.anchorMin = new Vector2(1, 0.5f);
+                // arrowRect.anchorMax = new Vector2(1, 0.5f);
+                // arrowRect.pivot = new Vector2(0.5f, 0.5f);
+                // arrowRect.anchoredPosition = new Vector2(2, 2.4f); 
                 arrowRect.sizeDelta = new Vector2(8f, 8f);
+                
+                modInfo.AddComponent<ArrowPositioner>().Initialize(textComponent, arrowRect);
                 
                 GameObject triangle = new GameObject("Triangle", typeof(RectTransform));
                 triangle.transform.SetParent(arrowObject.transform, false);
@@ -179,7 +213,7 @@ namespace TWGSRussifier.Patches
             
             CreateSocialLinksPanel(rootTransform, modInfo);
         }
-        
+
         private static void CreateSocialLinksPanel(Transform rootTransform, GameObject modInfoButton)
         {
             GameObject panel = new GameObject("SocialLinksPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));

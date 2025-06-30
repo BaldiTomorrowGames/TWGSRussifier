@@ -8,7 +8,6 @@ namespace TWGSRussifier.API
     public static class Logger
     {
         private static BepInEx.Logging.ManualLogSource _bepLogger;
-        private static readonly string ModuleName = RussifierTemp.ModName;
 
         public static void Init(BepInEx.Logging.ManualLogSource logger)
         {
