@@ -1,4 +1,4 @@
-﻿using TWGSRussifier.API;
+using TWGSRussifier.API;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -42,20 +42,24 @@ namespace TWGSRussifier.Runtime
             return languageData.ContainsKey(key);
         }
 
-        private void UpdateTexts()
+        public void UpdateTexts()
         {
-            if (languageData == null || languageData.Count == 0) return;
+            if (languageData == null || languageData.Count == 0)
+            {
+                API.Logger.Info("No language data to apply.");
+                return;
+            }
 
             if (Singleton<LocalizationManager>.Instance != null)
             {
                 FieldInfo localText = AccessTools.Field(typeof(LocalizationManager), "localizedText");
                 localText.SetValue(Singleton<LocalizationManager>.Instance, languageData);
+                API.Logger.Info("Language data applied successfully.");
             }
-        }
-
-        public void LateUpdate()
-        {
-            UpdateTexts();
+            else
+            {
+                API.Logger.Warning("LocalizationManager instance not found. Texts will not be updated.");
+            }
         }
 
         public void UpdateAudio()
@@ -73,6 +77,7 @@ namespace TWGSRussifier.Runtime
         {
             instance = this;
             languageData = new Dictionary<string, string>();
+            ModSceneManager.instance.onMenuSceneLoadOnce += UpdateTexts;
             ModSceneManager.instance.onMenuSceneLoadOnce += UpdateAudio;
             ModSceneManager.instance.onMenuSceneLoadOnce += LoadTextures;
             ModSceneManager.instance.onMenuSceneLoadOnce += ApplyTextures;

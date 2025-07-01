@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,32 +34,29 @@ namespace TWGSRussifier.API
         }
         public static void InsertDirectory(string mainPath)
         {
-            if (!Directory.Exists(mainPath))
-            {
-                Directory.CreateDirectory(mainPath);
-            }
+            Directory.CreateDirectory(mainPath);
         }
         public static void CreateInstance<T>() where T : MonoBehaviour
         {
             if (GameObject.FindObjectOfType<T>(true) == null)
             {
-                T newInstance = GameObject.Instantiate(new GameObject()).AddComponent<T>();
-                newInstance.name = typeof(T).Name;
-                Logger.Info($"Создан {newInstance.name}");
+                GameObject newGo = new GameObject(typeof(T).Name);
+                newGo.AddComponent<T>();
+                Logger.Info($"Создан {newGo.name}");
             }
             else
             {
                 throw new System.Exception($"Класс {typeof(T).Name} уже существует!");
             }
-           
         }
+
         public static T CreateInstanceI<T>() where T : MonoBehaviour
         {
             if (GameObject.FindObjectOfType<T>(true) == null)
             {
-                T newInstance = GameObject.Instantiate(new GameObject()).AddComponent<T>();
-                newInstance.name = typeof(T).Name;
-                Logger.Info($"Создан {newInstance.name}");
+                GameObject newGo = new GameObject(typeof(T).Name);
+                T newInstance = newGo.AddComponent<T>();
+                Logger.Info($"Создан {newGo.name}");
                 return newInstance;
             }
             else
