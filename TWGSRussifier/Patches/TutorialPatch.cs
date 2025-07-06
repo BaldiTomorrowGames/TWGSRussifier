@@ -2,7 +2,7 @@ using HarmonyLib;
 using UnityEngine;
 using TMPro;
 using System.Collections;
-using TWGSRussifier.Runtime;
+// using TWGSRussifier.Runtime;
 using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
@@ -14,28 +14,28 @@ namespace TWGSRussifier.Patches
         [HarmonyPostfix]
         public static void Postfix(TutorialGameManager __instance)
         {
-            RestoreAudio(__instance);
+            // RestoreAudio(__instance);
             __instance.StartCoroutine(ApplyLocalizationWithDelay());
         }
         
         private static void RestoreAudio(TutorialGameManager instance)
         {
-            if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
-            {
-                LanguageManager.instance.UpdateAudio();
+            // if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
+            // {
+            //     LanguageManager.instance.UpdateAudio();
                 
-                instance.StartCoroutine(RestoreAudioAfterMinimalDelay());
-            }
+            //     instance.StartCoroutine(RestoreAudioAfterMinimalDelay());
+            // }
         }
         
         private static IEnumerator RestoreAudioAfterMinimalDelay()
         {
             yield return new WaitForSeconds(0.1f);
             
-            if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
-            {
-                LanguageManager.instance.UpdateAudio();
-            }
+            // if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
+            // {
+            //     LanguageManager.instance.UpdateAudio();
+            // }
         }
 
         private static IEnumerator ApplyLocalizationWithDelay()

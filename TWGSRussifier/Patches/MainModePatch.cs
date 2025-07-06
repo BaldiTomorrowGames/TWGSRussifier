@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
-using TWGSRussifier.Runtime;
+// using TWGSRussifier.Runtime;
 using TWGSRussifier.API;
 
 namespace TWGSRussifier

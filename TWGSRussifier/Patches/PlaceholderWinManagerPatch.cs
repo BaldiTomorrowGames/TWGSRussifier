@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using System.Reflection;
-using TWGSRussifier.Runtime;
+// using TWGSRussifier.Runtime;
 
 namespace TWGSRussifier.Patches
 {

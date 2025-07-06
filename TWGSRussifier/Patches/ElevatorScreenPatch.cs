@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
-using TWGSRussifier.Runtime;
+// using TWGSRussifier.Runtime;
 using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
@@ -59,7 +59,7 @@ namespace TWGSRussifier.Patches
             
             if (!audioRestoredOnGameStart)
             {
-                RestoreAudio();
+                // RestoreAudio();
                 audioRestoredOnGameStart = true;
             }
             
@@ -283,10 +283,10 @@ namespace TWGSRussifier.Patches
         
         private static void RestoreAudio()
         {
-            if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
-            {
-                LanguageManager.instance.UpdateAudio();
-            }
+            // if (LanguageManager.instance != null)
+            // {
+            //     LanguageManager.instance.UpdateAudio();
+            // }
         }
     }
 } 

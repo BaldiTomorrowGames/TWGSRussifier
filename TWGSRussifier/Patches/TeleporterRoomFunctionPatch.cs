@@ -8,9 +8,9 @@ namespace TWGSRussifier
 {
     public class TeleporterTextLocalizer : MonoBehaviour
     {
-        public string key;
-        private TextMeshPro textComponent;
-        private string originalText;
+        public string key = null!;
+        private TextMeshPro textComponent = null!;
+        private string originalText = null!;
         
         private void Awake()
         {
@@ -29,16 +29,16 @@ namespace TWGSRussifier
         
         public void RefreshLocalization()
         {
-            if (textComponent == null) return;
+            // if (textComponent == null) return;
             
-            if (Runtime.LanguageManager.instance != null && !string.IsNullOrEmpty(key))
-            {
-                string localizedText = Runtime.LanguageManager.instance.GetKeyData(key);
-                if (!string.IsNullOrEmpty(localizedText))
-                {
-                    textComponent.text = localizedText;
-                }
-            }
+            // if (Runtime.LanguageManager.instance != null && !string.IsNullOrEmpty(key))
+            // {
+            //     string localizedText = Runtime.LanguageManager.instance.GetKeyData(key);
+            //     if (!string.IsNullOrEmpty(localizedText))
+            //     {
+            //         textComponent.text = localizedText;
+            //     }
+            // }
         }
         
         private void Update()
@@ -53,7 +53,7 @@ namespace TWGSRussifier
     [HarmonyPatch(typeof(TeleporterRoomFunction), "Initialize")]
     internal class TeleporterRoomFunctionPatch
     {
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string name)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string name)
         {
             if (parent == null) return null;
 
@@ -63,7 +63,7 @@ namespace TWGSRussifier
                 if (child.name == name)
                     return child;
                 
-                Transform found = FindInChildrenIncludingInactive(child, name);
+                Transform? found = FindInChildrenIncludingInactive(child, name);
                 if (found != null)
                     return found;
             }

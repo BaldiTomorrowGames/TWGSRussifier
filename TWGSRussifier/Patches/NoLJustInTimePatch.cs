@@ -12,7 +12,7 @@ namespace TWGSRussifier.Patches
     {
         private static readonly string audioFileName = "NoL_JustInTime";
         private static bool audioLoaded = false;
-        private static AudioClip loadedClip = null;
+        private static AudioClip? loadedClip = null;
         
         private static readonly string[] supportedExtensions = new string[] { "wav", "ogg", "mp3" };
 
@@ -37,33 +37,33 @@ namespace TWGSRussifier.Patches
                 return;
             }
 
-            string basePath = RussifierTemp.GetAudioPath();
+            // string basePath = RussifierTemp.GetAudioPath();
             
-            if (!Directory.Exists(basePath))
-            {
-                GameUtils.InsertDirectory(basePath);
-                API.Logger.Warning($"Директория для аудио не найдена, создана: {basePath}");
-                return;
-            }
+            // if (!Directory.Exists(basePath))
+            // {
+            //     GameUtils.InsertDirectory(basePath);
+            //     API.Logger.Warning($"Директория для аудио не найдена, создана: {basePath}");
+            //     return;
+            // }
             
-            foreach (string ext in supportedExtensions)
-            {
-                string fullPath = Path.Combine(basePath, $"{audioFileName}.{ext}");
+            // foreach (string ext in supportedExtensions)
+            // {
+            //     string fullPath = Path.Combine(basePath, $"{audioFileName}.{ext}");
                 
-                if (File.Exists(fullPath))
-                {
-                    loadedClip = AssetLoader.AudioClipFromFile(fullPath);
+            //     if (File.Exists(fullPath))
+            //     {
+            //         loadedClip = AssetLoader.AudioClipFromFile(fullPath);
                     
-                    if (loadedClip != null)
-                    {
-                        audioLoaded = true;
-                        API.Logger.Info($"Успешно загружен аудиоклип {audioFileName} из пути: {fullPath}");
-                        return;
-                    }
-                }
-            }
+            //         if (loadedClip != null)
+            //         {
+            //             audioLoaded = true;
+            //             API.Logger.Info($"Успешно загружен аудиоклип {audioFileName} из пути: {fullPath}");
+            //             return;
+            //         }
+            //     }
+            // }
             
-            API.Logger.Warning($"Не удалось найти аудиоклип {audioFileName} в {basePath}");
+            // API.Logger.Warning($"Не удалось найти аудиоклип {audioFileName} в {basePath}");
         }
 
         private static void TryReplaceAudio(NoLateTeacher teacher)
@@ -81,10 +81,10 @@ namespace TWGSRussifier.Patches
                 
                 foreach (string fieldName in possibleFieldNames)
                 {
-                    FieldInfo field = AccessTools.Field(typeof(NoLateTeacher), fieldName);
+                    FieldInfo? field = AccessTools.Field(typeof(NoLateTeacher), fieldName);
                     if (field != null)
                     {
-                        SoundObject soundObj = field.GetValue(teacher) as SoundObject;
+                        SoundObject? soundObj = field.GetValue(teacher) as SoundObject;
                         if (soundObj != null)
                         {
                             SoundObject newObj = ScriptableObject.CreateInstance<SoundObject>();
@@ -122,10 +122,10 @@ namespace TWGSRussifier.Patches
             if (!audioLoaded || loadedClip == null) TryLoadAudioClip();
             if (audioLoaded && loadedClip != null)
             {
-                FieldInfo field = AccessTools.Field(typeof(NoLateTeacher), "audInTime");
+                FieldInfo? field = AccessTools.Field(typeof(NoLateTeacher), "audInTime");
                 if (field != null)
                 {
-                    SoundObject oldSound = field.GetValue(__instance) as SoundObject;
+                    SoundObject? oldSound = field.GetValue(__instance) as SoundObject;
                     if (oldSound != null)
                     {
                         SoundObject newSound = ScriptableObject.CreateInstance<SoundObject>();

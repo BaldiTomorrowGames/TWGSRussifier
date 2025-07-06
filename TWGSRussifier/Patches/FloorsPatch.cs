@@ -2,7 +2,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using TWGSRussifier.Runtime;
+// using TWGSRussifier.Runtime;
 
 namespace TWGSRussifier.Patches
 {
@@ -87,14 +87,14 @@ namespace TWGSRussifier.Patches
         
         private static string GetLocalizedFloorTitle(string localizationKey)
         {
-            if (LanguageManager.instance != null && LanguageManager.instance.ContainsData(localizationKey))
-            {
-                string localizedTitle = LanguageManager.instance.GetKeyData(localizationKey);
-                if (!string.IsNullOrEmpty(localizedTitle))
-                {
-                    return localizedTitle;
-                }
-            }
+            // if (LanguageManager.instance != null && LanguageManager.instance.ContainsData(localizationKey))
+            // {
+            //     string localizedTitle = LanguageManager.instance.GetKeyData(localizationKey);
+            //     if (!string.IsNullOrEmpty(localizedTitle))
+            //     {
+            //         return localizedTitle;
+            //     }
+            // }
           
             return string.Empty;
         }

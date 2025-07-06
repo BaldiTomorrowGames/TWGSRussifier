@@ -1,4 +1,4 @@
-﻿using TWGSRussifier.Runtime;
+﻿// using TWGSRussifier.Runtime;
 using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
@@ -22,19 +22,19 @@ namespace TWGSRussifier.Patches
             AudioClip oldClip = (AudioClip)welcome.GetValue(__instance);
             AudioSource audioSource = (AudioSource)source.GetValue(__instance);
 
-            welcome.SetValue(__instance, LanguageManager.instance.GetClip(oldClip.name));
-            AudioClip newStartup = LanguageManager.instance.GetClip(audioSource.clip.name);
-            if (audioSource.clip.name.Contains("WelcomeClickOn"))
-            {
-                if (audioSource.clip != newStartup)
-                {
-                    audioSource.clip = newStartup;
-                    if (!audioSource.isPlaying)
-                    {
-                        audioSource.Play();
-                    }
-                }
-            }
+            // welcome.SetValue(__instance, LanguageManager.instance.GetClip(oldClip.name));
+            // AudioClip newStartup = LanguageManager.instance.GetClip(audioSource.clip.name);
+            // if (audioSource.clip.name.Contains("WelcomeClickOn"))
+            // {
+            //     if (audioSource.clip != newStartup)
+            //     {
+            //         audioSource.clip = newStartup;
+            //         if (!audioSource.isPlaying)
+            //         {
+            //             audioSource.Play();
+            //         }
+            //     }
+            // }
         }
     }
 }
