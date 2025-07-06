@@ -52,7 +52,6 @@ namespace TWGSRussifier
 
             VersionCheck.CheckGameVersion(expectedGameVersion, Info);
             
-            // Загрузка локализации до полной загрузки ассетов
             string modPath = AssetLoader.GetModPath(this);
             string langPath = Path.Combine(modPath, "Language", "Russian");
             if (Directory.Exists(langPath))
@@ -68,18 +67,16 @@ namespace TWGSRussifier
 
         private IEnumerator OnAssetsLoaded()
         {
-            yield return 3; // Общее количество шагов загрузки
+            yield return 3; 
 
-            yield return "Загрузка ресурсов русификатора..."; // Начальный текст
+            yield return "Загрузка ресурсов русификатора..."; 
             API.Logger.Info("Загрузка русифицированных ассетов...");
 
             string modPath = AssetLoader.GetModPath(this);
 
-            // Шаг 1: Загрузка и замена текстур
             yield return "Загрузка текстур...";
             ApplyAllTextures();
 
-            // Шаг 2: Загрузка и замена звуков
             yield return "Загрузка звуков...";
             if (ConfigManager.AreSoundsEnabled())
             {
@@ -116,7 +113,6 @@ namespace TWGSRussifier
                 }
             }
 
-            // Шаг 3: Обновление постеров
             yield return "Обновление плакатов...";
             UpdatePosters(modPath);
 
