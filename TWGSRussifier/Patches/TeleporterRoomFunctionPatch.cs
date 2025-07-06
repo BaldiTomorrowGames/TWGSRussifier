@@ -1,7 +1,6 @@
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
-using System.Text;
 using System.Collections.Generic;
 
 namespace TWGSRussifier
@@ -10,16 +9,11 @@ namespace TWGSRussifier
     {
         public string key = null!;
         private TextMeshPro textComponent = null!;
-        private string originalText = null!;
         
         private void Awake()
         {
             textComponent = GetComponent<TextMeshPro>();
-            if (textComponent != null)
-            {
-                originalText = textComponent.text;
-                RefreshLocalization();
-            }
+            RefreshLocalization();
         }
         
         private void OnEnable()
@@ -29,23 +23,12 @@ namespace TWGSRussifier
         
         public void RefreshLocalization()
         {
-            // if (textComponent == null) return;
+            if (textComponent == null || string.IsNullOrEmpty(key)) return;
             
-            // if (Runtime.LanguageManager.instance != null && !string.IsNullOrEmpty(key))
-            // {
-            //     string localizedText = Runtime.LanguageManager.instance.GetKeyData(key);
-            //     if (!string.IsNullOrEmpty(localizedText))
-            //     {
-            //         textComponent.text = localizedText;
-            //     }
-            // }
-        }
-        
-        private void Update()
-        {
-            if (textComponent != null && textComponent.text != originalText)
+            string localizedText = LocalizationManager.Instance.GetLocalizedText(key);
+            if (!string.IsNullOrEmpty(localizedText))
             {
-                RefreshLocalization();
+                textComponent.text = localizedText;
             }
         }
     }
@@ -70,24 +53,6 @@ namespace TWGSRussifier
             
             return null;
         }
-        
-        private static List<Transform> FindAllChildrenWithName(Transform parent, string contains)
-        {
-            List<Transform> result = new List<Transform>();
-            if (parent == null) return result;
-            
-            Transform[] allChildren = parent.GetComponentsInChildren<Transform>(true);
-            
-            foreach (Transform child in allChildren)
-            {
-                if (child.name.Contains(contains))
-                {
-                    result.Add(child);
-                }
-            }
-            
-            return result;
-        }
 
         [HarmonyPostfix]
         private static void Initialize_Postfix(TeleporterRoomFunction __instance, RoomController room)
@@ -96,14 +61,14 @@ namespace TWGSRussifier
             
             if (room.ec.name.Contains("Laboratory_Lvl4") || room.ec.name.Contains("Laboratory_Lvl5"))
             {
-                Transform functionBase = FindInChildrenIncludingInactive(room.transform, "TeleporterRoomFunctionObjectBase");
+                Transform? functionBase = FindInChildrenIncludingInactive(room.transform, "TeleporterRoomFunctionObjectBase");
                 
                 if (functionBase == null) return;
                 
                 List<Transform> labelObjects = new List<Transform>();
                 for (int i = 0; i < 4; i++)
                 {
-                    Transform label = FindInChildrenIncludingInactive(functionBase, "RoomLabels_" + i);
+                    Transform? label = FindInChildrenIncludingInactive(functionBase, "RoomLabels_" + i);
                     if (label != null)
                     {
                         labelObjects.Add(label);
@@ -114,19 +79,19 @@ namespace TWGSRussifier
                 
                 for (int i = 0; i < labelObjects.Count; i++)
                 {
-                    Transform textTransform = FindInChildrenIncludingInactive(labelObjects[i], "Text (TMP)");
+                    Transform? textTransform = FindInChildrenIncludingInactive(labelObjects[i], "Text (TMP)");
                     
                     if (textTransform != null)
                     {
-                        TextMeshPro textComponent = textTransform.GetComponent<TextMeshPro>();
+                        TextMeshPro? textComponent = textTransform.GetComponent<TextMeshPro>();
                         if (textComponent != null)
                         {
                             string localizationKey = "TWGS_RoomLabel_" + i;
                             
-                            TeleporterTextLocalizer localizer = textComponent.GetComponent<TeleporterTextLocalizer>();
+                            TeleporterTextLocalizer? localizer = textComponent.GetComponent<TeleporterTextLocalizer>();
                             if (localizer == null)
                             {
-                                TextLocalizer oldLocalizer = textComponent.GetComponent<TextLocalizer>();
+                                TextLocalizer? oldLocalizer = textComponent.GetComponent<TextLocalizer>();
                                 if (oldLocalizer != null)
                                 {
                                     Object.Destroy(oldLocalizer);
@@ -143,30 +108,6 @@ namespace TWGSRussifier
                         }
                     }
                 }
-            }
-        }
-    }
-    
-    public static class TransformExtensions
-    {
-        public static string GetPath(this Transform transform)
-        {
-            StringBuilder sb = new StringBuilder();
-            GetPathRecursive(transform, sb);
-            return sb.ToString();
-        }
-        
-        private static void GetPathRecursive(Transform transform, StringBuilder sb)
-        {
-            if (transform.parent == null)
-            {
-                sb.Append(transform.name);
-            }
-            else
-            {
-                GetPathRecursive(transform.parent, sb);
-                sb.Append("/");
-                sb.Append(transform.name);
             }
         }
     }

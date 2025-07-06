@@ -36,19 +36,19 @@ namespace TWGSRussifier.Patches
                 return;
             }
 
-            GameObject endingError = endingErrorField.GetValue(manager) as GameObject;
+            GameObject? endingError = endingErrorField.GetValue(manager) as GameObject;
             if (endingError == null)
             {
                 return;
             }
 
-            Transform textTransform = endingError.transform.Find("Text (TMP)");
+            Transform? textTransform = endingError.transform.Find("Text (TMP)");
             if (textTransform != null)
             {
-                TextMeshProUGUI textComponent = textTransform.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI? textComponent = textTransform.GetComponent<TextMeshProUGUI>();
                 if (textComponent != null)
                 {
-                    TextLocalizer localizer = textTransform.gameObject.GetComponent<TextLocalizer>();
+                    TextLocalizer? localizer = textTransform.gameObject.GetComponent<TextLocalizer>();
                     if (localizer == null)
                     {
                         localizer = textTransform.gameObject.AddComponent<TextLocalizer>();

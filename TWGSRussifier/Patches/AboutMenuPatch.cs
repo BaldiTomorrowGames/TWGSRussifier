@@ -30,34 +30,35 @@ namespace TWGSRussifier
             new KeyValuePair<string, Vector2>("SaveFolderButton", new Vector2(150f, 50f))
         };
         
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Dictionary<string, Transform> BuildTransformPathMap(Transform parent)
         {
+            var map = new Dictionary<string, Transform>();
             var children = parent.GetComponentsInChildren<Transform>(true);
+
             foreach (var child in children)
             {
                 if (child == parent) continue;
-                if (DoesPathMatch(parent, child, path))
+        
+                StringBuilder pathBuilder = new StringBuilder();
+                Transform current = child;
+                while (current != null && current != parent)
                 {
-                    return child;
+                    if (pathBuilder.Length > 0)
+                        pathBuilder.Insert(0, "/");
+                    pathBuilder.Insert(0, current.name);
+                    current = current.parent;
+                }
+        
+                if (current == parent)
+                {
+                    string path = pathBuilder.ToString();
+                    if (!map.ContainsKey(path))
+                    {
+                        map.Add(path, child);
+                    }
                 }
             }
-            return null;
-        }
-
-        private static bool DoesPathMatch(Transform parent, Transform target, string expectedPath)
-        {
-            if (target == null || parent == null || target == parent) return false;
-            StringBuilder pathBuilder = new StringBuilder();
-            Transform current = target;
-            while (current != null && current != parent)
-            {
-                if (pathBuilder.Length > 0)
-                    pathBuilder.Insert(0, "/");
-                pathBuilder.Insert(0, current.name);
-                current = current.parent;
-            }
-            if (current != parent) return false;
-            return pathBuilder.ToString() == expectedPath;
+            return map;
         }
         
         [HarmonyPatch(typeof(MenuButton), "Press")]
@@ -87,25 +88,22 @@ namespace TWGSRussifier
                 
                 if (__instance.name == "About" && value && !fixesApplied)
                 {
-                    // Debug.Log("[AboutMenuPatch] Меню About активировано, применяется локализация");
-                    ApplyLocalization(__instance.transform);
-                    ApplySizeDeltaChanges(__instance.transform);
+                    var transformMap = BuildTransformPathMap(__instance.transform);
+                    ApplyLocalization(transformMap);
+                    ApplySizeDeltaChanges(transformMap);
                     fixesApplied = true;
                     
-                    ForceRefreshLocalization(__instance.transform);
+                    ForceRefreshLocalization(transformMap);
                 }
             }
         }
         
-        private static void ForceRefreshLocalization(Transform aboutTransform)
+        private static void ForceRefreshLocalization(Dictionary<string, Transform> transformMap)
         {
             // Debug.Log("[AboutMenuPatch] Принудительная перезагрузка локализации");
             foreach (var entry in LocalizationKeys)
             {
-                string relativePath = entry.Key;
-                
-                Transform targetTransform = FindInChildrenIncludingInactive(aboutTransform, relativePath);
-                if (targetTransform != null)
+                if (transformMap.TryGetValue(entry.Key, out Transform targetTransform))
                 {
                     TextLocalizer localizer = targetTransform.GetComponent<TextLocalizer>();
                     if (localizer != null)
@@ -115,51 +113,43 @@ namespace TWGSRussifier
                 }
                 else
                 {
-                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {relativePath} в меню About");
+                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {entry.Key} в меню About");
                 }
             }
         }
         
-        private static void ApplySizeDeltaChanges(Transform aboutTransform)
+        private static void ApplySizeDeltaChanges(Dictionary<string, Transform> transformMap)
         {
            // Debug.Log("[AboutMenuPatch] Применение изменений размеров");
             
             foreach (var target in SizeDeltaTargets)
             {
-                string relativePath = target.Key;
-                Vector2 sizeDelta = target.Value;
-                
-                Transform elementTransform = FindInChildrenIncludingInactive(aboutTransform, relativePath);
-                if (elementTransform != null)
+                if (transformMap.TryGetValue(target.Key, out Transform elementTransform))
                 {
                     RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
-                        rectTransform.sizeDelta = sizeDelta;
-                       // Debug.Log($"[AboutMenuPatch] Применено изменение размеров {sizeDelta} к {relativePath}");
+                        rectTransform.sizeDelta = target.Value;
+                       // Debug.Log($"[AboutMenuPatch] Применено изменение размеров {target.Value} к {target.Key}");
                     }
                     else
                     {
-                       // Debug.LogWarning($"[AboutMenuPatch] RectTransform компонент не найден на {relativePath}");
+                       // Debug.LogWarning($"[AboutMenuPatch] RectTransform компонент не найден на {target.Key}");
                     }
                 }
                 else
                 {
-                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {relativePath} в меню About");
+                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {target.Key} в меню About");
                 }
             }
         }
         
-        private static void ApplyLocalization(Transform aboutTransform)
+        private static void ApplyLocalization(Dictionary<string, Transform> transformMap)
         {
            // Debug.Log("[AboutMenuPatch] Применение локализации к меню About");
             foreach (var entry in LocalizationKeys)
             {
-                string relativePath = entry.Key;
-                string localizationKey = entry.Value;
-                
-                Transform targetTransform = FindInChildrenIncludingInactive(aboutTransform, relativePath);
-                if (targetTransform != null)
+                if (transformMap.TryGetValue(entry.Key, out Transform targetTransform))
                 {
                     TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
                     if (textComponent != null)
@@ -177,24 +167,24 @@ namespace TWGSRussifier
                         if (localizer == null)
                         {
                             localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
-                            localizer.key = localizationKey;
-                           // Debug.Log($"[AboutMenuPatch] Добавлен TextLocalizer к {relativePath} с ключом {localizationKey}");
+                            localizer.key = entry.Value;
+                           // Debug.Log($"[AboutMenuPatch] Добавлен TextLocalizer к {entry.Key} с ключом {entry.Value}");
                         }
-                        else if (localizer.key != localizationKey)
+                        else if (localizer.key != entry.Value)
                         {
-                            localizer.key = localizationKey;
+                            localizer.key = entry.Value;
                             localizer.RefreshLocalization();
-                           // Debug.Log($"[AboutMenuPatch] Обновлен ключ TextLocalizer для {relativePath} на {localizationKey}");
+                           // Debug.Log($"[AboutMenuPatch] Обновлен ключ TextLocalizer для {entry.Key} на {entry.Value}");
                         }
                     }
                     else
                     {
-                      //  Debug.LogWarning($"[AboutMenuPatch] TextMeshProUGUI компонент не найден на {relativePath}");
+                      //  Debug.LogWarning($"[AboutMenuPatch] TextMeshProUGUI компонент не найден на {entry.Key}");
                     }
                 }
                 else
                 {
-                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {relativePath} в меню About");
+                   // Debug.LogWarning($"[AboutMenuPatch] Не удалось найти путь {entry.Key} в меню About");
                 }
             }
         }

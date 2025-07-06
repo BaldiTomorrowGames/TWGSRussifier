@@ -87,15 +87,11 @@ namespace TWGSRussifier.Patches
         
         private static string GetLocalizedFloorTitle(string localizationKey)
         {
-            // if (LanguageManager.instance != null && LanguageManager.instance.ContainsData(localizationKey))
-            // {
-            //     string localizedTitle = LanguageManager.instance.GetKeyData(localizationKey);
-            //     if (!string.IsNullOrEmpty(localizedTitle))
-            //     {
-            //         return localizedTitle;
-            //     }
-            // }
-          
+            string localizedTitle = Singleton<LocalizationManager>.Instance.GetLocalizedText(localizationKey);
+            if (localizedTitle != localizationKey)
+            {
+                return localizedTitle;
+            }
             return string.Empty;
         }
     }

@@ -1,6 +1,6 @@
 # TomorrowGames Baldi's Basics Plus Russifier
 
-![Версия](https://img.shields.io/badge/Версия-1.0.2.1-blue)
+![Версия](https://img.shields.io/badge/Версия-1.1.0.0-blue)
 ![Статус разработки](https://img.shields.io/badge/Статус-100%25-yellow)
 ![Игра](https://img.shields.io/badge/Игра-Baldi's%20Basics%20Plus%200.10.2-green)
 
@@ -32,7 +32,7 @@
 
 ## 🛠 Для разработчиков
 
-Проект разрабатывается на C# с использованием кода игры и BepInEx. Вклад в развитие проекта приветствуется!
+Проект разрабатывается на C# с использованием кода игры, MTM101BMDE и BepInEx. Вклад в развитие проекта приветствуется!
 
 ## 💻 Компиляция
 
@@ -47,6 +47,7 @@
 - BepInEx.dll
 - BepInEx.Harmony.dll
 - HarmonyXInterop.dll
+- MTM101BaldAPI.dll
 - Newtonsoft.Json.dll
 - UnityEngine.dll
 - UnityEngine.CoreModule.dll

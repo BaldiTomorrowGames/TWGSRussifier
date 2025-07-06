@@ -15,7 +15,7 @@ namespace TWGSRussifier.Patches
         private static bool updateChecked = false;
         private static readonly string UpdateLocalizationKey = "TWGS_Menu_UpdateAvailable";
         private static readonly string ReminderLocalizationKey = "TWGS_Menu_Reminder";
-        private static GameObject dummyReminder = null;
+        private static GameObject? dummyReminder = null;
 
         [HarmonyPatch(typeof(GameObject), "SetActive")]
         private static class SetActivePatch
@@ -31,7 +31,7 @@ namespace TWGSRussifier.Patches
                         updateChecked = true;
                     }
 
-                    Transform reminderTransform = __instance.transform.Find("Reminder");
+                    Transform? reminderTransform = __instance.transform.Find("Reminder");
                     if (reminderTransform != null)
                     {
                         ModifyReminderElement(reminderTransform.gameObject);
@@ -71,19 +71,19 @@ namespace TWGSRussifier.Patches
             {
                 if (n == "Reminder")
                 {
-                    StackFrame[] stackFrames = new System.Diagnostics.StackTrace(true).GetFrames();
+                    StackFrame[]? stackFrames = new System.Diagnostics.StackTrace(true).GetFrames();
                     if (stackFrames != null)
                     {
                         foreach (var frame in stackFrames)
                         {
-                            MethodBase method = frame.GetMethod();
+                            MethodBase? method = frame.GetMethod();
                             if (method != null && method.DeclaringType != null)
                             {
                                 string namespaceName = method.DeclaringType.Namespace ?? "";
                                 
                                 if (namespaceName.StartsWith("MTM101BaldAPI") || 
                                     namespaceName.Contains(".MTM101BaldAPI") ||
-                                    method.DeclaringType.FullName.Contains("MTM101BaldAPI"))
+                                    method.DeclaringType.FullName != null && method.DeclaringType.FullName.Contains("MTM101BaldAPI"))
                                 {
                                     // API.Logger.Info($"Перехвачен доступ к Reminder из MTM101BaldAPI (метод: {method.DeclaringType.FullName}.{method.Name})");
                                     __result = GetDummyReminder(__instance);
@@ -107,23 +107,23 @@ namespace TWGSRussifier.Patches
             {
                 if (__result != null && __result.name == "Reminder")
                 {
-                    StackFrame[] stackFrames = new System.Diagnostics.StackTrace(true).GetFrames();
+                    StackFrame[]? stackFrames = new System.Diagnostics.StackTrace(true).GetFrames();
                     if (stackFrames != null)
                     {
                         foreach (var frame in stackFrames)
                         {
-                            MethodBase method = frame.GetMethod();
+                            MethodBase? method = frame.GetMethod();
                             if (method != null && method.DeclaringType != null)
                             {
                                 string namespaceName = method.DeclaringType.Namespace ?? "";
                                 
                                 if (namespaceName.StartsWith("MTM101BaldAPI") || 
                                     namespaceName.Contains(".MTM101BaldAPI") ||
-                                    method.DeclaringType.FullName.Contains("MTM101BaldAPI"))
+                                    method.DeclaringType.FullName != null && method.DeclaringType.FullName.Contains("MTM101BaldAPI"))
                                 {
                                     // API.Logger.Info($"Перехвачен доступ к Reminder через GetChild из MTM101BaldAPI (метод: {method.DeclaringType.FullName}.{method.Name})");
                                     
-                                    Transform oldParent = __result.parent;
+                                    Transform? oldParent = __result.parent;
                                     
                                     __result = GetDummyReminder(oldParent);
                                     break;
@@ -139,10 +139,10 @@ namespace TWGSRussifier.Patches
         {
             await UpdateChecker.CheckForUpdates();
             
-            GameObject menuObject = GameObject.Find("Menu");
+            GameObject? menuObject = GameObject.Find("Menu");
             if (menuObject != null)
             {
-                Transform reminderTransform = menuObject.transform.Find("Reminder");
+                Transform? reminderTransform = menuObject.transform.Find("Reminder");
                 if (reminderTransform != null)
                 {
                     ModifyReminderElement(reminderTransform.gameObject);
@@ -154,10 +154,10 @@ namespace TWGSRussifier.Patches
         {
             if (reminderObject == null) return;
 
-            TextMeshProUGUI textComponent = reminderObject.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI? textComponent = reminderObject.GetComponent<TextMeshProUGUI>();
             if (textComponent != null)
             {
-                TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
                 if (localizer == null)
                 {
                     localizer = reminderObject.AddComponent<TextLocalizer>();
@@ -170,7 +170,7 @@ namespace TWGSRussifier.Patches
 
                     textComponent.raycastTarget = true;
 
-                    StandardMenuButton button = reminderObject.GetComponent<StandardMenuButton>();
+                    StandardMenuButton? button = reminderObject.GetComponent<StandardMenuButton>();
                     if (button == null)
                     {
                         button = reminderObject.AddComponent<StandardMenuButton>();
@@ -194,7 +194,7 @@ namespace TWGSRussifier.Patches
 
                     textComponent.raycastTarget = false;
 
-                    StandardMenuButton button = reminderObject.GetComponent<StandardMenuButton>();
+                    StandardMenuButton? button = reminderObject.GetComponent<StandardMenuButton>();
                     if (button != null)
                     {
                         GameObject.Destroy(button);

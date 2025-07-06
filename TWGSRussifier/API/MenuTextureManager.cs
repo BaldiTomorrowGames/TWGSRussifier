@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace TWGSRussifier.Core
+namespace TWGSRussifier.API
 {
     public class MenuTextureManager : MonoBehaviour
     {

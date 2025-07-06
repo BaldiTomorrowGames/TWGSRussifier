@@ -5,13 +5,14 @@ using System.Text;
 using TMPro;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using MTM101BaldAPI.UI;
 
 namespace TWGSRussifier.Patches
 {
     internal class ArrowPositioner : MonoBehaviour
     {
-        private TextMeshProUGUI textComponent;
-        private RectTransform arrowRect;
+        private TextMeshProUGUI textComponent = null!;
+        private RectTransform arrowRect = null!;
 
         public void Initialize(TextMeshProUGUI text, RectTransform arrow)
         {
@@ -80,7 +81,7 @@ namespace TWGSRussifier.Patches
             new KeyValuePair<string, Vector2>("StartTest_1", new Vector2(228f, 32f))
         };
 
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             foreach (Transform child in parent.GetComponentsInChildren<Transform>(true))
             {
@@ -133,18 +134,18 @@ namespace TWGSRussifier.Patches
             }
         }
 
-        private static GameObject socialLinksPanel = null;
+        private static GameObject? socialLinksPanel = null;
         private static bool dropdownVisible = false;
-        private static RectTransform dropdownArrow = null;
+        private static RectTransform? dropdownArrow = null;
         
         private static void CreateModInfoButton(Transform rootTransform)
         {
             if (rootTransform == null) return;
 
-            Transform reminderTransform = rootTransform.Find("Reminder");
+            Transform? reminderTransform = rootTransform.Find("Reminder");
             if (reminderTransform == null) return;
 
-            Transform existingModInfo = rootTransform.Find("ModInfo");
+            Transform? existingModInfo = rootTransform.Find("ModInfo");
             if (existingModInfo != null) return;
 
             GameObject modInfo = GameObject.Instantiate(reminderTransform.gameObject, rootTransform);
@@ -153,19 +154,19 @@ namespace TWGSRussifier.Patches
             modInfo.transform.localPosition = new Vector3(-180f, 155f, 0f);
             modInfo.transform.SetSiblingIndex(15);
             
-            RectTransform rectTransform = modInfo.GetComponent<RectTransform>();
+            RectTransform? rectTransform = modInfo.GetComponent<RectTransform>();
             if (rectTransform != null)
             {
                 rectTransform.sizeDelta = new Vector2(150f, 50f);
                 rectTransform.offsetMin = new Vector2(-239f, 160f);
             }
 
-            TextMeshProUGUI textComponent = modInfo.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI? textComponent = modInfo.GetComponent<TextMeshProUGUI>();
             if (textComponent != null)
             {
                 textComponent.raycastTarget = true;
 
-                TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
                 if (localizer == null)
                 {
                     localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
@@ -199,14 +200,8 @@ namespace TWGSRussifier.Patches
                 localizer.key = "TWGS_Menu_ModInfo";
                 localizer.RefreshLocalization();
 
-                StandardMenuButton button = textComponent.gameObject.AddComponent<StandardMenuButton>();
-                button.OnPress = new UnityEvent();
-                button.OnHighlight = new UnityEvent();
-                button.OnRelease = new UnityEvent();
-                button.OffHighlight = new UnityEvent();
+                StandardMenuButton button = textComponent.gameObject.ConvertToButton<StandardMenuButton>(true);
                 button.underlineOnHigh = true;
-                button.text = textComponent;
-                button.gameObject.tag = "Button";
 
                 button.OnPress.AddListener(() => { ToggleSocialLinksDropdown(rootTransform, modInfo); });
             }
@@ -265,7 +260,7 @@ namespace TWGSRussifier.Patches
             
             TextLocalizer localizer = buttonObj.AddComponent<TextLocalizer>();
             
-            string localizationKey = SocialMediaLinks.Find(x => x.ButtonName == buttonName)?.LocalizationKey;
+            string? localizationKey = SocialMediaLinks.Find(x => x.ButtonName == buttonName)?.LocalizationKey;
             if (string.IsNullOrEmpty(localizationKey))
             {
                 localizationKey = buttonName;
@@ -274,14 +269,8 @@ namespace TWGSRussifier.Patches
             localizer.key = localizationKey;
             localizer.RefreshLocalization();
             
-            StandardMenuButton button = buttonObj.AddComponent<StandardMenuButton>();
-            button.OnPress = new UnityEvent();
-            button.OnHighlight = new UnityEvent();
-            button.OnRelease = new UnityEvent();
-            button.OffHighlight = new UnityEvent();
+            StandardMenuButton button = buttonObj.ConvertToButton<StandardMenuButton>(true);
             button.underlineOnHigh = true;
-            button.text = textComponent;
-            button.gameObject.tag = "Button";
             
             button.OnPress.AddListener(() => { 
                 Application.OpenURL(url);
@@ -289,7 +278,7 @@ namespace TWGSRussifier.Patches
             });
         }
         
-        private static void ToggleSocialLinksDropdown(Transform rootTransform, GameObject modInfoButton)
+        private static void ToggleSocialLinksDropdown(Transform? rootTransform, GameObject? modInfoButton)
         {
             if (socialLinksPanel == null && rootTransform != null && modInfoButton != null)
             {
@@ -320,10 +309,10 @@ namespace TWGSRussifier.Patches
             
             foreach (var target in SizeDeltaTargets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(rootTransform, target.Key); 
+                Transform? elementTransform = FindInChildrenIncludingInactive(rootTransform, target.Key); 
                 if (elementTransform != null)
                 {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
+                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
                         if (rectTransform.sizeDelta != target.Value)
@@ -368,14 +357,14 @@ namespace TWGSRussifier.Patches
                 string relativePath = entry.Key; 
                 string localizationKey = entry.Value;
                 
-                Transform targetTransform = FindInChildrenIncludingInactive(rootTransform, relativePath); 
+                Transform? targetTransform = FindInChildrenIncludingInactive(rootTransform, relativePath); 
                 if (targetTransform != null)
                 {
-                    TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI? textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
                     
                     if (textComponent == null) 
                     {
-                        Transform textChild = targetTransform.Find("Text (TMP)");
+                        Transform? textChild = targetTransform.Find("Text (TMP)");
                         if (textChild != null)
                         {
                              textComponent = textChild.GetComponent<TextMeshProUGUI>();
@@ -384,7 +373,7 @@ namespace TWGSRussifier.Patches
 
                     if (textComponent != null)
                     {
-                        TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                        TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
                         if (localizer == null)
                         {
                             localizer = textComponent.gameObject.AddComponent<TextLocalizer>();

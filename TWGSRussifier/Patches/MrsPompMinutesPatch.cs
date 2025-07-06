@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using System.Reflection;
+using MTM101BaldAPI.Reflection;
 using UnityEngine;
 
 namespace TWGSRussifier.Patches
@@ -21,38 +21,24 @@ namespace TWGSRussifier.Patches
     [HarmonyPatch("UpdateTimer")]
     public static class MrsPompMinutesPatch
     {
-        static void Postfix(NoLateTeacher __instance, float time)
+        private static string GetMinutesKey(int minutes)
         {
-            MinutesElement[] minutes = new MinutesElement[] {
-                new MinutesElement(0, "Vfx_NoL_MinutesLeft"),
-                new MinutesElement(1, "Vfx_NoL_MinutesLeft_Additional"),
-                new MinutesElement(2, "Vfx_NoL_MinutesLeft")
-            };
-
-            FieldInfo audMinutesField = AccessTools.Field(typeof(NoLateTeacher), "audMinutesLeft");
-            FieldInfo timerField = AccessTools.Field(typeof(NoLateTeacher), "currentDisplayTime");
-
-            int currentDisplayTime = (int)timerField.GetValue(__instance);
-            SoundObject sound = (SoundObject)audMinutesField.GetValue(__instance);
-
-            foreach (var minute in minutes)
+            if (minutes % 10 == 1 && minutes % 100 != 11)
             {
-                if (currentDisplayTime / 60 == minute.num)
-                {
-                    if (sound != null)
-                    {
-                        sound.soundKey = minute.key;
-                        audMinutesField.SetValue(__instance, sound);
-                       // Debug.Log($"Установлен ключ звука: {minute.key} для минуты {minute.num}");
-                    }
-                    else
-                    {
-                       // Debug.LogWarning("SoundObject не найден!");
-                    }
-
-                    break;
-                }
+                return "Vfx_NoL_MinutesLeft_Additional"; // ...1 минута
             }
+            return "Vfx_NoL_MinutesLeft"; // ...0, 2, 3, 4, 5... минут(ы)
+        }
+
+        static void Postfix(NoLateTeacher __instance)
+        {
+            SoundObject sound = (SoundObject)ReflectionHelpers.ReflectionGetVariable(__instance, "audMinutesLeft");
+            if (sound == null) return;
+
+            int currentDisplayTime = (int)ReflectionHelpers.ReflectionGetVariable(__instance, "currentDisplayTime");
+            int minutes = currentDisplayTime / 60;
+            
+            sound.soundKey = GetMinutesKey(minutes);
         }
     }
 }

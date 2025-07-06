@@ -84,4 +84,58 @@ namespace TWGSRussifier.Patches
             return false;
         }
     }
+
+    // Этот Postfix-патч сработает *после* того, как MTM101BMDE подготовит экран предупреждения.
+    // Мы просто заменяем английский текст на русский.
+    [HarmonyPatch(typeof(WarningScreen))]
+    internal class WarningScreen_Patch
+    {
+        [HarmonyPatch("Start")]
+        [HarmonyPostfix]
+        private static void Start_Postfix(WarningScreen __instance)
+        {
+            TranslateWarningText(__instance.textBox);
+        }
+
+        [HarmonyPatch("Advance")]
+        [HarmonyPostfix]
+        private static void Advance_Postfix(WarningScreen __instance)
+        {
+            TranslateWarningText(__instance.textBox);
+        }
+
+        private static void TranslateWarningText(TMP_Text textBox)
+        {
+            if (textBox == null) return;
+
+            string currentText = textBox.text;
+
+            // Перевод заголовков
+            currentText = currentText.Replace("WARNING!", "ВНИМАНИЕ!");
+            currentText = currentText.Replace("ERROR!", "ОШИБКА!");
+
+            // Перевод стандартного текста предупреждения (если он есть)
+            if (currentText.Contains("This game is not suitable for children or those who are easily disturbed."))
+            {
+                currentText = "Эта игра не подходит для детей и людей со слабой психикой.\nОна содержит внезапные громкие звуки и пугающие образы.";
+            }
+
+            // Перевод инструкции "Press any button to continue"
+            if (currentText.Contains("PRESS ANY BUTTON TO CONTINUE"))
+            {
+                currentText = currentText.Replace("PRESS ANY BUTTON TO CONTINUE", "НАЖМИТЕ ЛЮБУЮ КЛАВИШУ ДЛЯ ПРОДОЛЖЕНИЯ");
+            }
+            else
+            {
+                // Для случаев, когда указана конкретная кнопка
+                currentText = System.Text.RegularExpressions.Regex.Replace(currentText, @"PRESS (.+) TO CONTINUE", "НАЖМИТЕ $1 ДЛЯ ПРОДОЛЖЕНИЯ");
+            }
+            
+            // Перевод инструкции выхода
+            currentText = currentText.Replace("PRESS ALT+F4 TO EXIT", "НАЖМИТЕ ALT+F4 ЧТОБЫ ВЫЙТИ");
+
+
+            textBox.text = currentText;
+        }
+    }
 } 

@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using TWGSRussifier.API;
-using TWGSRussifier.Core;
 using HarmonyLib;
 using MTM101BaldAPI.Registers;
 using MTM101BaldAPI.AssetTools;
@@ -20,11 +19,13 @@ namespace TWGSRussifier
     }
 
     [BepInPlugin(RussifierTemp.ModGUID, RussifierTemp.ModName, RussifierTemp.ModVersion)]
+    [BepInDependency("mtm101.rulerp.bbplus.baldidevapi", BepInDependency.DependencyFlags.HardDependency)]
     [BepInProcess("BALDI.exe")]
     public class TPPlugin : BaseUnityPlugin
     {
         public static TPPlugin Instance { get; private set; } = null!;
-        private Harmony harmonyInstance = null!;
+        public static Dictionary<string, AudioClip> AllClips { get; private set; } = new Dictionary<string, AudioClip>();
+        private Harmony? harmonyInstance = null!;
         private const string expectedGameVersion = "0.11";
 
         private static readonly string[] menuTextureNames =
@@ -50,6 +51,15 @@ namespace TWGSRussifier
             harmonyInstance.PatchAll();
 
             VersionCheck.CheckGameVersion(expectedGameVersion, Info);
+            
+            // Загрузка локализации до полной загрузки ассетов
+            string modPath = AssetLoader.GetModPath(this);
+            string langPath = Path.Combine(modPath, "Language", "Russian");
+            if (Directory.Exists(langPath))
+            {
+                API.Logger.Info($"Обнаружена папка локализации: {langPath}");
+                AssetLoader.LoadLocalizationFolder(langPath, Language.English);
+            }
 
             LoadingEvents.RegisterOnAssetsLoaded(Info, OnAssetsLoaded(), false);
             
@@ -58,57 +68,55 @@ namespace TWGSRussifier
 
         private IEnumerator OnAssetsLoaded()
         {
-            yield return 4; // Общее количество шагов загрузки
+            yield return 3; // Общее количество шагов загрузки
 
             yield return "Загрузка ресурсов русификатора..."; // Начальный текст
             API.Logger.Info("Загрузка русифицированных ассетов...");
 
             string modPath = AssetLoader.GetModPath(this);
 
-            // Шаг 1: Загрузка локализации
-            yield return "Загрузка локализации...";
-            string langPath = Path.Combine(modPath, "Language", "Russian");
-            if (Directory.Exists(langPath))
-            {
-                API.Logger.Info($"Обнаружена папка локализации: {langPath}");
-                AssetLoader.LoadLocalizationFolder(langPath, Language.English);
-            }
-
-            // Шаг 2: Загрузка и замена текстур
+            // Шаг 1: Загрузка и замена текстур
             yield return "Загрузка текстур...";
             ApplyAllTextures();
 
-            // Шаг 3: Загрузка и замена звуков
+            // Шаг 2: Загрузка и замена звуков
             yield return "Загрузка звуков...";
             if (ConfigManager.AreSoundsEnabled())
             {
                 string audiosPath = Path.Combine(modPath, "Audios");
                 if (Directory.Exists(audiosPath))
                 {
-                    API.Logger.Info($"Обнаружена папка со звуками: {audiosPath}, производится замена...");
+                    API.Logger.Info($"Обнаружена папка со звуками: {audiosPath}, производится кэширование и замена...");
+
+                    string[] audioFiles = Directory.GetFiles(audiosPath, "*.wav").Concat(Directory.GetFiles(audiosPath, "*.ogg")).ToArray();
+                    foreach (string audioFile in audioFiles)
+                    {
+                        string clipName = Path.GetFileNameWithoutExtension(audioFile);
+                        if (!AllClips.ContainsKey(clipName))
+                        {
+                            AudioClip newClip = AssetLoader.AudioClipFromFile(audioFile);
+                            if (newClip)
+                            {
+                                newClip.name = clipName;
+                                AllClips.Add(clipName, newClip);
+                                API.Logger.Info($"Аудиоклип '{clipName}' кэширован.");
+                            }
+                        }
+                    }
+
                     SoundObject[] allSounds = Resources.FindObjectsOfTypeAll<SoundObject>();
                     foreach (SoundObject soundObject in allSounds)
                     {
-                        string clipPath = Path.Combine(audiosPath, soundObject.name + ".wav"); // Предполагаем wav, можно добавить и ogg
-                        if (!File.Exists(clipPath))
+                        if (AllClips.TryGetValue(soundObject.name, out AudioClip newClip))
                         {
-                            clipPath = Path.Combine(audiosPath, soundObject.name + ".ogg");
-                        }
-
-                        if (File.Exists(clipPath))
-                        {
-                            AudioClip newClip = AssetLoader.AudioClipFromFile(clipPath);
-                            if (newClip)
-                            {
-                                soundObject.soundClip = newClip;
-                                API.Logger.Info($"Звук '{soundObject.name}' заменен.");
-                            }
+                            soundObject.soundClip = newClip;
+                            API.Logger.Info($"Звук '{soundObject.name}' заменен.");
                         }
                     }
                 }
             }
 
-            // Шаг 4: Обновление постеров
+            // Шаг 3: Обновление постеров
             yield return "Обновление плакатов...";
             UpdatePosters(modPath);
 

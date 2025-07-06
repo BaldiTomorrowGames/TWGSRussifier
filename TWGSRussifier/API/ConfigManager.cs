@@ -18,7 +18,7 @@ namespace TWGSRussifier.API
             
             EnableTextures = plugin.Config.Bind("General", "Enable Textures", true, "Enable or disable texture replacement.");
             EnableSounds = plugin.Config.Bind("General", "Enable Sounds", true, "Enable or disable sound replacement.");
-            EnableLogging = plugin.Config.Bind("General", "Enable Logging", true, "Enable or disable logging.");
+            EnableLogging = plugin.Config.Bind("General", "Enable Logging", false, "Enable or disable logging.");
 
             _logger.LogInfo("Config loaded successfully.");
         }

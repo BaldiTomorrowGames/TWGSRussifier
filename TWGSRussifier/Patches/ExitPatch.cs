@@ -2,6 +2,7 @@
 using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
+using TWGSRussifier;
 
 namespace TWGSRussifier.Patches
 {
@@ -13,12 +14,11 @@ namespace TWGSRussifier.Patches
         {
             FieldInfo source = AccessTools.Field(typeof(MainMenu), "audioSource");
             AudioSource audioSource = (AudioSource)source.GetValue(__instance);
-            // AudioClip rusClip = LanguageManager.instance.GetClip(audioSource.clip.name);
-            // if (rusClip != null)
-            // {
-            //     audioSource.clip = rusClip;
-
-            // }
+            
+            if (audioSource.clip != null && TPPlugin.AllClips.TryGetValue(audioSource.clip.name, out AudioClip rusClip))
+            {
+                audioSource.clip = rusClip;
+            }
             audioSource.Play();
         }
     }
