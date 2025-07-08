@@ -1,4 +1,5 @@
 using HarmonyLib;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
 {
@@ -20,8 +21,14 @@ namespace TWGSRussifier.Patches
             string processedSizeKey = sizeKey.Replace("Level_Size_", "");
 
 			string combinedKey = $"TWGS_Floor_EndlessName_{processedTypeKey}_{processedSizeKey}";
-			
-			__instance.levelName.text = Singleton<LocalizationManager>.Instance.GetLocalizedText(combinedKey);
+
+			var locMan = Singleton<LocalizationManager>.Instance;
+			if (locMan.HasKey(combinedKey))
+			{
+				__instance.levelName.text = locMan.GetLocalizedText(combinedKey);
+				return;
+			}
+			__instance.levelName.text = locMan.GetLocalizedText(sizeKey) + " " + locMan.GetLocalizedText(typeKey);
 		}
     }
 } 
