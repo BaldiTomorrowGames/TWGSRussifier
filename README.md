@@ -1,6 +1,6 @@
 # TomorrowGames Baldi's Basics Plus Russifier
 
-![Версия](https://img.shields.io/badge/Версия-1.1.0.0-blue)
+![Версия](https://img.shields.io/badge/Версия-1.1.1.1-blue)
 ![Статус разработки](https://img.shields.io/badge/Статус-100%25-yellow)
 ![Игра](https://img.shields.io/badge/Игра-Baldi's%20Basics%20Plus%200.11-green)
 
@@ -19,8 +19,9 @@
 
 ## 💿 Установка
 
-1. Установите [BepInEx](https://github.com/BepInEx/BepInEx) 
-2. Скачайте последнюю версию мода со [страницы релизов](https://github.com/BaldiTomorrowGames/TWGSRussifier/releases)
+1. Установите [BepInEx](https://github.com/BepInEx/BepInEx)
+2. Установите [MTM101BaldAPI](https://gamebanana.com/mods/383711)
+3. Скачайте последнюю версию мода со [страницы релизов](https://github.com/BaldiTomorrowGames/TWGSRussifier/releases)
 4. Распакуйте содержимое архива в папку игры
 5. Запустите игру
 
@@ -28,6 +29,7 @@
 
 - [Baldi's Basics Plus](https://www.basicallygames.com/baldis-basics-plus) <sub><sup>(0.11)</sub></sup>
 - [BepInEx](https://github.com/BepInEx/BepInEx/releases/latest) <sub><sup>(5.4.23.3+)</sub></sup>
+- [MTM101BaldAPI](https://gamebanana.com/mods/383711) <sub><sup>(8.1.0.0+)</sub></sup>
 - [CyrillicPlus](https://gamebanana.com/mods/524258) <sub><sup>(1.2.1)</sub></sup>
 
 ## 🛠 Для разработчиков
