@@ -1,8 +1,9 @@
-﻿using TWGSRussifier.Runtime;
-using HarmonyLib;
+﻿using HarmonyLib;
+using MTM101BaldAPI.AssetTools;
 using System.Reflection;
-using UnityEngine;
+using TWGSRussifier;
 using TWGSRussifier.API;
+using UnityEngine;
 
 namespace TWGSRussifier.Patches
 {
@@ -22,16 +23,24 @@ namespace TWGSRussifier.Patches
             AudioClip oldClip = (AudioClip)welcome.GetValue(__instance);
             AudioSource audioSource = (AudioSource)source.GetValue(__instance);
 
-            welcome.SetValue(__instance, LanguageManager.instance.GetClip(oldClip.name));
-            AudioClip newStartup = LanguageManager.instance.GetClip(audioSource.clip.name);
-            if (audioSource.clip.name.Contains("WelcomeClickOn"))
+            AudioClip newWelcome = AssetLoader.AudioClipFromMod(TPPlugin.Instance, new string[] { "Audios", oldClip.name + ".wav" });
+            if (newWelcome != null)
             {
-                if (audioSource.clip != newStartup)
+                welcome.SetValue(__instance, newWelcome);
+            }
+
+            if (audioSource.clip != null && audioSource.clip.name.Contains("WelcomeClickOn"))
+            {
+                AudioClip newStartup = AssetLoader.AudioClipFromMod(TPPlugin.Instance, new string[] { "Audios", audioSource.clip.name + ".wav" });
+                if (newStartup != null)
                 {
-                    audioSource.clip = newStartup;
-                    if (!audioSource.isPlaying)
+                    if (audioSource.clip != newStartup)
                     {
-                        audioSource.Play();
+                        audioSource.clip = newStartup;
+                        if (!audioSource.isPlaying)
+                        {
+                            audioSource.Play();
+                        }
                     }
                 }
             }

@@ -1,15 +1,15 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
-using TWGSRussifier.Runtime;
+using BepInEx.Bootstrap;
 
 namespace TWGSRussifier.Patches
 {
     [HarmonyPatch]
     public class FloorsPatch
     {
-        private static bool initialized = false;
         private static readonly Dictionary<string, string> floorLocalizationKeys = new Dictionary<string, string>
         {
             { "MainLevel_1", "TWGS_Floor_Level1" },
@@ -37,22 +37,37 @@ namespace TWGSRussifier.Patches
             { "SpeedyChallenge", "TWGS_Floor_SpeedyChallenge" }
         };
 
-        [HarmonyPatch(typeof(MenuInitializer), "Start")]
-        [HarmonyPostfix]
-        private static void MenuInitializerStartPostfix()
-        {
-            if (!initialized)
-            {
-                ApplyFloorTitlePatches();
-                initialized = true;
-            }
-        }
-        
         [HarmonyPatch(typeof(ElevatorScreen), "UpdateFloorDisplay")]
         [HarmonyPrefix]
         private static bool ElevatorScreenUpdateFloorDisplayPrefix(ElevatorScreen __instance)
         {
-            if (Singleton<CoreGameManager>.Instance != null && 
+            if (Chainloader.PluginInfos.ContainsKey("com.pixelguy.bbtimes"))
+            {
+                try
+                {
+                    Type bbTimesManagerType = Type.GetType("BBTimes.Manager.BBTimesManager, BBTimes");
+                    if (bbTimesManagerType != null)
+                    {
+                        FieldInfo currentLevelField = bbTimesManagerType.GetField("CurrentLevel", BindingFlags.Public | BindingFlags.Static);
+                        if (currentLevelField != null)
+                        {
+                            SceneObject currentLevel = (SceneObject)currentLevelField.GetValue(null);
+                            if (currentLevel != null)
+                            {
+                                UpdateFloorTitle(currentLevel);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"TWGS Russifier: Failed to get CurrentLevel from BBTimes via reflection: {e.Message}");
+                }
+
+                return true;
+            }
+
+            if (Singleton<CoreGameManager>.Instance != null &&
                 Singleton<CoreGameManager>.Instance.sceneObject != null)
             {
                 SceneObject currentScene = Singleton<CoreGameManager>.Instance.sceneObject;
@@ -63,16 +78,6 @@ namespace TWGSRussifier.Patches
             return true;
         }
 
-        private static void ApplyFloorTitlePatches()
-        {
-            SceneObject[] allScenes = Resources.FindObjectsOfTypeAll<SceneObject>();
-            
-            foreach (SceneObject scene in allScenes)
-            {
-                UpdateFloorTitle(scene);
-            }
-        }
-        
         private static void UpdateFloorTitle(SceneObject scene)
         {
             if (floorLocalizationKeys.TryGetValue(scene.name, out string localizationKey))
@@ -87,15 +92,11 @@ namespace TWGSRussifier.Patches
         
         private static string GetLocalizedFloorTitle(string localizationKey)
         {
-            if (LanguageManager.instance != null && LanguageManager.instance.ContainsData(localizationKey))
+            string localizedTitle = Singleton<LocalizationManager>.Instance.GetLocalizedText(localizationKey);
+            if (localizedTitle != localizationKey)
             {
-                string localizedTitle = LanguageManager.instance.GetKeyData(localizationKey);
-                if (!string.IsNullOrEmpty(localizedTitle))
-                {
-                    return localizedTitle;
-                }
+                return localizedTitle;
             }
-          
             return string.Empty;
         }
     }

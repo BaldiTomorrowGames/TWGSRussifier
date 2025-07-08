@@ -17,7 +17,7 @@ namespace TWGSRussifier
             new KeyValuePair<string, Vector2>("Stealthy", new Vector2(175f, 32f))
         };
         
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -70,11 +70,11 @@ namespace TWGSRussifier
         {
             foreach (var target in SizeDeltaTargets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(pickChallengeTransform, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(pickChallengeTransform, target.Key);
                 
                 if (elementTransform != null)
                 {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
+                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
                         if (rectTransform.sizeDelta != target.Value)

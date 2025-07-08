@@ -19,7 +19,7 @@ namespace TWGSRussifier
             { "Version Number", "TWGS_Menu_Version" }
         };
 
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true); 
             foreach (var child in children)
@@ -129,13 +129,13 @@ namespace TWGSRussifier
                 string relativePath = entry.Key;
                 string localizationKey = entry.Value;
 
-                Transform targetTransform = FindInChildrenIncludingInactive(rootTransform, relativePath);
+                Transform? targetTransform = FindInChildrenIncludingInactive(rootTransform, relativePath);
                 if (targetTransform != null)
                 {
-                    TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI? textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
                     if (textComponent != null)
                     {
-                        TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                        TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
                         if (localizer == null)
                         {
                             localizer = textComponent.gameObject.AddComponent<TextLocalizer>();

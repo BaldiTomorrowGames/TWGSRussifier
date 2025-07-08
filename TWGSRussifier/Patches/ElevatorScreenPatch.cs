@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
-using TWGSRussifier.Runtime;
 using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
@@ -12,7 +11,6 @@ namespace TWGSRussifier.Patches
     internal class ElevatorScreenPatch
     {
         private static bool fixesApplied = false;
-        private static bool audioRestoredOnGameStart = false;
         
         private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
         {
@@ -57,12 +55,6 @@ namespace TWGSRussifier.Patches
         {
             fixesApplied = false;
             
-            if (!audioRestoredOnGameStart)
-            {
-                RestoreAudio();
-                audioRestoredOnGameStart = true;
-            }
-            
             __instance.OnLoadReady += () => {
                 ApplyPatchesToBigScreen(__instance);
             };
@@ -75,7 +67,7 @@ namespace TWGSRussifier.Patches
             fixesApplied = false;
         }
         
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -109,7 +101,7 @@ namespace TWGSRussifier.Patches
         {
             if (fixesApplied) return;
             
-            BigScreen bigScreen = elevatorScreen.GetComponentInChildren<BigScreen>(true);
+            BigScreen? bigScreen = elevatorScreen.GetComponentInChildren<BigScreen>(true);
             if (bigScreen == null) return;
             
             ApplyChanges(bigScreen.transform);
@@ -130,7 +122,7 @@ namespace TWGSRussifier.Patches
         {
             foreach (var target in targets)
             {
-                Transform elementTransform = root.Find(target.Key);
+                Transform? elementTransform = root.Find(target.Key);
                 if (elementTransform == null)
                 {
                     elementTransform = FindInChildrenIncludingInactive(root, target.Key);
@@ -138,7 +130,7 @@ namespace TWGSRussifier.Patches
 
                 if (elementTransform != null)
                 {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
+                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
                         applyAction(rectTransform, target.Value);
@@ -154,7 +146,7 @@ namespace TWGSRussifier.Patches
                 string elementName = entry.Key;
                 string localizationKey = entry.Value;
                 
-                Transform elementTransform = bigScreenTransform.Find(elementName);
+                Transform? elementTransform = bigScreenTransform.Find(elementName);
                 if (elementTransform == null)
                 {
                     elementTransform = FindInChildrenIncludingInactive(bigScreenTransform, elementName);
@@ -162,7 +154,7 @@ namespace TWGSRussifier.Patches
                 
                 if (elementTransform != null)
                 {
-                    TextMeshProUGUI textComponent = elementTransform.GetComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI? textComponent = elementTransform.GetComponent<TextMeshProUGUI>();
                     if (textComponent != null)
                     {
                         if (elementName == "TimeBonusValue" || elementName == "GradeBonusValue")
@@ -194,7 +186,7 @@ namespace TWGSRussifier.Patches
                                 }
                             }
                             
-                            TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                            TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
                             if (localizer == null)
                             {
                                 localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
@@ -213,10 +205,10 @@ namespace TWGSRussifier.Patches
         
         private static void LocalizeErrorText(Transform elevatorScreenTransform)
         {
-            Transform errorTransform = FindInChildrenIncludingInactive(elevatorScreenTransform, "ElevatorTransission/Error");
+            Transform? errorTransform = FindInChildrenIncludingInactive(elevatorScreenTransform, "ElevatorTransission/Error");
             if (errorTransform != null)
             {
-                TextMeshProUGUI textComponent = errorTransform.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI? textComponent = errorTransform.GetComponent<TextMeshProUGUI>();
                 if (textComponent != null)
                 {
                     Component[] components = errorTransform.GetComponents<Component>();
@@ -228,7 +220,7 @@ namespace TWGSRussifier.Patches
                         }
                     }
                     
-                    TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                    TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
                     if (localizer == null)
                     {
                         localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
@@ -245,11 +237,11 @@ namespace TWGSRussifier.Patches
         
         private class CustomTextLocalizer : MonoBehaviour
         {
-            public string key;
-            public string originalText;
-            public string localizedText;
+            public string key = null!;
+            public string originalText = null!;
+            public string localizedText = null!;
             
-            private TextMeshProUGUI textComponent;
+            private TextMeshProUGUI textComponent = null!;
             
             private void Awake()
             {
@@ -278,14 +270,6 @@ namespace TWGSRussifier.Patches
                 {
                     textComponent.text = textComponent.text.Replace(originalText, localizedText);
                 }
-            }
-        }
-        
-        private static void RestoreAudio()
-        {
-            if (ConfigManager.AreSoundsEnabled() && LanguageManager.instance != null)
-            {
-                LanguageManager.instance.UpdateAudio();
             }
         }
     }

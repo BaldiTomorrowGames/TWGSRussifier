@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
-using TWGSRussifier.Runtime;
 using TWGSRussifier.API;
 
 namespace TWGSRussifier
@@ -19,7 +18,7 @@ namespace TWGSRussifier
             new KeyValuePair<string, Vector2>("MainContinue", new Vector2(380f, 32f))
         };
         
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -99,7 +98,7 @@ namespace TWGSRussifier
         {
             foreach (var target in SizeDeltaTargets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(hideSeekMenuTransform, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(hideSeekMenuTransform, target.Key);
                 
                 if (elementTransform != null)
                 {
@@ -118,7 +117,7 @@ namespace TWGSRussifier
     
     public static class CoroutineHelper
     {
-        private static CoroutineExecutor executor;
+        private static CoroutineExecutor executor = null!;
 
         public static Coroutine StartCoroutine(System.Collections.IEnumerator coroutine)
         {

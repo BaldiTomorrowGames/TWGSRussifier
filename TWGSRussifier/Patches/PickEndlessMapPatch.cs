@@ -22,7 +22,7 @@ namespace TWGSRussifier
             { "Text (TMP)", "TWGS_Menu_EndlessMapText" },
         };
         
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -92,10 +92,10 @@ namespace TWGSRussifier
             {
                 string relativePath = entry.Key;
                 
-                Transform targetTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, relativePath);
+                Transform? targetTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, relativePath);
                 if (targetTransform != null)
                 {
-                    TextLocalizer localizer = targetTransform.GetComponent<TextLocalizer>();
+                    TextLocalizer? localizer = targetTransform.GetComponent<TextLocalizer>();
                     if (localizer != null)
                     {
                         localizer.RefreshLocalization();
@@ -108,11 +108,11 @@ namespace TWGSRussifier
         {
             foreach (var target in SizeDeltaTargets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, target.Key);
                 
                 if (elementTransform != null)
                 {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
+                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
                         if (rectTransform.sizeDelta != target.Value)
@@ -131,13 +131,13 @@ namespace TWGSRussifier
                 string relativePath = entry.Key;
                 string localizationKey = entry.Value;
                 
-                Transform targetTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, relativePath);
+                Transform? targetTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, relativePath);
                 if (targetTransform != null)
                 {
-                    TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI? textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
                     if (textComponent != null)
                     {
-                        TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                        TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
                         if (localizer == null)
                         {
                             localizer = textComponent.gameObject.AddComponent<TextLocalizer>();

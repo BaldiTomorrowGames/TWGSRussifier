@@ -24,7 +24,6 @@ namespace TWGSRussifier
         
         private static readonly List<KeyValuePair<string, Vector2>> OffsetMinTargets = new List<KeyValuePair<string, Vector2>>
         {
-            new KeyValuePair<string, Vector2>("Endless", new Vector2(-216f, 0f))
         };
 
         private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
@@ -33,7 +32,7 @@ namespace TWGSRussifier
             new KeyValuePair<string, Vector2>("TutorialPrompt/NoButton/Text", new Vector2(155f, 32f))
         };
         
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -108,11 +107,11 @@ namespace TWGSRussifier
         {
             foreach (var target in AnchoredPositionTargets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
                 
                 if (elementTransform != null)
                 {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
+                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
                         if (rectTransform.anchoredPosition != target.Value)
@@ -125,11 +124,11 @@ namespace TWGSRussifier
             
             foreach (var target in OffsetMinTargets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
                 
                 if (elementTransform != null)
                 {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
+                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
                         if (rectTransform.offsetMin != target.Value)
@@ -142,11 +141,11 @@ namespace TWGSRussifier
 
             foreach (var target in SizeDeltaTargets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
                 
                 if (elementTransform != null)
                 {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
+                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
                         if (rectTransform.sizeDelta != target.Value)

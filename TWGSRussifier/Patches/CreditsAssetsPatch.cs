@@ -2,86 +2,64 @@ using HarmonyLib;
 using UnityEngine;
 using System.IO;
 using System.Linq;
-using TWGSRussifier.API; 
+using TWGSRussifier.API;
+using MTM101BaldAPI.AssetTools;
 
 namespace TWGSRussifier.Patches
 {
-    [HarmonyPatch(typeof(Credits), "Start")] 
-    internal class CreditsAssetsPatch 
+    [HarmonyPatch(typeof(Credits), "Start")]
+    internal class CreditsAssetsPatch
     {
-        private static bool textureReplaced = false; 
+        private static bool textureReplaced = false;
 
         [HarmonyPostfix]
         private static void CreditsStartPostfix(Credits __instance)
         {
-            if (textureReplaced)
-            {
-                return;
-            }
-            
-            if (!ConfigManager.AreTexturesEnabled())
+            if (textureReplaced || !ConfigManager.AreTexturesEnabled())
             {
                 return;
             }
 
             string textureName = "AwaitingSubmission";
-            string fileName = textureName + ".png";
-            
-            string texturesPath = RussifierTemp.GetTexturePath();
-            string filePath = Path.Combine(texturesPath, fileName);
-
-            if (!File.Exists(filePath))
-            {
-                return;
-            }
 
             try
             {
                 Texture2D originalTexture = Resources.FindObjectsOfTypeAll<Texture2D>().FirstOrDefault(t => t.name == textureName);
-                
                 if (originalTexture == null)
                 {
                     return;
                 }
-                
-                Texture2D loadedTexture = AssetLoader.TextureFromFile(filePath, originalTexture.format);
-                if (loadedTexture == null)
+
+                string modPath = AssetLoader.GetModPath(TPPlugin.Instance);
+                string filePath = Path.Combine(modPath, "Textures", textureName + ".png");
+
+                if (!File.Exists(filePath))
+                {
+                    return;
+                }
+
+                Texture2D newTexture = AssetLoader.TextureFromFile(filePath);
+                if (newTexture == null)
                 {
                     API.Logger.Warning($"Не удалось загрузить текстуру из {filePath}");
                     return;
                 }
-                
-                loadedTexture.name = textureName + "_Loaded";
 
-                if (loadedTexture.format == originalTexture.format)
+                if (originalTexture.width != newTexture.width || originalTexture.height != newTexture.height)
                 {
-                    Graphics.CopyTexture(loadedTexture, originalTexture);
-                    textureReplaced = true;
-                    UnityEngine.Object.Destroy(loadedTexture);
+                    API.Logger.Warning($"Texture size for '{textureName}' does not match original. Replacement cancelled.");
+                    Object.Destroy(newTexture);
+                    return;
                 }
-                else
-                {
-                    Texture2D convertedTexture = new Texture2D(loadedTexture.width, loadedTexture.height, originalTexture.format, false);
-                    if (convertedTexture == null)
-                    {
-                        API.Logger.Warning($"Не удалось создать преобразованную текстуру");
-                        UnityEngine.Object.Destroy(loadedTexture);
-                        return;
-                    }
-                    
-                    convertedTexture.SetPixels(loadedTexture.GetPixels());
-                    convertedTexture.Apply();
-                    
-                    Graphics.CopyTexture(convertedTexture, originalTexture);
-                    textureReplaced = true;
-                    
-                    UnityEngine.Object.Destroy(loadedTexture);
-                    UnityEngine.Object.Destroy(convertedTexture);
-                }
+                
+                newTexture = AssetLoader.AttemptConvertTo(newTexture, originalTexture.format);
+                AssetLoader.ReplaceTexture(originalTexture, newTexture);
+                textureReplaced = true;
+                API.Logger.Info($"Texture '{textureName}' in credits replaced.");
             }
             catch (System.Exception ex)
             {
-                API.Logger.Error($"[{RussifierTemp.ModGUID}] Ошибка замены текстуры в титрах: {ex.Message}");
+                API.Logger.Error($"Ошибка замены текстуры в титрах: {ex}");
             }
         }
     }

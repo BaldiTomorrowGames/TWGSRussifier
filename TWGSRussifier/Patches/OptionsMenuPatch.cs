@@ -15,7 +15,6 @@ namespace TWGSRussifier
             new KeyValuePair<string, Vector2>("Data/Main/DeleteFileButton", new Vector2(0f, -123f)),
             new KeyValuePair<string, Vector2>("Data/Main/ResetTripScoresButton", new Vector2(0f, -65f)),
             new KeyValuePair<string, Vector2>("Data/Main/ResetEndlessScoresButton", new Vector2(0f, -10f)),
-            new KeyValuePair<string, Vector2>("Graphics/ApplyButton", new Vector2(115f, -160f)),
             new KeyValuePair<string, Vector2>("Graphics/PixelFilterToggle/HotSpot", new Vector2(-14f, -20f)),
 
             new KeyValuePair<string, Vector2>("ControlsTemp/MapperButton/MapperButton", new Vector2(5f, 0f)),
@@ -26,10 +25,8 @@ namespace TWGSRussifier
 
         private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
         {
-            new KeyValuePair<string, Vector2>("Graphics/ApplyButton/ApplyText", new Vector2(132f, 32f)),
             new KeyValuePair<string, Vector2>("General/FlashToggle/HotSpot", new Vector2(232f, 60f)),
             new KeyValuePair<string, Vector2>("Graphics/PixelFilterToggle/HotSpot", new Vector2(300f, 60f)),
-            new KeyValuePair<string, Vector2>("Graphics/ApplyButton", new Vector2(140f, 32f)),
             new KeyValuePair<string, Vector2>("ControlsTemp/MapperButton", new Vector2(370f, 32f)),
             new KeyValuePair<string, Vector2>("Graphics/FullScreenToggle/HotSpot", new Vector2(265f, 32f)),
             new KeyValuePair<string, Vector2>("ControlsTemp/MapperButton/MapperButton", new Vector2(400f, 32f)),
@@ -55,7 +52,7 @@ namespace TWGSRussifier
             { "ControlsTemp/SteamButton/SteamDesc", "TWGS_Menu_SteamDescText" },
         };
 
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -90,8 +87,40 @@ namespace TWGSRussifier
         private static void Awake_Postfix(OptionsMenu __instance)
         {
             ApplyChanges(__instance);
+            ApplyChangesToAllApplyButtons(__instance);
             
             ApplyLocalization(__instance);
+        }
+
+        private static void ApplyChangesToAllApplyButtons(OptionsMenu optionsMenuInstance)
+        {
+            if (optionsMenuInstance == null) return;
+            
+            Transform optionsTransform = optionsMenuInstance.transform;
+            var children = optionsTransform.GetComponentsInChildren<Transform>(true);
+
+            foreach (var child in children)
+            {
+                if (child.name == "ApplyButton")
+                {
+                    RectTransform rectTransform = child.GetComponent<RectTransform>();
+                    if (rectTransform != null)
+                    {
+                        rectTransform.anchoredPosition = new Vector2(115f, -160f);
+                        rectTransform.sizeDelta = new Vector2(140f, 32f);
+
+                        Transform applyTextTransform = child.Find("ApplyText");
+                        if (applyTextTransform != null)
+                        {
+                            RectTransform applyTextRect = applyTextTransform.GetComponent<RectTransform>();
+                            if (applyTextRect != null)
+                            {
+                                applyTextRect.sizeDelta = new Vector2(132f, 32f);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private static void ApplyChanges(OptionsMenu optionsMenuInstance)
@@ -118,13 +147,13 @@ namespace TWGSRussifier
                 string relativePath = entry.Key;
                 string localizationKey = entry.Value;
                 
-                Transform targetTransform = FindInChildrenIncludingInactive(optionsTransform, relativePath);
+                Transform? targetTransform = FindInChildrenIncludingInactive(optionsTransform, relativePath);
                 if (targetTransform != null)
                 {
-                    TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI? textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
                     if (textComponent != null)
                     {
-                        TextLocalizer localizer = textComponent.GetComponent<TextLocalizer>();
+                        TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
                         if (localizer == null)
                         {
                             localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
@@ -144,11 +173,11 @@ namespace TWGSRussifier
         {
             foreach (var target in targets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(root, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(root, target.Key);
 
                 if (elementTransform != null)
                 {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
+                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
                     if (rectTransform != null)
                     {
                         applyAction(rectTransform, target.Value);
