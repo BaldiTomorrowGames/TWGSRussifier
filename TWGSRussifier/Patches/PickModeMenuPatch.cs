@@ -7,6 +7,7 @@ using System.Text;
 using TMPro;
 using System.Reflection;
 using System.Collections;
+using TWGSRussifier.Patches;
 
 namespace TWGSRussifier
 {
@@ -24,6 +25,7 @@ namespace TWGSRussifier
         
         private static readonly List<KeyValuePair<string, Vector2>> OffsetMinTargets = new List<KeyValuePair<string, Vector2>>
         {
+            new KeyValuePair<string, Vector2>("Endless", new Vector2(-216f, 0f))
         };
 
         private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
@@ -135,6 +137,10 @@ namespace TWGSRussifier
                         {
                             rectTransform.offsetMin = target.Value;
                         }
+                    }
+                    if (elementTransform.GetComponent<TransformFixator>() == null)
+                    {
+                        elementTransform.gameObject.AddComponent<TransformFixator>();
                     }
                 }
             }
