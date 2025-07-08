@@ -21,9 +21,10 @@
 
 1. Установите [BepInEx](https://github.com/BepInEx/BepInEx)
 2. Установите [MTM101BaldAPI](https://gamebanana.com/mods/383711)
-3. Скачайте последнюю версию мода со [страницы релизов](https://github.com/BaldiTomorrowGames/TWGSRussifier/releases)
-4. Распакуйте содержимое архива в папку игры
-5. Запустите игру
+3. Установите [CyrillicPlus](https://gamebanana.com/mods/524258)
+4. Скачайте последнюю версию мода со [страницы релизов](https://github.com/BaldiTomorrowGames/TWGSRussifier/releases)
+5. Распакуйте содержимое архива в папку игры
+6. Запустите игру
 
 ## ⚙️ Требования
 
