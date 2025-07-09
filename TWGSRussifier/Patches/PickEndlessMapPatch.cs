@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier
 {
@@ -21,36 +22,6 @@ namespace TWGSRussifier
         {
             { "Text (TMP)", "TWGS_Menu_EndlessMapText" },
         };
-        
-        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
-        {
-            var children = parent.GetComponentsInChildren<Transform>(true);
-            foreach (var child in children)
-            {
-                if (child == parent) continue;
-                if (DoesPathMatch(parent, child, path))
-                {
-                    return child;
-                }
-            }
-            return null;
-        }
-
-        private static bool DoesPathMatch(Transform parent, Transform target, string expectedPath)
-        {
-            if (target == null || parent == null || target == parent) return false;
-            StringBuilder pathBuilder = new StringBuilder();
-            Transform current = target;
-            while (current != null && current != parent)
-            {
-                if (pathBuilder.Length > 0)
-                    pathBuilder.Insert(0, "/");
-                pathBuilder.Insert(0, current.name);
-                current = current.parent;
-            }
-            if (current != parent) return false;
-            return pathBuilder.ToString() == expectedPath;
-        }
         
         [HarmonyPatch(typeof(MenuButton), "Press")]
         private static class MenuButtonPressPatch
@@ -88,69 +59,17 @@ namespace TWGSRussifier
         }
         private static void ForceRefreshLocalization(Transform pickEndlessMapTransform)
         {
-            foreach (var entry in LocalizationKeys)
-            {
-                string relativePath = entry.Key;
-                
-                Transform? targetTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, relativePath);
-                if (targetTransform != null)
-                {
-                    TextLocalizer? localizer = targetTransform.GetComponent<TextLocalizer>();
-                    if (localizer != null)
-                    {
-                        localizer.RefreshLocalization();
-                    }
-                }
-            }
+            pickEndlessMapTransform.ApplyLocalizations(LocalizationKeys, true);
         }
         
         private static void ApplyButtonSizeFixes(Transform pickEndlessMapTransform)
         {
-            foreach (var target in SizeDeltaTargets)
-            {
-                Transform? elementTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, target.Key);
-                
-                if (elementTransform != null)
-                {
-                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
-                    if (rectTransform != null)
-                    {
-                        if (rectTransform.sizeDelta != target.Value)
-                        {
-                            rectTransform.sizeDelta = target.Value;
-                        }
-                    }
-                }
-            }
+            pickEndlessMapTransform.SetSizeDeltas(SizeDeltaTargets);
         }
         
         private static void ApplyLocalization(Transform pickEndlessMapTransform)
         {
-            foreach (var entry in LocalizationKeys)
-            {
-                string relativePath = entry.Key;
-                string localizationKey = entry.Value;
-                
-                Transform? targetTransform = FindInChildrenIncludingInactive(pickEndlessMapTransform, relativePath);
-                if (targetTransform != null)
-                {
-                    TextMeshProUGUI? textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
-                    if (textComponent != null)
-                    {
-                        TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
-                        if (localizer == null)
-                        {
-                            localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
-                            localizer.key = localizationKey;
-                        }
-                        else if (localizer.key != localizationKey)
-                        {
-                            localizer.key = localizationKey;
-                            localizer.RefreshLocalization();
-                        }
-                    }
-                }
-            }
+            pickEndlessMapTransform.ApplyLocalizations(LocalizationKeys);
         }
     }
 } 

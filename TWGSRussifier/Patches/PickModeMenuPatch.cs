@@ -7,7 +7,7 @@ using System.Text;
 using TMPro;
 using System.Reflection;
 using System.Collections;
-using TWGSRussifier.Patches;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier
 {
@@ -33,36 +33,6 @@ namespace TWGSRussifier
             new KeyValuePair<string, Vector2>("TutorialPrompt/NoButton", new Vector2(160f, 32f)),
             new KeyValuePair<string, Vector2>("TutorialPrompt/NoButton/Text", new Vector2(155f, 32f))
         };
-        
-        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
-        {
-            var children = parent.GetComponentsInChildren<Transform>(true);
-            foreach (var child in children)
-            {
-                if (child == parent) continue;
-                if (DoesPathMatch(parent, child, path))
-                {
-                    return child;
-                }
-            }
-            return null;
-        }
-
-        private static bool DoesPathMatch(Transform parent, Transform target, string expectedPath)
-        {
-            if (target == null || parent == null || target == parent) return false;
-            StringBuilder pathBuilder = new StringBuilder();
-            Transform current = target;
-            while (current != null && current != parent)
-            {
-                if (pathBuilder.Length > 0)
-                    pathBuilder.Insert(0, "/");
-                pathBuilder.Insert(0, current.name);
-                current = current.parent;
-            }
-            if (current != parent) return false;
-            return pathBuilder.ToString() == expectedPath;
-        }
         
         [HarmonyPatch(typeof(GameLoader), "LoadLevel")]
         private static class LoadLevelPatch
@@ -107,57 +77,20 @@ namespace TWGSRussifier
 
         private static void ApplyButtonPositionFixes(Transform pickModeTransform)
         {
-            foreach (var target in AnchoredPositionTargets)
-            {
-                Transform? elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
-                
-                if (elementTransform != null)
-                {
-                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
-                    if (rectTransform != null)
-                    {
-                        if (rectTransform.anchoredPosition != target.Value)
-                        {
-                            rectTransform.anchoredPosition = target.Value;
-                        }
-                    }
-                }
-            }
-            
+            pickModeTransform.SetAnchoredPositions(AnchoredPositionTargets);
+            pickModeTransform.SetOffsetMins(OffsetMinTargets);
+            pickModeTransform.SetSizeDeltas(SizeDeltaTargets);
+
+            // This part with TransformFixator needs to be handled separately.
             foreach (var target in OffsetMinTargets)
             {
-                Transform? elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
+                Transform? elementTransform = pickModeTransform.FindTransform(target.Key);
                 
                 if (elementTransform != null)
                 {
-                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
-                    if (rectTransform != null)
-                    {
-                        if (rectTransform.offsetMin != target.Value)
-                        {
-                            rectTransform.offsetMin = target.Value;
-                        }
-                    }
                     if (elementTransform.GetComponent<TransformFixator>() == null)
                     {
                         elementTransform.gameObject.AddComponent<TransformFixator>();
-                    }
-                }
-            }
-
-            foreach (var target in SizeDeltaTargets)
-            {
-                Transform? elementTransform = FindInChildrenIncludingInactive(pickModeTransform, target.Key);
-                
-                if (elementTransform != null)
-                {
-                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
-                    if (rectTransform != null)
-                    {
-                        if (rectTransform.sizeDelta != target.Value)
-                        {
-                            rectTransform.sizeDelta = target.Value;
-                        }
                     }
                 }
             }

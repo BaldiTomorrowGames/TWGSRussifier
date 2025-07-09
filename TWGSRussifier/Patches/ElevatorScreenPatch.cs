@@ -67,36 +67,6 @@ namespace TWGSRussifier.Patches
             fixesApplied = false;
         }
         
-        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
-        {
-            var children = parent.GetComponentsInChildren<Transform>(true);
-            foreach (var child in children)
-            {
-                if (child == parent) continue;
-                if (DoesPathMatch(parent, child, path))
-                {
-                    return child;
-                }
-            }
-            return null;
-        }
-
-        private static bool DoesPathMatch(Transform parent, Transform target, string expectedPath)
-        {
-            if (target == null || parent == null || target == parent) return false;
-            StringBuilder pathBuilder = new StringBuilder();
-            Transform current = target;
-            while (current != null && current != parent)
-            {
-                if (pathBuilder.Length > 0)
-                    pathBuilder.Insert(0, "/");
-                pathBuilder.Insert(0, current.name);
-                current = current.parent;
-            }
-            if (current != parent) return false;
-            return pathBuilder.ToString() == expectedPath;
-        }
-        
         private static void ApplyPatchesToBigScreen(ElevatorScreen elevatorScreen)
         {
             if (fixesApplied) return;
@@ -114,90 +84,54 @@ namespace TWGSRussifier.Patches
         
         private static void ApplyChanges(Transform bigScreenTransform)
         {
-            ProcessTargets(bigScreenTransform, AnchoredPositionTargets, (rect, value) => rect.anchoredPosition = value);
-            ProcessTargets(bigScreenTransform, SizeDeltaTargets, (rect, value) => rect.sizeDelta = value);
-        }
-
-        private static void ProcessTargets(Transform root, List<KeyValuePair<string, Vector2>> targets, System.Action<RectTransform, Vector2> applyAction)
-        {
-            foreach (var target in targets)
-            {
-                Transform? elementTransform = root.Find(target.Key);
-                if (elementTransform == null)
-                {
-                    elementTransform = FindInChildrenIncludingInactive(root, target.Key);
-                }
-
-                if (elementTransform != null)
-                {
-                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
-                    if (rectTransform != null)
-                    {
-                        applyAction(rectTransform, target.Value);
-                    }
-                }
-            }
+            bigScreenTransform.SetAnchoredPositions(AnchoredPositionTargets);
+            bigScreenTransform.SetSizeDeltas(SizeDeltaTargets);
         }
         
         private static void ApplyLocalization(Transform bigScreenTransform)
         {
-            foreach (var entry in LocalizationKeys)
+            var standardKeys = new Dictionary<string, string>();
+            var customKeys = new Dictionary<string, string>();
+
+            foreach(var entry in LocalizationKeys)
+            {
+                if (entry.Key == "TimeBonusValue" || entry.Key == "GradeBonusValue")
+                {
+                    customKeys.Add(entry.Key, entry.Value);
+                }
+                else
+                {
+                    standardKeys.Add(entry.Key, entry.Value);
+                }
+            }
+
+            bigScreenTransform.ApplyLocalizations(standardKeys);
+
+            foreach (var entry in customKeys)
             {
                 string elementName = entry.Key;
                 string localizationKey = entry.Value;
                 
-                Transform? elementTransform = bigScreenTransform.Find(elementName);
-                if (elementTransform == null)
-                {
-                    elementTransform = FindInChildrenIncludingInactive(bigScreenTransform, elementName);
-                }
+                Transform? elementTransform = bigScreenTransform.FindTransform(elementName);
                 
                 if (elementTransform != null)
                 {
                     TextMeshProUGUI? textComponent = elementTransform.GetComponent<TextMeshProUGUI>();
                     if (textComponent != null)
                     {
-                        if (elementName == "TimeBonusValue" || elementName == "GradeBonusValue")
+                        Component[] components = elementTransform.GetComponents<Component>();
+                        foreach (Component component in components)
                         {
-                            string originalText = textComponent.text;
-                            
-                            Component[] components = elementTransform.GetComponents<Component>();
-                            foreach (Component component in components)
+                            if (component != null && component.GetType().Name == "TextLocalizer" && component.GetType() != typeof(TextLocalizer))
                             {
-                                if (component != null && component.GetType().Name == "TextLocalizer" && component.GetType() != typeof(TextLocalizer))
-                                {
-                                    Object.Destroy(component);
-                                }
-                            }
-                            
-                            CustomTextLocalizer customLocalizer = textComponent.gameObject.AddComponent<CustomTextLocalizer>();
-                            customLocalizer.key = localizationKey;
-                            customLocalizer.originalText = "YTPs";
-                            customLocalizer.localizedText = "ОТМ";
-                        }
-                        else
-                        {
-                            Component[] components = elementTransform.GetComponents<Component>();
-                            foreach (Component component in components)
-                            {
-                                if (component != null && component.GetType().Name == "TextLocalizer" && component.GetType() != typeof(TextLocalizer))
-                                {
-                                    Object.Destroy(component);
-                                }
-                            }
-                            
-                            TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
-                            if (localizer == null)
-                            {
-                                localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
-                                localizer.key = localizationKey;
-                            }
-                            else if (localizer.key != localizationKey)
-                            {
-                                localizer.key = localizationKey;
-                                localizer.RefreshLocalization();
+                                Object.Destroy(component);
                             }
                         }
+                        
+                        CustomTextLocalizer customLocalizer = textComponent.gameObject.AddComponent<CustomTextLocalizer>();
+                        customLocalizer.key = localizationKey;
+                        customLocalizer.originalText = "YTPs";
+                        customLocalizer.localizedText = "ОТМ";
                     }
                 }
             }
@@ -205,7 +139,7 @@ namespace TWGSRussifier.Patches
         
         private static void LocalizeErrorText(Transform elevatorScreenTransform)
         {
-            Transform? errorTransform = FindInChildrenIncludingInactive(elevatorScreenTransform, "ElevatorTransission/Error");
+            Transform? errorTransform = elevatorScreenTransform.FindTransform("ElevatorTransission/Error");
             if (errorTransform != null)
             {
                 TextMeshProUGUI? textComponent = errorTransform.GetComponent<TextMeshProUGUI>();

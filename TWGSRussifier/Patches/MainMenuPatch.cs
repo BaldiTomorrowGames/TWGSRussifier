@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using MTM101BaldAPI.UI;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
 {
@@ -80,44 +81,6 @@ namespace TWGSRussifier.Patches
             new KeyValuePair<string, Vector2>("StartTest", new Vector2(210f, 32f)),
             new KeyValuePair<string, Vector2>("StartTest_1", new Vector2(228f, 32f))
         };
-
-        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
-        {
-            foreach (Transform child in parent.GetComponentsInChildren<Transform>(true))
-            {
-                if (child.name == path)
-                {
-                    return child;
-                }
-            }
-            
-             var children = parent.GetComponentsInChildren<Transform>(true); 
-            foreach (var child in children)
-            {
-                if (child == parent) continue;
-                if (DoesPathMatch(parent, child, path)) 
-                {
-                    return child;
-                }
-            }
-            return null;
-        }
-
-        private static bool DoesPathMatch(Transform parent, Transform target, string expectedPath)
-        {
-            if (target == null || parent == null || target == parent) return false;
-            StringBuilder pathBuilder = new StringBuilder();
-            Transform current = target;
-            while (current != null && current != parent)
-            {
-                if (pathBuilder.Length > 0)
-                    pathBuilder.Insert(0, "/");
-                pathBuilder.Insert(0, current.name);
-                current = current.parent;
-            }
-            if (current != parent) return false;
-            return pathBuilder.ToString() == expectedPath;
-        }
 
         [HarmonyPatch(typeof(GameObject), "SetActive")]
         private static class SetActivePatch
@@ -280,46 +243,23 @@ namespace TWGSRussifier.Patches
         
         private static void ToggleSocialLinksDropdown(Transform? rootTransform, GameObject? modInfoButton)
         {
-            if (socialLinksPanel == null && rootTransform != null && modInfoButton != null)
+            if (socialLinksPanel == null || rootTransform == null || modInfoButton == null)
             {
-                CreateSocialLinksPanel(rootTransform, modInfoButton);
+                return;
             }
             
-            if (socialLinksPanel != null)
+            dropdownVisible = !dropdownVisible;
+            socialLinksPanel.SetActive(dropdownVisible);
+
+            if (dropdownArrow != null)
             {
-                dropdownVisible = !dropdownVisible;
-                socialLinksPanel.SetActive(dropdownVisible);
-                
-                if (dropdownArrow != null)
-                {
-                    dropdownArrow.rotation = Quaternion.Euler(0, 0, dropdownVisible ? -90f : 0f);
-                    
-                    TriangleImage triangleUI = dropdownArrow.GetComponentInChildren<TriangleImage>();
-                    if (triangleUI != null)
-                    {
-                        triangleUI.SetVerticesDirty();
-                    }
-                }
+                dropdownArrow.localRotation = Quaternion.Euler(0, 0, dropdownVisible ? -90 : 0);
             }
         }
-
+        
         private static void ApplySizeChanges(Transform rootTransform)
         {
-            if (rootTransform == null) return;
-            
-            foreach (var target in SizeDeltaTargets)
-            {
-                Transform? elementTransform = FindInChildrenIncludingInactive(rootTransform, target.Key); 
-                if (elementTransform != null)
-                {
-                    RectTransform? rectTransform = elementTransform.GetComponent<RectTransform>();
-                    if (rectTransform != null)
-                    {
-                        if (rectTransform.sizeDelta != target.Value)
-                            rectTransform.sizeDelta = target.Value;
-                    }
-                }
-            }
+            rootTransform.SetSizeDeltas(SizeDeltaTargets);
         }
 
         private class TriangleImage : UnityEngine.UI.Graphic
@@ -350,44 +290,7 @@ namespace TWGSRussifier.Patches
         
         private static void ApplyLocalization(Transform rootTransform)
         {
-             if (rootTransform == null) return;
-            
-            foreach (var entry in LocalizationKeys)
-            {
-                string relativePath = entry.Key; 
-                string localizationKey = entry.Value;
-                
-                Transform? targetTransform = FindInChildrenIncludingInactive(rootTransform, relativePath); 
-                if (targetTransform != null)
-                {
-                    TextMeshProUGUI? textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
-                    
-                    if (textComponent == null) 
-                    {
-                        Transform? textChild = targetTransform.Find("Text (TMP)");
-                        if (textChild != null)
-                        {
-                             textComponent = textChild.GetComponent<TextMeshProUGUI>();
-                        }
-                    }
-
-                    if (textComponent != null)
-                    {
-                        TextLocalizer? localizer = textComponent.GetComponent<TextLocalizer>();
-                        if (localizer == null)
-                        {
-                            localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
-                            localizer.key = localizationKey;
-                            localizer.RefreshLocalization(); 
-                        }
-                        else if (localizer.key != localizationKey)
-                        {
-                             localizer.key = localizationKey;
-                             localizer.RefreshLocalization();
-                        }
-                    }
-                }
-            }
+            rootTransform.ApplyLocalizations(LocalizationKeys);
         }
     }
 } 

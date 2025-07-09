@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 
-namespace TWGSRussifier.Patches
+namespace TWGSRussifier.API
 {
-    class TransformFixator : MonoBehaviour
+    public class TransformFixator : MonoBehaviour
     {
         private RectTransform? rectTransform;
         private Vector2 anchorMin, anchorMax;
@@ -47,6 +44,5 @@ namespace TWGSRussifier.Patches
                 rectTransform.sizeDelta = sizeDelta;
             }
         }
-
     }
-}
+} 

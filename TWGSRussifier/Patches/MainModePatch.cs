@@ -18,36 +18,6 @@ namespace TWGSRussifier
             new KeyValuePair<string, Vector2>("MainContinue", new Vector2(380f, 32f))
         };
         
-        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
-        {
-            var children = parent.GetComponentsInChildren<Transform>(true);
-            foreach (var child in children)
-            {
-                if (child == parent) continue;
-                if (DoesPathMatch(parent, child, path))
-                {
-                    return child;
-                }
-            }
-            return null;
-        }
-
-        private static bool DoesPathMatch(Transform parent, Transform target, string expectedPath)
-        {
-            if (target == null || parent == null || target == parent) return false;
-            StringBuilder pathBuilder = new StringBuilder();
-            Transform current = target;
-            while (current != null && current != parent)
-            {
-                if (pathBuilder.Length > 0)
-                    pathBuilder.Insert(0, "/");
-                pathBuilder.Insert(0, current.name);
-                current = current.parent;
-            }
-            if (current != parent) return false;
-            return pathBuilder.ToString() == expectedPath;
-        }
-        
         [HarmonyPatch(typeof(MenuButton), "Press")]
         private static class MainButtonPressPatch
         {
@@ -96,22 +66,7 @@ namespace TWGSRussifier
         
         private static void ApplyButtonSizeFixes(Transform hideSeekMenuTransform)
         {
-            foreach (var target in SizeDeltaTargets)
-            {
-                Transform? elementTransform = FindInChildrenIncludingInactive(hideSeekMenuTransform, target.Key);
-                
-                if (elementTransform != null)
-                {
-                    RectTransform rectTransform = elementTransform.GetComponent<RectTransform>();
-                    if (rectTransform != null)
-                    {
-                        if (rectTransform.sizeDelta != target.Value)
-                        {
-                            rectTransform.sizeDelta = target.Value;
-                        }
-                    }
-                }
-            }
+            hideSeekMenuTransform.SetSizeDeltas(SizeDeltaTargets);
         }
     }
     

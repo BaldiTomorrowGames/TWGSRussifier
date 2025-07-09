@@ -4,12 +4,18 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using TWGSRussifier.API;
 
 namespace TWGSRussifier
 {
     internal class PicnicPanicPatch
     {
         private static bool patchApplied = false;
+
+        private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
+        {
+            new KeyValuePair<string, Vector2>("GameCanvas/Game/MinigameHUD/ScoreIndicatorBase/ScoreIndicator", new Vector2(103f, 32f))
+        };
         
         [HarmonyPatch(typeof(MinigameBase), "StartMinigame")]
         private static class StartMinigamePatch
@@ -63,44 +69,13 @@ namespace TWGSRussifier
                     }
                 }
                 
-                Transform gameCanvas = minigameObj.transform.Find("GameCanvas");
-                if (gameCanvas == null)
-                {
-                    return;
-                }
+                minigameObj.transform.SetSizeDeltas(SizeDeltaTargets);
                 
-                Transform game = gameCanvas.Find("Game");
-                if (game == null)
-                {
-                    return;
-                }
-                
-                Transform minigameHUD = game.Find("MinigameHUD");
-                if (minigameHUD == null)
-                {
-                    return;
-                }
-                
-                Transform scoreIndicatorBase = minigameHUD.Find("ScoreIndicatorBase");
-                if (scoreIndicatorBase == null)
-                {
-                    return;
-                }
-                
-                Transform scoreIndicator = scoreIndicatorBase.Find("ScoreIndicator");
+                Transform? scoreIndicator = minigameObj.transform.FindTransform("GameCanvas/Game/MinigameHUD/ScoreIndicatorBase/ScoreIndicator");
                 if (scoreIndicator == null)
                 {
                     return;
                 }
-                
-                RectTransform rectTransform = scoreIndicator.GetComponent<RectTransform>();
-                if (rectTransform == null)
-                {
-                    return;
-                }
-                
-                Vector2 newSize = new Vector2(103f, 32f);
-                rectTransform.sizeDelta = newSize;
                 
                 TMP_Text textComponent = scoreIndicator.GetComponent<TMP_Text>();
                 if (textComponent != null)
