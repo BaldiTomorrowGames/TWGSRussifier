@@ -13,6 +13,7 @@ namespace TWGSRussifier.Patches
         private static bool textureReplaced = false;
 
         [HarmonyPostfix]
+        [HarmonyPriority(Priority.High)]
         private static void CreditsStartPostfix(Credits __instance)
         {
             if (textureReplaced || !ConfigManager.AreTexturesEnabled())
@@ -63,4 +64,4 @@ namespace TWGSRussifier.Patches
             }
         }
     }
-} 
+}
