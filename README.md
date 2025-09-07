@@ -1,8 +1,8 @@
 # TomorrowGames Baldi's Basics Plus Russifier
 
-![Версия](https://img.shields.io/badge/Версия-1.1.1.2-blue)
+![Версия](https://img.shields.io/badge/Версия-1.2.0-blue)
 ![Статус разработки](https://img.shields.io/badge/Статус-100%25-yellow)
-![Игра](https://img.shields.io/badge/Игра-Baldi's%20Basics%20Plus%200.11-green)
+![Игра](https://img.shields.io/badge/Игра-Baldi's%20Basics%20Plus%200.12-green)
 
 ## 📝 Описание
 
