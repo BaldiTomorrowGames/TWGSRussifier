@@ -8,7 +8,7 @@ namespace TWGSRussifier.API
     {
         public const string ModGUID = "twgs.plus.russifier";
         public const string ModName = "Baldi's Basics Plus Russifier";
-        public const string ModVersion = "1.1.1.2";
+        public const string ModVersion = "1.2.0";
 
         public static string PostersFile = "PosterSettings.json";
     }

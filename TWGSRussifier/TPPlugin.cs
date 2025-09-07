@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using TWGSRussifier.API;
 using HarmonyLib;
 using MTM101BaldAPI.Registers;
@@ -26,7 +26,7 @@ namespace TWGSRussifier
         public static TPPlugin Instance { get; private set; } = null!;
         public static Dictionary<string, AudioClip> AllClips { get; private set; } = new Dictionary<string, AudioClip>();
         private Harmony? harmonyInstance = null!;
-        private const string expectedGameVersion = "0.11";
+        private const string expectedGameVersion = "0.12";
 
         private static readonly string[] menuTextureNames =
         {
@@ -60,7 +60,7 @@ namespace TWGSRussifier
                 AssetLoader.LoadLocalizationFolder(langPath, Language.English);
             }
 
-            LoadingEvents.RegisterOnAssetsLoaded(Info, OnAssetsLoaded(), false);
+            LoadingEvents.RegisterOnAssetsLoaded(Info, OnAssetsLoaded(), LoadingEventOrder.Post);
             
             gameObject.AddComponent<MenuTextureManager>();
         }

@@ -34,7 +34,9 @@ namespace TWGSRussifier.Patches
             
             { "StealthyChallenge", "TWGS_Floor_StealthyChallenge" },
             { "GrappleChallenge", "TWGS_Floor_GrappleChallenge" },
-            { "SpeedyChallenge", "TWGS_Floor_SpeedyChallenge" }
+            { "SpeedyChallenge", "TWGS_Floor_SpeedyChallenge" },
+            
+            { "EventTest", "TWGS_Floor_EventTest" }
         };
 
         [HarmonyPatch(typeof(ElevatorScreen), "UpdateFloorDisplay")]
