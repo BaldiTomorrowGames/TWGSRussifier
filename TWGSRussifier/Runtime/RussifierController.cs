@@ -14,20 +14,11 @@ namespace TWGSRussifier.Runtime
             instance = this;
             ModAssets = new AssetManager();
             DontDestroyOnLoad(gameObject);
-            CustomOptionsCore.OnMenuInitialize += BuildMenu;
         }
 
         public void Load()
         {
             Singleton<LocalizationManager>.Instance.LoadLocalizedText("Subtitles_Russian.json", default(Language));
-        }
-
-        public void BuildMenu(OptionsMenu __instance, CustomOptionsHandler handler)
-        {
-            if (Singleton<CoreGameManager>.Instance != null)
-            {
-                return;
-            }
         }
     }
 }
