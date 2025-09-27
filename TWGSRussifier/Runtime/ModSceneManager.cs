@@ -11,6 +11,8 @@ namespace TWGSRussifier.Runtime
         public UnityAction onLogoSceneLoad;
         public UnityAction onWarningsSceneLoad;
         public UnityAction onGameSceneLoad;
+        public UnityAction onCreditsSceneLoad;
+        public UnityAction onAnySceneLoad;
         public UnityAction onMenuSceneLoadOnce;
         private bool MenuWasLoaded = false;
         private string lastScene;
@@ -26,6 +28,9 @@ namespace TWGSRussifier.Runtime
             if (lastScene != SceneManager.GetActiveScene().name)
             {
                 lastScene = SceneManager.GetActiveScene().name;
+
+                onAnySceneLoad?.Invoke();
+
                 switch (lastScene)
                 {
                     case "Logo":
@@ -44,6 +49,9 @@ namespace TWGSRussifier.Runtime
                         break;
                     case "Game":
                         onGameSceneLoad?.Invoke();
+                        break;
+                    case "Credits":
+                        onCreditsSceneLoad?.Invoke();
                         break;
                 }
             }

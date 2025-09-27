@@ -1,4 +1,4 @@
-﻿using TWGSRussifier.API;
+using TWGSRussifier.API;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -53,7 +53,7 @@ namespace TWGSRussifier.Runtime
             }
         }
 
-        public void LateUpdate()
+        private void OnLocalizationChanged()
         {
             UpdateTexts();
         }
@@ -76,13 +76,16 @@ namespace TWGSRussifier.Runtime
             ModSceneManager.instance.onMenuSceneLoadOnce += UpdateAudio;
             ModSceneManager.instance.onMenuSceneLoadOnce += LoadTextures;
             ModSceneManager.instance.onMenuSceneLoadOnce += ApplyTextures;
+            ModSceneManager.instance.onAnySceneLoad += OnLocalizationChanged;
+            ModSceneManager.instance.onClassicLauncherSceneLoad += OnLocalizationChanged;
             DontDestroyOnLoad(gameObject);
 
             allTextures = Resources.FindObjectsOfTypeAll<Texture2D>().ToList();
-            
+
             basePath = RussifierTemp.GetBasePath();
             GameUtils.InsertDirectory(basePath);
             LoadLanguageData();
+            OnLocalizationChanged();
 
             API.Logger.Info($"Загружены данные языка из {basePath}");
         }
