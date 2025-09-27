@@ -1,41 +1,51 @@
-using BepInEx;
 using BepInEx.Configuration;
+using TWGSRussifier.API;
 using BepInEx.Logging;
-using System.IO;
 
 namespace TWGSRussifier.API
 {
     public static class ConfigManager
     {
-        public static ConfigEntry<bool> EnableTextures { get; private set; } = null!;
-        public static ConfigEntry<bool> EnableSounds { get; private set; } = null!;
-        public static ConfigEntry<bool> EnableLogging { get; private set; } = null!;
-        private static ManualLogSource _logger = null!;
+        public static ConfigEntry<bool> EnableTextures { get; private set; }
+        public static ConfigEntry<bool> EnableSounds { get; private set; }
+        public static ConfigEntry<bool> EnableLogging { get; private set; }
+        private static ManualLogSource _logger;
 
-        public static void Initialize(BaseUnityPlugin plugin, ManualLogSource logger)
+        public static void Initialize(BepInEx.BaseUnityPlugin plugin, ManualLogSource logger)
         {
             _logger = logger;
             
-            EnableTextures = plugin.Config.Bind("General", "Enable Textures", true, "Enable or disable texture replacement.");
-            EnableSounds = plugin.Config.Bind("General", "Enable Sounds", true, "Enable or disable sound replacement.");
-            EnableLogging = plugin.Config.Bind("General", "Enable Logging", false, "Enable or disable logging.");
+            EnableTextures = plugin.Config.Bind("Main", 
+                "EnableTextures", 
+                true, 
+                "Включить замену текстур");
 
-            _logger.LogInfo("Config loaded successfully.");
+            EnableSounds = plugin.Config.Bind("Main", 
+                "EnableSounds", 
+                true, 
+                "Включить замену звуков");
+
+            EnableLogging = plugin.Config.Bind("Main", 
+                "EnableLogging", 
+                false, 
+                "Включить логирование");
+
+            _logger.LogInfo($"Конфигурация загружена. Текстуры: {EnableTextures.Value}, Звуки: {EnableSounds.Value}, Логирование: {EnableLogging.Value}");
         }
 
         public static bool AreTexturesEnabled()
         {
-            return EnableTextures.Value;
+            return EnableTextures?.Value ?? false;
         }
 
         public static bool AreSoundsEnabled()
         {
-            return EnableSounds.Value;
+            return EnableSounds?.Value ?? false;
         }
 
         public static bool IsLoggingEnabled()
         {
-            return EnableLogging.Value;
+            return EnableLogging?.Value ?? true;
         }
     }
 } 

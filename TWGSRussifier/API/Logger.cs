@@ -7,7 +7,7 @@ namespace TWGSRussifier.API
 {
     public static class Logger
     {
-        private static BepInEx.Logging.ManualLogSource _bepLogger = null!;
+        private static BepInEx.Logging.ManualLogSource _bepLogger;
 
         public static void Init(BepInEx.Logging.ManualLogSource logger)
         {

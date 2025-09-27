@@ -8,6 +8,7 @@
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
     <DebugType>none</DebugType>
     <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AssemblyName>BBCRRussifier</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+
 
   <Target Name="RemoveDependencies" AfterTargets="Build">
     <ItemGroup>
