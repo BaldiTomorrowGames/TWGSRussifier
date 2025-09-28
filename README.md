@@ -1,4 +1,4 @@
-# TomorrowGames Baldi's Basics Plus Russifier
+# TomorrowGames Baldi's Basics Classic Remastered Russifier
 
 ![Версия](https://img.shields.io/badge/Версия-1.0.0-blue)
 ![Статус разработки](https://img.shields.io/badge/Статус-100%25-yellow)
