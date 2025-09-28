@@ -48,8 +48,6 @@
 - BepInEx.dll
 - BepInEx.Harmony.dll
 - HarmonyXInterop.dll
-- MTM101BaldAPI.dll
-- Newtonsoft.Json.dll
 - UnityEngine.dll
 - UnityEngine.CoreModule.dll
 - UnityEngine.UI.dll
