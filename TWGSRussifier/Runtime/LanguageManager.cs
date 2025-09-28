@@ -77,7 +77,6 @@ namespace TWGSRussifier.Runtime
             ModSceneManager.instance.onMenuSceneLoadOnce += LoadTextures;
             ModSceneManager.instance.onMenuSceneLoadOnce += ApplyTextures;
             ModSceneManager.instance.onAnySceneLoad += OnLocalizationChanged;
-            ModSceneManager.instance.onClassicLauncherSceneLoad += OnLocalizationChanged;
             DontDestroyOnLoad(gameObject);
 
             allTextures = Resources.FindObjectsOfTypeAll<Texture2D>().ToList();

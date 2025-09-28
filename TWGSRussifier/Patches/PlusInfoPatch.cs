@@ -6,28 +6,27 @@ using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
 {
-    internal class MainMenuPatch
+    internal class PlusInfoPatch
     {
         private static bool initialized = false;
         
         private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
         {
-            { "Version", "TWGS_MainMenu_Version" },
+            { "PlusInfo/ScreenAnchor/Screen2/TMP", "TWGS_PlusInfo_Screen2" },
+            { "PlusInfo/ScreenAnchor/Screen1/TMP_Upper", "TWGS_PlusInfo_Screen1_Upper" },
+            { "PlusInfo/ScreenAnchor/Screen1/TMP_Lower", "TWGS_PlusInfo_Screen1_Lower" },
+            { "PlusInfo/ScreenAnchor/Screen3/TMP", "TWGS_PlusInfo_Screen3" },
+            { "PlusInfo/ScreenAnchor/Screen4/TMP_0", "TWGS_PlusInfo_Screen4_0" },
+            { "PlusInfo/ScreenAnchor/Screen4/TMP_1", "TWGS_PlusInfo_Screen4_1" },
+            { "PlusInfo/ScreenAnchor/Screen4/TMP_2", "TWGS_PlusInfo_Screen4_2" },
+            { "PlusInfo/ScreenAnchor/Screen5/TMP_Title", "TWGS_PlusInfo_Screen5_Title" },
+            { "PlusInfo/ScreenAnchor/Screen5/TMP", "TWGS_PlusInfo_Screen5" },
+            { "PlusInfo/ScreenAnchor/Screen6/TMP", "TWGS_PlusInfo_Screen6" },
+            { "PlusInfo/ScreenAnchor/Screen6/WebsiteButton/TMP", "TWGS_PlusInfo_Screen6_Website" },
+            { "PlusInfo/Back/TMP", "TWGS_PlusInfo_Back" },
+            { "PlusInfo/BackwardButton/TMP", "TWGS_PlusInfo_BackwardButton" },
+            { "PlusInfo/ForwardButton/TMP", "TWGS_PlusInfo_ForwardButton" }
         };
-
-        [HarmonyPatch(typeof(MainMenu), "Start")]
-        private static class MainMenuStartPatch
-        {
-            [HarmonyPostfix]
-            private static void Postfix(MainMenu __instance)
-            {
-                if (!initialized)
-                {
-                    ApplyLocalizationToMainMenu(__instance.transform);
-                    initialized = true;
-                }
-            }
-        }
 
         [HarmonyPatch(typeof(GameObject), "SetActive")]
         private static class SetActivePatch
@@ -35,9 +34,9 @@ namespace TWGSRussifier.Patches
             [HarmonyPostfix]
             private static void Postfix(GameObject __instance, bool value)
             {
-                if (__instance.name == "Title" && value && !initialized)
+                if (__instance.name == "PlusInfo" && value && !initialized)
                 {
-                    ApplyLocalizationToMainMenu(__instance.transform);
+                    ApplyLocalizationToPlusInfo(__instance.transform);
                     initialized = true;
                 }
             }
@@ -53,7 +52,7 @@ namespace TWGSRussifier.Patches
             }
         }
 
-        private static void ApplyLocalizationToMainMenu(Transform rootTransform)
+        private static void ApplyLocalizationToPlusInfo(Transform rootTransform)
         {
             if (rootTransform == null) return;
 
@@ -62,7 +61,9 @@ namespace TWGSRussifier.Patches
                 string path = kvp.Key;
                 string localizationKey = kvp.Value;
 
-                Transform targetTransform = rootTransform.Find(path);
+                string searchPath = path.StartsWith("PlusInfo/") ? path.Substring("PlusInfo/".Length) : path;
+                
+                Transform targetTransform = rootTransform.Find(searchPath);
                 if (targetTransform != null)
                 {
                     TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
