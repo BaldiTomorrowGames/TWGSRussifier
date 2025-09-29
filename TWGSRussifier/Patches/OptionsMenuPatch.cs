@@ -11,6 +11,9 @@ namespace TWGSRussifier.Patches
     {
         private static readonly List<KeyValuePair<string, Vector2>> AnchoredPositionTargets = new List<KeyValuePair<string, Vector2>>
         {
+            new KeyValuePair<string, Vector2>("General/FlashToggle/ToggleText", new Vector2(19f, 0f)),
+            new KeyValuePair<string, Vector2>("General/FlashToggle/HotSpot", new Vector2(-110f, 0f)),
+            new KeyValuePair<string, Vector2>("General/FlashToggle/Box", new Vector2(34f, 0f)),
             new KeyValuePair<string, Vector2>("General/RumbleToggle", new Vector2(90f, -128f)),
             new KeyValuePair<string, Vector2>("General/LauncherToggle", new Vector2(90f, -160f)),
             new KeyValuePair<string, Vector2>("General/LauncherToggle/HotSpot", new Vector2(-100f, 0f)),
@@ -22,16 +25,15 @@ namespace TWGSRussifier.Patches
             new KeyValuePair<string, Vector2>("Graphics/VsyncToggle", new Vector2(12f, -80f)),
             new KeyValuePair<string, Vector2>("Graphics/PixelFilterToggle", new Vector2(12f, -112f)),
             new KeyValuePair<string, Vector2>("Graphics/ApplyButton", new Vector2(117f, -160f)),
-            new KeyValuePair<string, Vector2>("General/FlashToggle/Box", new Vector2(34f, 0f)),
-            new KeyValuePair<string, Vector2>("General/FlashToggle/ToggleText", new Vector2(18f, 0f)),
-            new KeyValuePair<string, Vector2>("General/LauncherToggle/HotSpot", new Vector2(-82f, 0f)),
 
         };
 
         private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
         {
+            new KeyValuePair<string, Vector2>("General/FlashToggle/ToggleText", new Vector2(252f, 32f)),
+            new KeyValuePair<string, Vector2>("General/FlashToggle/HotSpot", new Vector2(310f, 32f)),
             new KeyValuePair<string, Vector2>("General/LauncherToggle/ToggleText", new Vector2(239f, 32f)),
-            new KeyValuePair<string, Vector2>("General/LauncherToggle/HotSpot", new Vector2(305f, 32f)),
+            new KeyValuePair<string, Vector2>("General/LauncherToggle/HotSpot", new Vector2(300f, 32f)),
 
             new KeyValuePair<string, Vector2>("Graphics/FullScreenToggle/HotSpot", new Vector2(230f, 32f)),
             new KeyValuePair<string, Vector2>("Graphics/PixelFilterToggle/HotSpot", new Vector2(300f, 60f)),
@@ -42,7 +44,6 @@ namespace TWGSRussifier.Patches
             new KeyValuePair<string, Vector2>("ControlsTemp/MapperButton/MapperButton", new Vector2(400f, 32f)),
             new KeyValuePair<string, Vector2>("ControlsTemp/SteamButton/SteamInputButton", new Vector2(348f, 32f)),
             new KeyValuePair<string, Vector2>("ControlsTemp/SteamButton", new Vector2(355f, 32f)),
-            new KeyValuePair<string, Vector2>("General/FlashToggle/ToggleText", new Vector2(260f, 32f)),
         };
 
         private static readonly List<KeyValuePair<string, Vector2>> OffsetMinTargets = new List<KeyValuePair<string, Vector2>>
@@ -163,4 +164,4 @@ namespace TWGSRussifier.Patches
             }
         }
     }
-} 
+}
