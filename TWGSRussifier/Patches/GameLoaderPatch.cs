@@ -18,7 +18,7 @@ namespace TWGSRussifier.Patches
             new KeyValuePair<string, Vector2>("FunSettings/FunSetting3", new Vector2(0f, -107f)),
             new KeyValuePair<string, Vector2>("FunSettings/FunSetting4", new Vector2(0f, -143f)),
             new KeyValuePair<string, Vector2>("FunSettings/FunSetting1/UnlockedText", new Vector2(16f, 0f)),
-            new KeyValuePair<string, Vector2>("FunSettings/FunSetting4/UnlockedText", new Vector2(16f, 0f)),
+            new KeyValuePair<string, Vector2>("FunSettings/FunSetting4/UnlockedText", new Vector2(16f, 1f)),
             new KeyValuePair<string, Vector2>("CurrentStyle/Text (TMP)", new Vector2(1f, 0f)),
         };
 

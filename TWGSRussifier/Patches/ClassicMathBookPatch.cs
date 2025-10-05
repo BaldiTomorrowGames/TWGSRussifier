@@ -54,7 +54,7 @@ namespace TWGSRussifier.Patches
                     Transform titleTextTransform = bookTransform.Find("Canvas/CoverText/TitleTMP");
                     if (titleTextTransform != null)
                     {
-                        ApplyLocalizerToText(titleTextTransform, "TWGS_ClassicBook_Title");
+                        ApplyLocalizerToText(titleTextTransform, "TWGS_ClassicBook_Title", true);
                     }
                     
                     Transform subTextTransform = bookTransform.Find("Canvas/CoverText/SubTMP");
@@ -77,7 +77,7 @@ namespace TWGSRussifier.Patches
             }
         }
 
-        private static void ApplyLocalizerToText(Transform textTransform, string localizationKey)
+        private static void ApplyLocalizerToText(Transform textTransform, string localizationKey, bool applySpecialFontSize = false)
         {
             TextMeshProUGUI textComponent = textTransform.GetComponent<TextMeshProUGUI>();
             if (textComponent != null)
@@ -87,7 +87,10 @@ namespace TWGSRussifier.Patches
                 {
                     TextLocalizer localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
                     localizer.key = localizationKey;
-                    textComponent.fontSize = 26;
+                    if (applySpecialFontSize)
+                    {
+                        textComponent.fontSize = 26;
+                    }
                     localizer.RefreshLocalization();
                 }
             }

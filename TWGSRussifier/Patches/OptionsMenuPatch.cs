@@ -12,7 +12,7 @@ namespace TWGSRussifier.Patches
         private static readonly List<KeyValuePair<string, Vector2>> AnchoredPositionTargets = new List<KeyValuePair<string, Vector2>>
         {
             new KeyValuePair<string, Vector2>("General/FlashToggle/ToggleText", new Vector2(19f, 0f)),
-            new KeyValuePair<string, Vector2>("General/FlashToggle/HotSpot", new Vector2(-110f, 0f)),
+            new KeyValuePair<string, Vector2>("General/FlashToggle/HotSpot", new Vector2(-84f, 0f)),
             new KeyValuePair<string, Vector2>("General/FlashToggle/Box", new Vector2(34f, 0f)),
             new KeyValuePair<string, Vector2>("General/RumbleToggle", new Vector2(90f, -128f)),
             new KeyValuePair<string, Vector2>("General/LauncherToggle", new Vector2(90f, -160f)),

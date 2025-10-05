@@ -77,6 +77,30 @@ namespace TWGSRussifier.Patches
 
                         TextLocalizer localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
                         localizer.key = localizationKey;
+                        
+                        if (path == "PlusInfo/ScreenAnchor/Screen5/TMP")
+                        {
+                            textComponent.fontSize = 23;
+                        }
+                        
+                        if (path == "PlusInfo/ScreenAnchor/Screen6/TMP")
+                        {
+                            RectTransform rectTransform = textComponent.GetComponent<RectTransform>();
+                            if (rectTransform != null)
+                            {
+                                rectTransform.anchoredPosition = new Vector2(0, 10);
+                            }
+                        }
+                        
+                        if (path == "PlusInfo/ScreenAnchor/Screen6/WebsiteButton/TMP")
+                        {
+                            RectTransform rectTransform = textComponent.GetComponent<RectTransform>();
+                            if (rectTransform != null)
+                            {
+                                rectTransform.sizeDelta = new Vector2(209, 32);
+                            }
+                        }
+                        
                         localizer.RefreshLocalization();
                     }
                 }
