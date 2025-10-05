@@ -6,16 +6,16 @@ namespace TWGSRussifier.Runtime
 {
     public class ModSceneManager : MonoBehaviour
     {
-        public static ModSceneManager instance;
-        public UnityAction onMenuSceneLoad;
-        public UnityAction onLogoSceneLoad;
-        public UnityAction onWarningsSceneLoad;
-        public UnityAction onGameSceneLoad;
-        public UnityAction onCreditsSceneLoad;
-        public UnityAction onAnySceneLoad;
-        public UnityAction onMenuSceneLoadOnce;
+        public static ModSceneManager instance = null!;
+        public UnityAction onMenuSceneLoad = null!;
+        public UnityAction onLogoSceneLoad = null!;
+        public UnityAction onWarningsSceneLoad = null!;
+        public UnityAction onGameSceneLoad = null!;
+        public UnityAction onCreditsSceneLoad = null!;
+        public UnityAction onAnySceneLoad = null!;
+        public UnityAction onMenuSceneLoadOnce = null!;
         private bool MenuWasLoaded = false;
-        private string lastScene;
+        private string lastScene = null!;
         
         public void Start()
         {

@@ -8,14 +8,14 @@ namespace TWGSRussifier.API
 {
     public static class AssetLoader
     {
-        public static Texture2D TextureFromFile(string path, TextureFormat format)
+        public static Texture2D? TextureFromFile(string path, TextureFormat format)
         {
             if (!ConfigManager.AreTexturesEnabled())
             {
                 Logger.Info($"Загрузка текстуры отключена в конфигурации: {path}");
                 return null;
             }
-            
+
             try
             {
                 if (File.Exists(path))
@@ -34,7 +34,7 @@ namespace TWGSRussifier.API
             return null;
         }
 
-        public static Texture2D TextureFromFile(string path)
+        public static Texture2D? TextureFromFile(string path)
         {
             return TextureFromFile(path, TextureFormat.RGBA32);
         }
@@ -71,14 +71,14 @@ namespace TWGSRussifier.API
             Path.Combine("File://", "")
         };
 
-        public static AudioClip AudioClipFromFile(string path)
+        public static AudioClip? AudioClipFromFile(string path)
         {
             if (!ConfigManager.AreSoundsEnabled())
             {
                 Logger.Info($"Загрузка звуков отключена в конфигурации: {path}");
                 return null;
             }
-            
+
             if (!File.Exists(path))
             {
                 Logger.Error($"Файл не найден: {path}");
@@ -94,17 +94,17 @@ namespace TWGSRussifier.API
             return AudioClipFromFile(path, audioType);
         }
 
-        public static AudioClip AudioClipFromFile(string path, AudioType type)
+        public static AudioClip? AudioClipFromFile(string path, AudioType type)
         {
             if (!ConfigManager.AreSoundsEnabled())
             {
                 return null;
             }
-            
+
             try
             {
-                AudioClip clip = null;
-                UnityWebRequest audioRequest = null;
+                AudioClip? clip = null;
+                UnityWebRequest? audioRequest = null;
                 
                 foreach (string fallback in fallbacks)
                 {
@@ -146,7 +146,7 @@ namespace TWGSRussifier.API
             }
         }
 
-        public static Texture2D AttemptConvertTo(Texture2D toConvert, TextureFormat format)
+        public static Texture2D? AttemptConvertTo(Texture2D? toConvert, TextureFormat format)
         {
             if (toConvert == null) return null;
             if (toConvert.format == format) return toConvert;

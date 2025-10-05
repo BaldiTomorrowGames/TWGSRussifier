@@ -5,7 +5,7 @@ namespace TWGSRussifier.Runtime
 {
     public class RussifierController : MonoBehaviour
     {
-        private static RussifierController instance;
+        private static RussifierController instance = null!;
         public AssetManager ModAssets = new AssetManager();
         public static RussifierController Instance => instance;
 

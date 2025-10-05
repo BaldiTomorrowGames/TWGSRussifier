@@ -15,10 +15,10 @@ namespace TWGSRussifier.Runtime
 
     public class PostersManager : MonoBehaviour
     {
-        public static PostersManager instance;
-        
+        public static PostersManager instance = null!;
+
         private List<PosterObject> loadedPosters = new List<PosterObject>();
-        private string postersPath;
+        private string postersPath = null!;
         private bool initialized = false;
 
         public void Start()

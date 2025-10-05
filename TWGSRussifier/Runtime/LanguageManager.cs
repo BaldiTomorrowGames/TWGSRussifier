@@ -11,28 +11,28 @@ namespace TWGSRussifier.Runtime
 {
     public class LanguageManager : MonoBehaviour
     {
-        public static LanguageManager instance;
+        public static LanguageManager instance = null!;
 
         public Dictionary<string, string> languageData = new Dictionary<string, string>();
         public Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
         public Dictionary<int, Texture2D> textureAssets = new Dictionary<int, Texture2D>();
         public List<Texture2D> allTextures = new List<Texture2D>();
 
-        private string basePath;
-        private string texturesPath;
-        private string audiosPath;
+        private string basePath = null!;
+        private string texturesPath = null!;
+        private string audiosPath = null!;
 
-        public string GetKeyData(string key)
+        public string? GetKeyData(string key)
         {
             return languageData.ContainsKey(key) ? languageData[key] : null;
         }
 
-        public AudioClip GetClip(string key)
+        public AudioClip? GetClip(string key)
         {
             return audioClips.ContainsKey(key) ? audioClips[key] : null;
         }
 
-        public Texture2D GetTexture2D(int hashcode)
+        public Texture2D? GetTexture2D(int hashcode)
         {
             return textureAssets.ContainsKey(hashcode) ? textureAssets[hashcode] : null;
         }
@@ -64,8 +64,11 @@ namespace TWGSRussifier.Runtime
             foreach (SoundObject soundObject in allSounds)
             {
                 API.Logger.Info("Загружен звук: " + soundObject.soundClip.name);
-                AudioClip newClip = GetClip(soundObject.soundClip.name);
-                RussifierTemp.UpdateClipData(soundObject, newClip);
+                AudioClip? newClip = GetClip(soundObject.soundClip.name);
+                if (newClip != null)
+                {
+                    RussifierTemp.UpdateClipData(soundObject, newClip);
+                }
             }
         }
 
@@ -115,7 +118,7 @@ namespace TWGSRussifier.Runtime
                 {
                     string clipName = Path.GetFileNameWithoutExtension(clip);
                     API.Logger.Info($"Загружен звук: {clipName}!");
-                    AudioClip fileClip = AssetLoader.AudioClipFromFile(clip);
+                    AudioClip? fileClip = AssetLoader.AudioClipFromFile(clip);
                     if (fileClip != null)
                     {
                         audioClips[clipName] = fileClip;
@@ -151,16 +154,16 @@ namespace TWGSRussifier.Runtime
             foreach (var pngPath in pngs)
             {
                 string nameToSearch = Path.GetFileNameWithoutExtension(pngPath).Trim();
-                Texture2D targetTex = allTextures.FirstOrDefault(x => x.name == nameToSearch);
+                Texture2D? targetTex = allTextures.FirstOrDefault(x => x.name == nameToSearch);
 
                 if (targetTex == null)
                 {
                     API.Logger.Warning($"Не найдена соответствующая текстура для: {nameToSearch}");
                     continue;
                 }
-                Texture2D generatedTex = AssetLoader.AttemptConvertTo(AssetLoader.TextureFromFile(pngPath), targetTex.format);
+                Texture2D? generatedTex = AssetLoader.AttemptConvertTo(AssetLoader.TextureFromFile(pngPath), targetTex.format);
 
-                if (!textureAssets.ContainsKey(targetTex.GetHashCode()))
+                if (generatedTex != null && !textureAssets.ContainsKey(targetTex.GetHashCode()))
                 {
                     textureAssets[targetTex.GetHashCode()] = generatedTex;
                     API.Logger.Info($"Загружена текстура: {targetTex.name}");

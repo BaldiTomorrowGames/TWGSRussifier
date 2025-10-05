@@ -11,12 +11,12 @@ namespace TWGSRussifier.API
 
         public void Add<T>(string key, T value)
         {
-            Type type = value.GetType();
+            Type type = value?.GetType() ?? typeof(T);
             if (!data.ContainsKey(type))
             {
                 data[type] = new Dictionary<string, object>();
             }
-            data[type][key] = value;
+            data[type][key] = value!;
         }
 
         public void AddRange<T>(T[] range) where T : UnityEngine.Object
@@ -37,7 +37,7 @@ namespace TWGSRussifier.API
                     return (T)typeDict.Value[key];
                 }
             }
-            return default(T);
+            return default(T)!;
         }
 
         public bool Remove<T>(string key)

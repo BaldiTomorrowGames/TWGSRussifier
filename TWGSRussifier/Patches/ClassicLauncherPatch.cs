@@ -13,7 +13,6 @@ namespace TWGSRussifier.Patches
     internal class ClassicLauncherPatch
     {
         private static bool initialized = false;
-        private static bool textureReplaced = false;
         
         private static readonly Dictionary<string, string> LocalizationKeys = new Dictionary<string, string>()
         {
@@ -46,7 +45,6 @@ namespace TWGSRussifier.Patches
             private static void Prefix()
             {
                 initialized = false;
-                textureReplaced = false;
             }
         }
 
@@ -56,7 +54,7 @@ namespace TWGSRussifier.Patches
 
             try
             {
-                Texture2D originalTexture = Resources.FindObjectsOfTypeAll<Texture2D>().FirstOrDefault(t => t.name == textureName);
+                Texture2D? originalTexture = Resources.FindObjectsOfTypeAll<Texture2D>().FirstOrDefault(t => t.name == textureName);
                 if (originalTexture == null)
                 {
                     return;
@@ -65,19 +63,21 @@ namespace TWGSRussifier.Patches
                 string modPath = RussifierTemp.GetTexturePath();
                 string filePath = Path.Combine(modPath, textureName + ".png");
 
-                Texture2D newTexture = AssetLoader.TextureFromFile(filePath);
+                Texture2D? newTexture = AssetLoader.TextureFromFile(filePath);
 
-                if (originalTexture.width != newTexture.width || originalTexture.height != newTexture.height)
+                if (newTexture == null || originalTexture.width != newTexture.width || originalTexture.height != newTexture.height)
                 {
-                    Object.Destroy(newTexture);
+                    if (newTexture != null) Object.Destroy(newTexture);
                     return;
                 }
-                
+
                 newTexture = AssetLoader.AttemptConvertTo(newTexture, originalTexture.format);
-                ReplaceTexturePixels(originalTexture, newTexture);
-                textureReplaced = true;
+                if (newTexture != null)
+                {
+                    ReplaceTexturePixels(originalTexture, newTexture);
+                }
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
             }
         }
@@ -111,7 +111,7 @@ namespace TWGSRussifier.Patches
 
                 Object.Destroy(newTexture);
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
             }
         }
@@ -159,7 +159,7 @@ namespace TWGSRussifier.Patches
                     UpdateLocalizationManager(subtitleData);
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
             }
         }

@@ -62,7 +62,7 @@ namespace TWGSRussifier.Patches
             { "ControlsTemp/SteamButton/SteamDesc", "TWGS_Menu_SteamDescText" },
         };
 
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -124,8 +124,8 @@ namespace TWGSRussifier.Patches
             {
                 string relativePath = entry.Key;
                 string localizationKey = entry.Value;
-                
-                Transform targetTransform = FindInChildrenIncludingInactive(optionsTransform, relativePath);
+
+                Transform? targetTransform = FindInChildrenIncludingInactive(optionsTransform, relativePath);
                 if (targetTransform != null)
                 {
                     TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
@@ -151,7 +151,7 @@ namespace TWGSRussifier.Patches
         {
             foreach (var target in targets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(root, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(root, target.Key);
 
                 if (elementTransform != null)
                 {

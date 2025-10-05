@@ -16,7 +16,7 @@ namespace TWGSRussifier.Patches
             { "Canvas/Fault (2)", "TWGS_PartyWin_Fault2Text" }
         };
 
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -64,7 +64,7 @@ namespace TWGSRussifier.Patches
                 string relativePath = entry.Key;
                 string localizationKey = entry.Value;
 
-                Transform targetTransform = FindInChildrenIncludingInactive(partyWinTransform, relativePath);
+                Transform? targetTransform = FindInChildrenIncludingInactive(partyWinTransform, relativePath);
                 if (targetTransform != null)
                 {
                     TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();

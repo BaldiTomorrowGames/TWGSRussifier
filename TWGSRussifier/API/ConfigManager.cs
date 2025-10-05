@@ -6,10 +6,10 @@ namespace TWGSRussifier.API
 {
     public static class ConfigManager
     {
-        public static ConfigEntry<bool> EnableTextures { get; private set; }
-        public static ConfigEntry<bool> EnableSounds { get; private set; }
-        public static ConfigEntry<bool> EnableLogging { get; private set; }
-        private static ManualLogSource _logger;
+        public static ConfigEntry<bool> EnableTextures { get; private set; } = null!;
+        public static ConfigEntry<bool> EnableSounds { get; private set; } = null!;
+        public static ConfigEntry<bool> EnableLogging { get; private set; } = null!;
+        private static ManualLogSource _logger = null!;
 
         public static void Initialize(BepInEx.BaseUnityPlugin plugin, ManualLogSource logger)
         {

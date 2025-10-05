@@ -6,8 +6,8 @@ namespace TWGSRussifier
 {
     public class TextLocalizer : MonoBehaviour
     {
-        public string key;
-        private TextMeshProUGUI textComponent;
+        public string key = null!;
+        private TextMeshProUGUI textComponent = null!;
         private bool initialized = false;
         
         private void Awake()
@@ -23,12 +23,12 @@ namespace TWGSRussifier
                 ApplyLocalization();
         }
 
-        public object RefreshLocalization()
+        public object? RefreshLocalization()
         {
             return ApplyLocalization();
         }
 
-        private object ApplyLocalization()
+        private object? ApplyLocalization()
         {
             if (textComponent != null && !string.IsNullOrEmpty(key) && Singleton<LocalizationManager>.Instance != null)
             {

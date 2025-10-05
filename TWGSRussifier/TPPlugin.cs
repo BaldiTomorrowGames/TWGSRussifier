@@ -12,7 +12,7 @@ namespace TWGSRussifier
     [BepInProcess("BALDI.exe")]
     public class TPPlugin : BaseUnityPlugin
     {
-        private Harmony harmonyInstance;
+        private Harmony harmonyInstance = null!;
         private const string expectedGameVersion = "1.1"; 
 
         public void Awake()
@@ -52,7 +52,7 @@ namespace TWGSRussifier
             if (harmonyInstance != null)
             {
                 harmonyInstance.UnpatchSelf();
-                harmonyInstance = null;
+                harmonyInstance = null!;
             }
         }
     }

@@ -46,7 +46,7 @@ namespace TWGSRussifier.Patches
         {
         };
 
-        private static Transform FindInChildrenIncludingInactive(Transform parent, string path)
+        private static Transform? FindInChildrenIncludingInactive(Transform parent, string path)
         {
             var children = parent.GetComponentsInChildren<Transform>(true);
             foreach (var child in children)
@@ -124,7 +124,7 @@ namespace TWGSRussifier.Patches
                 string relativePath = entry.Key;
                 string localizationKey = entry.Value;
 
-                Transform targetTransform = FindInChildrenIncludingInactive(gameLoaderTransform, relativePath);
+                Transform? targetTransform = FindInChildrenIncludingInactive(gameLoaderTransform, relativePath);
                 if (targetTransform != null)
                 {
                     TextMeshProUGUI textComponent = targetTransform.GetComponent<TextMeshProUGUI>();
@@ -150,7 +150,7 @@ namespace TWGSRussifier.Patches
         {
             foreach (var target in targets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(root, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(root, target.Key);
 
                 if (elementTransform != null)
                 {
@@ -167,7 +167,7 @@ namespace TWGSRussifier.Patches
         {
             foreach (var target in targets)
             {
-                Transform elementTransform = FindInChildrenIncludingInactive(root, target.Key);
+                Transform? elementTransform = FindInChildrenIncludingInactive(root, target.Key);
 
                 if (elementTransform != null)
                 {

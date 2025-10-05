@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace TWGSRussifier.API
 {
     public static class GameUtils
     {
-        public static string GetFileFrom(string[] paths, string fileName = "Subtitles_Russian.json")
+        public static string? GetFileFrom(string[] paths, string fileName = "Subtitles_Russian.json")
         {
             foreach (var path in paths)
             {
