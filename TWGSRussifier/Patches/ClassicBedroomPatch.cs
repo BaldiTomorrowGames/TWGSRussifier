@@ -115,7 +115,7 @@ namespace TWGSRussifier.Patches
 
                // Logger.Info("Русские буквы успешно размещены в спальне Балди");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                // Logger.Error($"Ошибка при замене букв в спальне: {ex.Message}");
             }
@@ -176,7 +176,7 @@ namespace TWGSRussifier.Patches
 
                // Logger.Info($"Создано {russianLetters.Length} спрайтов русских букв");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                // Logger.Error($"Ошибка при загрузке русского алфавита: {ex.Message}");
             }

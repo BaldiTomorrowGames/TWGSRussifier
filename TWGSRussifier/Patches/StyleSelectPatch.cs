@@ -31,16 +31,16 @@ namespace TWGSRussifier.Patches
         {
             if (button == null) return;
 
-            Transform styleSelectTransform = FindStyleSelectParent(button.transform);
+            Transform? styleSelectTransform = FindStyleSelectParent(button.transform);
             if (styleSelectTransform == null) return;
 
-            Transform descriptionTransform = styleSelectTransform.Find("Description");
+            Transform? descriptionTransform = styleSelectTransform.Find("Description");
             if (descriptionTransform == null) return;
 
-            TextMeshProUGUI textComponent = descriptionTransform.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI? textComponent = descriptionTransform.GetComponent<TextMeshProUGUI>();
             if (textComponent == null) return;
 
-            TextLocalizer existingLocalizer = textComponent.GetComponent<TextLocalizer>();
+            TextLocalizer? existingLocalizer = textComponent.GetComponent<TextLocalizer>();
             if (existingLocalizer != null)
             {
                 Object.DestroyImmediate(existingLocalizer);
@@ -51,9 +51,9 @@ namespace TWGSRussifier.Patches
             localizer.RefreshLocalization();
         }
 
-        private static Transform FindStyleSelectParent(Transform child)
+        private static Transform? FindStyleSelectParent(Transform child)
         {
-            Transform current = child;
+            Transform? current = child;
             
             while (current != null)
             {
