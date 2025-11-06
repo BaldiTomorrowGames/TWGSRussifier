@@ -1,7 +1,10 @@
 using HarmonyLib;
 using System;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 using TWGSRussifier.API;
 using Logger = TWGSRussifier.API.Logger;
 
@@ -13,6 +16,7 @@ namespace TWGSRussifier.Patches
         private static Texture2D? sheetTexture = null;
         private static Sprite[] russianLetters = new Sprite[33];
         private static bool isInitialized = false;
+        private static bool prefabChangesDone = false;
 
         private static readonly string[] AlphabetSheetData = new string[]
         {
@@ -119,6 +123,19 @@ namespace TWGSRussifier.Patches
             {
                // Logger.Error($"Ошибка при замене букв в спальне: {ex.Message}");
             }
+
+            if (!prefabChangesDone)
+            {
+                try
+                {
+                    ApplyBookPrefabLocalization(__instance);
+                    prefabChangesDone = true;
+                }
+                catch (Exception)
+                {
+                   // Logger.Error($"Ошибка при модификации префабов книг: {ex.Message}");
+                }
+            }
         }
 
         private static void LoadRussianAlphabet()
@@ -137,7 +154,7 @@ namespace TWGSRussifier.Patches
 
                 sheetTexture.filterMode = FilterMode.Point;
                 sheetTexture.Apply();
-                sheetTexture.name = "Alphabet_Russian_Sheet";
+                sheetTexture.name = "Alphabet_Ru_Sheet";
 
                // Logger.Info($"Текстура русского алфавита загружена из Textures: {sheetTexture.width}x{sheetTexture.height}");
 
@@ -170,7 +187,7 @@ namespace TWGSRussifier.Patches
                         new Vector2(0.5f, 0.5f),
                         40f
                     );
-                    russianLetter.name = $"Alphabet_Russian_{letterName}";
+                    russianLetter.name = $"Alphabet_Ru_{letterName}";
                     russianLetters[i] = russianLetter;
                 }
 
@@ -189,12 +206,147 @@ namespace TWGSRussifier.Patches
             letter.color = color;
         }
 
+        private static void ApplyBookPrefabLocalization(ClassicBasementManager instance)
+        {
+            try
+            {
+                Type cmpType = instance.GetType();
+                FieldInfo bookPreField = cmpType.GetField("bookPre", BindingFlags.Instance | BindingFlags.NonPublic);
+                
+                if (bookPreField == null)
+                {
+                   // Logger.Warning("Поле bookPre не найдено в ClassicBasementManager");
+                    return;
+                }
+
+                ClassicMathBook[]? bookPre = bookPreField.GetValue(instance) as ClassicMathBook[];
+                
+                if (bookPre == null || bookPre.Length == 0)
+                {
+                   // Logger.Warning("Массив bookPre пуст или null");
+                    return;
+                }
+
+               // Logger.Info($"Найдено {bookPre.Length} префабов книг, применяем локализацию");
+
+                for (int i = 0; i < bookPre.Length; i++)
+                {
+                    if (bookPre[i] != null)
+                    {
+                        ApplyLocalizationToBookPrefab(bookPre[i]);
+                    }
+                }
+
+               // Logger.Info("Локализация применена ко всем префабам книг");
+            }
+            catch (Exception)
+            {
+               // Logger.Error($"Ошибка при применении локализации к префабам книг: {ex.Message}");
+            }
+        }
+
+        private static void ApplyLocalizationToBookPrefab(ClassicMathBook book)
+        {
+            try
+            {
+                Transform canvasChild = book.transform.GetChild(0);
+                if (canvasChild == null) return;
+
+                Transform coverText = canvasChild.Find("CoverText");
+                if (coverText == null) return;
+
+                Transform titleTransform = coverText.Find("TitleTMP");
+                if (titleTransform != null)
+                {
+                    ApplyTextLocalizer(titleTransform, "TWGS_ClassicBook_Title", 26f);
+                }
+
+                Transform subTransform = coverText.Find("SubTMP");
+                if (subTransform != null)
+                {
+                    string bookIdentifier = GetBookIdentifierFromName(book.name);
+                    ApplyTextLocalizer(subTransform, $"TWGS_ClassicBook_{bookIdentifier}");
+                }
+
+                Transform authorTransform = coverText.Find("AuthorTMP");
+                if (authorTransform != null)
+                {
+                    ApplyTextLocalizer(authorTransform, "TWGS_ClassicBook_Author");
+                }
+
+                Transform insideText = canvasChild.Find("InsideText");
+                if (insideText != null)
+                {
+                    TMP_Text[] insideTexts = insideText.GetComponentsInChildren<TMP_Text>();
+                    for (int i = 0; i < insideTexts.Length && i <= 5; i++)
+                    {
+                        ApplyTextLocalizer(insideTexts[i].transform, $"TWGS_ClassicBook_Text_{i}");
+                    }
+                }
+
+               // Logger.Info($"Локализация применена к книге: {book.name}");
+            }
+            catch (Exception)
+            {
+               // Logger.Error($"Ошибка при применении локализации к книге {book.name}: {ex.Message}");
+            }
+        }
+
+        private static void ApplyTextLocalizer(Transform textTransform, string localizationKey, float? fontSize = null)
+        {
+            if (textTransform == null) return;
+
+            TextMeshProUGUI textComponent = textTransform.GetComponent<TextMeshProUGUI>();
+            if (textComponent == null) return;
+
+            TextLocalizer existingLocalizer = textComponent.GetComponent<TextLocalizer>();
+            if (existingLocalizer != null)
+            {
+               // Logger.Info($"TextLocalizer уже существует для {textTransform.name}");
+                return;
+            }
+
+            TextLocalizer localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
+            localizer.key = localizationKey;
+
+            if (fontSize.HasValue)
+            {
+                textComponent.fontSize = fontSize.Value;
+            }
+
+            localizer.RefreshLocalization();
+
+           // Logger.Info($"TextLocalizer добавлен: {textTransform.name} -> {localizationKey}");
+        }
+
+        private static string GetBookIdentifierFromName(string bookName)
+        {
+            if (bookName.Contains("Preschool")) return "Preschool";
+            if (bookName.Contains("Kindergarten")) return "Kindergarten";
+            if (bookName.Contains("College")) return "College";
+            if (bookName.Contains("ClassicBook_1")) return "1";
+            if (bookName.Contains("ClassicBook_2")) return "2";
+            if (bookName.Contains("ClassicBook_3")) return "3";
+            if (bookName.Contains("ClassicBook_4")) return "4";
+            if (bookName.Contains("ClassicBook_5")) return "5";
+            if (bookName.Contains("ClassicBook_6")) return "6";
+            if (bookName.Contains("ClassicBook_7")) return "7";
+            if (bookName.Contains("ClassicBook_8")) return "8";
+            if (bookName.Contains("ClassicBook_9")) return "9";
+            if (bookName.Contains("ClassicBook_10")) return "10";
+            if (bookName.Contains("ClassicBook_11")) return "11";
+            if (bookName.Contains("ClassicBook_12")) return "12";
+            
+            return "Default";
+        }
+
         [HarmonyPatch(typeof(CoreGameManager), "ReturnToMenu")]
         private static class ReturnToMenuPatch
         {
             [HarmonyPrefix]
             private static void Prefix()
             {
+                prefabChangesDone = false;
             }
         }
     }
