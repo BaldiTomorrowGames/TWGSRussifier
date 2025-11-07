@@ -134,6 +134,12 @@ namespace TWGSRussifier.Patches
 
         private static string GetBookIdentifier(string bookName)
         {
+            if (bookName.Contains("ClassicBook_Kindergarten")) return "Kindergarten";
+            if (bookName.Contains("ClassicBook_Preschool")) return "Preschool";
+            if (bookName.Contains("ClassicBook_College")) return "College";
+            if (bookName.Contains("ClassicBook_10")) return "10";
+            if (bookName.Contains("ClassicBook_11")) return "11";
+            if (bookName.Contains("ClassicBook_12")) return "12";
             if (bookName.Contains("ClassicBook_1")) return "1";
             if (bookName.Contains("ClassicBook_2")) return "2";
             if (bookName.Contains("ClassicBook_3")) return "3";
@@ -143,12 +149,6 @@ namespace TWGSRussifier.Patches
             if (bookName.Contains("ClassicBook_7")) return "7";
             if (bookName.Contains("ClassicBook_8")) return "8";
             if (bookName.Contains("ClassicBook_9")) return "9";
-            if (bookName.Contains("ClassicBook_10")) return "10";
-            if (bookName.Contains("ClassicBook_11")) return "11";
-            if (bookName.Contains("ClassicBook_12")) return "12";
-            if (bookName.Contains("ClassicBook_Kindergarten")) return "Kindergarten";
-            if (bookName.Contains("ClassicBook_Preschool")) return "Preschool";
-            if (bookName.Contains("ClassicBook_College")) return "College";
             
             return "Default";
         }

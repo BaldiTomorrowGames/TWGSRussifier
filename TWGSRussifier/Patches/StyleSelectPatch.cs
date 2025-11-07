@@ -5,25 +5,68 @@ using TWGSRussifier.API;
 
 namespace TWGSRussifier.Patches
 {
-    [HarmonyPatch(typeof(StandardMenuButton), "Highlight")]
     internal class StyleSelectPatch
     {
-        [HarmonyPostfix]
-        private static void Postfix(StandardMenuButton __instance)
+        private static bool shouldApplyLocalization = false;
+        
+        [HarmonyPatch(typeof(StandardMenuButton), "Highlight")]
+        private static class HighlightPatch
         {
-            if (__instance == null || __instance.transform == null) return;
-            
-            if (Singleton<PlayerFileManager>.Instance != null && 
-                Singleton<PlayerFileManager>.Instance.flags[4])
+            [HarmonyPostfix]
+            private static void Postfix(StandardMenuButton __instance)
             {
-                return;
+                if (__instance == null || __instance.transform == null) return;
+                
+                if (Singleton<PlayerFileManager>.Instance != null && 
+                    Singleton<PlayerFileManager>.Instance.flags[4])
+                {
+                    return;
+                }
+                
+                string objectPath = GetGameObjectPath(__instance.transform);
+                
+                if (objectPath.Contains("StyleSelect") && objectPath.Contains("Baldi"))
+                {
+                    ApplyLocalizationToDescription(__instance);
+                }
             }
-            
-            string objectPath = GetGameObjectPath(__instance.transform);
-            
-            if (objectPath.Contains("StyleSelect") && objectPath.Contains("Baldi"))
+        }
+
+        [HarmonyPatch(typeof(GameLoader), "SetStyle")]
+        private static class SetStylePatch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(GameLoader __instance, int style)
             {
-                ApplyLocalizationToDescription(__instance);
+                if (style == 3)
+                {
+                    shouldApplyLocalization = true;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(GameObject), "SetActive")]
+        private static class SetActivePatch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(GameObject __instance, bool value)
+            {
+                if (value && shouldApplyLocalization && __instance.name == "ModeSelect")
+                {
+                   // API.Logger.Info("ModeSelect активирован, применяем локализацию");
+                    ApplyLocalizationToCurrentStyle(__instance.transform);
+                    shouldApplyLocalization = false;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(CoreGameManager), "ReturnToMenu")]
+        private static class ReturnToMenuPatch
+        {
+            [HarmonyPrefix]
+            private static void Prefix()
+            {
+                shouldApplyLocalization = false;
             }
         }
 
@@ -47,8 +90,57 @@ namespace TWGSRussifier.Patches
             }
 
             TextLocalizer localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
-            localizer.key = "TWGS_Men_NullStyleDesc";
+            localizer.key = "TWGS_NullStyle_Desc";
             localizer.RefreshLocalization();
+        }
+
+        private static void ApplyLocalizationToCurrentStyle(Transform rootTransform)
+        {
+            if (rootTransform == null)
+            {
+               // API.Logger.Warning("rootTransform is null");
+                return;
+            }
+
+            try
+            {
+                Transform? currentStyleTransform = rootTransform.Find("CurrentStyle");
+                if (currentStyleTransform == null)
+                {
+                   // API.Logger.Warning("CurrentStyle не найден в ModeSelect");
+                    return;
+                }
+
+                Transform? textTransform = currentStyleTransform.Find("Text (TMP)");
+                if (textTransform == null)
+                {
+                  // API.Logger.Warning("Text (TMP) не найден в CurrentStyle");
+                    return;
+                }
+
+                TextMeshProUGUI? textComponent = textTransform.GetComponent<TextMeshProUGUI>();
+                if (textComponent == null)
+                {
+                   // API.Logger.Warning("TextMeshProUGUI компонент не найден");
+                    return;
+                }
+
+                TextLocalizer? existingLocalizer = textComponent.GetComponent<TextLocalizer>();
+                if (existingLocalizer != null)
+                {
+                    Object.DestroyImmediate(existingLocalizer);
+                }
+
+                TextLocalizer localizer = textComponent.gameObject.AddComponent<TextLocalizer>();
+                localizer.key = "TWGS_Men_NullStyle";
+                localizer.RefreshLocalization();
+
+                // API.Logger.Info("Локализация успешно применена к CurrentStyle/Text");
+            }
+            catch (System.Exception)
+            {
+                // API.Logger.Error($"Ошибка при применении локализации к CurrentStyle: {ex.Message}");
+            }
         }
 
         private static Transform? FindStyleSelectParent(Transform child)
