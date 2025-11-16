@@ -10,6 +10,7 @@ namespace TWGSRussifier.API
         public static ConfigEntry<bool> EnableTextures { get; private set; } = null!;
         public static ConfigEntry<bool> EnableSounds { get; private set; } = null!;
         public static ConfigEntry<bool> EnableLogging { get; private set; } = null!;
+        public static ConfigEntry<bool> EnableDevMode { get; private set; } = null!;
         private static ManualLogSource _logger = null!;
 
         public static void Initialize(BaseUnityPlugin plugin, ManualLogSource logger)
@@ -19,6 +20,7 @@ namespace TWGSRussifier.API
             EnableTextures = plugin.Config.Bind("General", "Enable Textures", true, "Enable or disable texture replacement.");
             EnableSounds = plugin.Config.Bind("General", "Enable Sounds", true, "Enable or disable sound replacement.");
             EnableLogging = plugin.Config.Bind("General", "Enable Logging", false, "Enable or disable logging.");
+            EnableDevMode = plugin.Config.Bind("Development", "Enable Dev Mode", false, "Enable development mode (scans and exports new posters). DISABLE FOR RELEASE!");
 
             _logger.LogInfo("Config loaded successfully.");
         }
@@ -36,6 +38,11 @@ namespace TWGSRussifier.API
         public static bool IsLoggingEnabled()
         {
             return EnableLogging.Value;
+        }
+
+        public static bool IsDevModeEnabled()
+        {
+            return EnableDevMode.Value;
         }
     }
 } 

@@ -19,6 +19,15 @@ namespace TWGSRussifier.API
                     var textComponent = elementTransform.GetComponent<TextMeshProUGUI>();
                     if (textComponent != null)
                     {
+                        Component[] components = textComponent.GetComponents<Component>();
+                        foreach (Component component in components)
+                        {
+                            if (component != null && component.GetType().Name == "TextLocalizer" && component.GetType() != typeof(TextLocalizer))
+                            {
+                                Object.Destroy(component);
+                            }
+                        }
+                        
                         var localizer = textComponent.GetComponent<TextLocalizer>() ?? textComponent.gameObject.AddComponent<TextLocalizer>();
                         
                         if (localizer.key != target.Value || forceRefresh)

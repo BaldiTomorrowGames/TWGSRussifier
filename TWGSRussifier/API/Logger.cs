@@ -67,6 +67,24 @@ namespace TWGSRussifier.API
             else
                 UnityEngine.Debug.LogError(msg);
         }
+
+        public static void ForceInfo(string message)
+        {
+            string msg = FormatMessage("INFO", message);
+            if (_bepLogger != null)
+                _bepLogger.Log(BepInEx.Logging.LogLevel.Info, msg);
+            else
+                UnityEngine.Debug.Log(msg);
+        }
+
+        public static void ForceWarning(string message)
+        {
+            string msg = FormatMessage("WARNING", message);
+            if (_bepLogger != null)
+                _bepLogger.Log(BepInEx.Logging.LogLevel.Warning, msg);
+            else
+                UnityEngine.Debug.LogWarning(msg);
+        }
         
         private static bool IsLoggingEnabled()
         {

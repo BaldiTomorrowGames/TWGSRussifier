@@ -18,7 +18,7 @@ namespace TWGSRussifier.Patches
             { "TimeText", "TWGS_Elevator_TimeText" },
             { "YTPText", "TWGS_Elevator_YTPText" },
             { "TotalText", "TWGS_Elevator_TotalText" },
-            { "GradeText", "TWGS_Elevator_GradeText" },
+            { "StickerText", "TWGS_Elevator_StickerBonuses" },
             { "MultiplierText", "TWGS_Elevator_MultiplierText" },
             { "TimeBonusText", "TWGS_Elevator_TimeBonusText" },
             { "GradeBonusText", "TWGS_Elevator_GradeBonusText" },
@@ -29,22 +29,28 @@ namespace TWGSRussifier.Patches
         private static readonly List<KeyValuePair<string, Vector2>> AnchoredPositionTargets = new List<KeyValuePair<string, Vector2>>
         {
             new KeyValuePair<string, Vector2>("ResultsText", new Vector2(-64f, 104f)),
-            new KeyValuePair<string, Vector2>("YTPText", new Vector2(30f, 74.5f)),
-            new KeyValuePair<string, Vector2>("YTPValue", new Vector2(38f, 74.5f)),
-            new KeyValuePair<string, Vector2>("GradeText", new Vector2(30f, -30.5f)),
-            new KeyValuePair<string, Vector2>("MultiplierText", new Vector2(30f, 39.5f)),
-            new KeyValuePair<string, Vector2>("MultiplierValue", new Vector2(35f, 39.5f)),
-            new KeyValuePair<string, Vector2>("GradeValue", new Vector2(35f, -30.5f)),
-            new KeyValuePair<string, Vector2>("TimeBonusText", new Vector2(70f, -65f)),
-            new KeyValuePair<string, Vector2>("TimeBonusValue", new Vector2(85f, -79f)),
-            new KeyValuePair<string, Vector2>("GradeBonusText", new Vector2(60f, -31f)),
-            new KeyValuePair<string, Vector2>("GradeBonusValue", new Vector2(85f, -45f))
+            // new KeyValuePair<string, Vector2>("TimeText", new Vector2(50f, 4.5f)),
+            // new KeyValuePair<string, Vector2>("TimeValue", new Vector2(58f, 4.5f)),
+            new KeyValuePair<string, Vector2>("YTPText", new Vector2(50f, 74.5f)),
+            new KeyValuePair<string, Vector2>("YTPValue", new Vector2(58f, 74.5f)),
+            new KeyValuePair<string, Vector2>("TotalText", new Vector2(52f, -30.5f)),
+            new KeyValuePair<string, Vector2>("TotalValue", new Vector2(60f, -30.5f)),
+            new KeyValuePair<string, Vector2>("StickerText", new Vector2(52f, 4.5f)),
+            new KeyValuePair<string, Vector2>("StickerValue", new Vector2(60f, 4.5f)),
+            new KeyValuePair<string, Vector2>("MultiplierText", new Vector2(50f, 39.5f)),
+            new KeyValuePair<string, Vector2>("MultiplierValue", new Vector2(55f, 39.5f)),
+            new KeyValuePair<string, Vector2>("TimeBonusText", new Vector2(90f, -65f)),
+            new KeyValuePair<string, Vector2>("TimeBonusValue", new Vector2(105f, -79f)),
+            new KeyValuePair<string, Vector2>("GradeBonusText", new Vector2(80f, -31f)),
+            new KeyValuePair<string, Vector2>("GradeBonusValue", new Vector2(105f, -45f))
         };
         
         private static readonly List<KeyValuePair<string, Vector2>> SizeDeltaTargets = new List<KeyValuePair<string, Vector2>>
         {
             new KeyValuePair<string, Vector2>("ResultsText", new Vector2(137.01f, 33.45f)),
             new KeyValuePair<string, Vector2>("YTPText", new Vector2(202f, 30f)),
+            new KeyValuePair<string, Vector2>("TotalText", new Vector2(202f, 30f)),
+            new KeyValuePair<string, Vector2>("StickerText", new Vector2(213f, 30f)),
             new KeyValuePair<string, Vector2>("TimeBonusText", new Vector2(94f, 30f)),
             new KeyValuePair<string, Vector2>("GradeBonusText", new Vector2(103f, 30f))
         };
@@ -117,9 +123,15 @@ namespace TWGSRussifier.Patches
                 if (elementTransform != null)
                 {
                     TextMeshProUGUI? textComponent = elementTransform.GetComponent<TextMeshProUGUI>();
+                    
+                    if (textComponent == null)
+                    {
+                        textComponent = elementTransform.GetComponentInChildren<TextMeshProUGUI>();
+                    }
+                    
                     if (textComponent != null)
                     {
-                        Component[] components = elementTransform.GetComponents<Component>();
+                        Component[] components = textComponent.GetComponents<Component>();
                         foreach (Component component in components)
                         {
                             if (component != null && component.GetType().Name == "TextLocalizer" && component.GetType() != typeof(TextLocalizer))

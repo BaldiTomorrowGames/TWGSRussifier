@@ -25,12 +25,12 @@ namespace TWGSRussifier.Patches
         {
             if (minutes % 10 == 1 && minutes % 100 != 11)
             {
-                return "Vfx_NoL_MinutesLeft_Additional"; // ...1 минута
+                return "Vfx_NoL_MinutesLeft_Additional";
             }
-            return "Vfx_NoL_MinutesLeft"; // ...0, 2, 3, 4, 5... минут(ы)
+            return "Vfx_NoL_MinutesLeft";
         }
 
-        static void Postfix(NoLateTeacher __instance)
+        static void Prefix(NoLateTeacher __instance)
         {
             SoundObject sound = (SoundObject)ReflectionHelpers.ReflectionGetVariable(__instance, "audMinutesLeft");
             if (sound == null) return;

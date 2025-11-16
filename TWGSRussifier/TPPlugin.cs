@@ -13,6 +13,16 @@ using System.Collections.Generic;
 namespace TWGSRussifier
 {
     [Serializable]
+    public class PosterTextData
+    {
+        public string textKey = string.Empty;
+        public IntVector2 position;
+        public IntVector2 size;
+        public int fontSize;
+        public Color color;
+    }
+
+    [Serializable]
     public class PosterTextTable
     {
         public List<PosterTextData> items = new List<PosterTextData>();
@@ -26,7 +36,7 @@ namespace TWGSRussifier
         public static TPPlugin Instance { get; private set; } = null!;
         public static Dictionary<string, AudioClip> AllClips { get; private set; } = new Dictionary<string, AudioClip>();
         private Harmony? harmonyInstance = null!;
-        private const string expectedGameVersion = "0.12.1";
+        private const string expectedGameVersion = "0.13";
 
         private static readonly string[] menuTextureNames =
         {
@@ -45,7 +55,8 @@ namespace TWGSRussifier
             API.Logger.Info($"Плагин {RussifierTemp.ModName} инициализирован.");
             API.Logger.Info($"Текстуры: {(ConfigManager.AreTexturesEnabled() ? "Включены" : "Отключены")}, " +
                            $"Звуки: {(ConfigManager.AreSoundsEnabled() ? "Включены" : "Отключены")}, " +
-                           $"Логирование: {(ConfigManager.IsLoggingEnabled() ? "Включено" : "Отключено")}");
+                           $"Логирование: {(ConfigManager.IsLoggingEnabled() ? "Включено" : "Отключено")}, " +
+                           $"Режим разработки: {(ConfigManager.IsDevModeEnabled() ? "ВКЛЮЧЕН" : "Отключен")}");
 
             harmonyInstance = new Harmony(RussifierTemp.ModGUID);
             harmonyInstance.PatchAll();
@@ -115,6 +126,13 @@ namespace TWGSRussifier
 
             yield return "Обновление плакатов...";
             UpdatePosters(modPath);
+
+            // Сканирование новых постеров в режиме разработки
+            if (ConfigManager.IsDevModeEnabled())
+            {
+                yield return "Сканирование новых постеров (DEV MODE)...";
+                PosterScanner.ScanAndExportNewPosters(modPath);
+            }
 
             API.Logger.Info("Загрузка ассетов завершена!");
         }
@@ -241,8 +259,8 @@ namespace TWGSRussifier
                                 var modifiedData = posterData.items[i];
                                 
                                 sourceData.textKey = modifiedData.textKey;
-                                sourceData.position = modifiedData.position;
-                                sourceData.size = modifiedData.size;
+                                sourceData.position = new IntVector2(modifiedData.position.x, modifiedData.position.z);
+                                sourceData.size = new IntVector2(modifiedData.size.x, modifiedData.size.z);
                                 sourceData.fontSize = modifiedData.fontSize;
                                 sourceData.color = modifiedData.color;
                             }
