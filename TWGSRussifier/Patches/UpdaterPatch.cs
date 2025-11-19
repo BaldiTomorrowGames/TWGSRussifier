@@ -85,7 +85,6 @@ namespace TWGSRussifier.Patches
                                     namespaceName.Contains(".MTM101BaldAPI") ||
                                     method.DeclaringType.FullName != null && method.DeclaringType.FullName.Contains("MTM101BaldAPI"))
                                 {
-                                    // API.Logger.Info($"Перехвачен доступ к Reminder из MTM101BaldAPI (метод: {method.DeclaringType.FullName}.{method.Name})");
                                     __result = GetDummyReminder(__instance);
                                     return false;
                                 }

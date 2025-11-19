@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace TWGSRussifier.API
 {
-
     public static class PosterScanner
     {
         /// <param name="modPath">Путь к папке мода</param>
