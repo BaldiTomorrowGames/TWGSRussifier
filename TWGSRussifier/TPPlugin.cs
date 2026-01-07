@@ -36,7 +36,7 @@ namespace TWGSRussifier
         public static TPPlugin Instance { get; private set; } = null!;
         public static Dictionary<string, AudioClip> AllClips { get; private set; } = new Dictionary<string, AudioClip>();
         private Harmony? harmonyInstance = null!;
-        private const string expectedGameVersion = "0.13";
+        private const string expectedGameVersion = "0.13.1";
 
         private static readonly string[] menuTextureNames =
         {
@@ -55,8 +55,7 @@ namespace TWGSRussifier
             API.Logger.Info($"Плагин {RussifierTemp.ModName} инициализирован.");
             API.Logger.Info($"Текстуры: {(ConfigManager.AreTexturesEnabled() ? "Включены" : "Отключены")}, " +
                            $"Звуки: {(ConfigManager.AreSoundsEnabled() ? "Включены" : "Отключены")}, " +
-                           $"Логирование: {(ConfigManager.IsLoggingEnabled() ? "Включено" : "Отключено")}, " +
-                           $"Режим разработки: {(ConfigManager.IsDevModeEnabled() ? "ВКЛЮЧЕН" : "Отключен")}");
+                           $"Логирование: {(ConfigManager.IsLoggingEnabled() ? "Включено" : "Отключено")}");
 
             harmonyInstance = new Harmony(RussifierTemp.ModGUID);
             harmonyInstance.PatchAll();
@@ -127,12 +126,13 @@ namespace TWGSRussifier
             yield return "Обновление плакатов...";
             UpdatePosters(modPath);
 
-            // Сканирование новых постеров в режиме разработки
+#if DEBUG
             if (ConfigManager.IsDevModeEnabled())
             {
                 yield return "Сканирование новых постеров (DEV MODE)...";
                 PosterScanner.ScanAndExportNewPosters(modPath);
             }
+#endif
 
             API.Logger.Info("Загрузка ассетов завершена!");
         }
