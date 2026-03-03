@@ -36,7 +36,7 @@ namespace TWGSRussifier
         public static TPPlugin Instance { get; private set; } = null!;
         public static Dictionary<string, AudioClip> AllClips { get; private set; } = new Dictionary<string, AudioClip>();
         private Harmony? harmonyInstance = null!;
-        private const string expectedGameVersion = "0.13.1";
+        private const string expectedGameVersion = "0.14";
 
         private static readonly string[] menuTextureNames =
         {
