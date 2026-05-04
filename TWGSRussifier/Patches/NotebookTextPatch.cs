@@ -42,6 +42,7 @@ namespace TWGSRussifier.Patches
             {
                 if (textVal != 0) return;
                 if (notebookText == null) return;
+                if (text.Contains("/")) return;
 
                 string numberPart = ExtractNumberPart(text);
                 if (string.IsNullOrEmpty(numberPart)) return;

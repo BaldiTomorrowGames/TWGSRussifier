@@ -76,7 +76,7 @@ namespace TWGSRussifier.Runtime
         {
             instance = this;
             languageData = new Dictionary<string, string>();
-            ModSceneManager.instance.onMenuSceneLoadOnce += UpdateAudio;
+            ModSceneManager.instance.onMenuSceneLoad += UpdateAudio;
             ModSceneManager.instance.onMenuSceneLoadOnce += LoadTextures;
             ModSceneManager.instance.onMenuSceneLoadOnce += ApplyTextures;
             ModSceneManager.instance.onGameSceneLoad += UpdateAudio;
