@@ -284,12 +284,35 @@ namespace TWGSRussifier.Patches
                     }
                 }
 
+                ApplyBookSizeDeltaSettings(canvasChild);
+
                // Logger.Info($"Локализация применена к книге: {book.name}");
             }
             catch (Exception)
             {
                // Logger.Error($"Ошибка при применении локализации к книге {book.name}: {ex.Message}");
             }
+        }
+
+        private static void ApplyBookSizeDeltaSettings(Transform canvasTransform)
+        {
+            SetRectTransformSize(canvasTransform, "InsideText/Text_4", 199f, 100f);
+            SetRectTransformSize(canvasTransform, "InsideText/Text_5", 187f, 128f);
+            SetRectTransformSize(canvasTransform, "InsideText1/Text_1", 183f, 300f);
+            SetRectTransformSize(canvasTransform, "InsideText2/Text_0", 191f, 300f);
+            SetRectTransformSize(canvasTransform, "InsideText2/Text_1", 188f, 300f);
+            SetRectTransformSize(canvasTransform, "InsideText3/Text_0", 200f, 300f);
+        }
+
+        private static void SetRectTransformSize(Transform parent, string path, float width, float height)
+        {
+            Transform target = parent.Find(path);
+            if (target == null) return;
+
+            RectTransform rectTransform = target.GetComponent<RectTransform>();
+            if (rectTransform == null) return;
+
+            rectTransform.sizeDelta = new Vector2(width, height);
         }
 
         private static void ApplyTextLocalizer(Transform textTransform, string localizationKey, float? fontSize = null)

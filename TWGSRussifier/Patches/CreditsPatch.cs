@@ -111,6 +111,22 @@ namespace TWGSRussifier.Patches
                     }
                 }
             }
+
+            Transform textGlitch = rootTransform.Find("CreditsBase/Credits_1/Text/TextGlitch");
+            if (textGlitch != null)
+            {
+                RectTransform rt = textGlitch.GetComponent<RectTransform>();
+                if (rt != null)
+                    rt.anchoredPosition = new Vector2(0f, -28f);
+            }
+
+            Transform text1 = rootTransform.Find("CreditsBase/Credits_1/Text/Text1");
+            if (text1 != null)
+            {
+                RectTransform rt = text1.GetComponent<RectTransform>();
+                if (rt != null)
+                    rt.sizeDelta = new Vector2(424f, 360f);
+            }
         }
     }
 }

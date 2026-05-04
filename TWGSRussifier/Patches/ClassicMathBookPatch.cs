@@ -1,6 +1,11 @@
 using HarmonyLib;
+using System;
+using Object = UnityEngine.Object;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Timeline;
 using TMPro;
+using TWGSRussifier.Runtime;
 
 namespace TWGSRussifier.Patches
 {
@@ -73,6 +78,7 @@ namespace TWGSRussifier.Patches
                     ApplyInsideTextLocalization(bookTransform);
                     
                     ApplySizeDeltaSettings(bookTransform);
+                    ApplyAdditionalSizeDeltaSettings(bookTransform);
                 }
             }
         }
@@ -111,25 +117,127 @@ namespace TWGSRussifier.Patches
 
         private static void ApplySizeDeltaSettings(Transform bookTransform)
         {
-            Transform text4Transform = bookTransform.Find("Canvas/InsideText/Text_4");
-            if (text4Transform != null)
+            SetRectTransformSize(bookTransform, "Canvas/InsideText/Text_4", 199f, 100f);
+            SetRectTransformSize(bookTransform, "Canvas/InsideText/Text_5", 187f, 128f);
+        }
+
+        private static void ApplyAdditionalSizeDeltaSettings(Transform bookTransform)
+        {
+            SetRectTransformSize(bookTransform, "Canvas/InsideText1/Text_1", 183f, 300f);
+            SetRectTransformSize(bookTransform, "Canvas/InsideText2/Text_0", 191f, 300f);
+            SetRectTransformSize(bookTransform, "Canvas/InsideText2/Text_1", 188f, 300f);
+            SetRectTransformSize(bookTransform, "Canvas/InsideText3/Text_0", 200f, 300f);
+        }
+
+        private static void SetRectTransformSize(Transform parent, string path, float width, float height)
+        {
+            Transform target = parent.Find(path);
+            if (target == null) return;
+
+            RectTransform rectTransform = target.GetComponent<RectTransform>();
+            if (rectTransform == null) return;
+
+            rectTransform.sizeDelta = new Vector2(width, height);
+        }
+
+        [HarmonyPatch(typeof(ClassicFinaleManager), "AwakeFunction")]
+        private static class ClassicFinaleAwakePatch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(ClassicFinaleManager __instance)
             {
-                RectTransform rectTransform = text4Transform.GetComponent<RectTransform>();
-                if (rectTransform != null)
+                ClassicMathBook? bookPre = AccessTools.Field(typeof(ClassicFinaleManager), "bookPre")
+                    ?.GetValue(__instance) as ClassicMathBook;
+                if (bookPre != null)
+                    ApplyFinalBookAdjustments(bookPre.transform);
+
+                UnityEngine.Playables.PlayableDirector? director =
+                    AccessTools.Field(typeof(ClassicFinaleManager), "director")
+                    ?.GetValue(__instance) as UnityEngine.Playables.PlayableDirector;
+                if (director?.playableAsset is TimelineAsset timeline)
+                    ReplaceTimelineAudio(timeline);
+            }
+        }
+
+        private static void ReplaceTimelineAudio(TimelineAsset timeline)
+        {
+            if (LanguageManager.instance == null) return;
+
+            foreach (TrackAsset track in timeline.GetOutputTracks())
+            {
+                AudioTrack? audioTrack = track as AudioTrack;
+                if (audioTrack == null) continue;
+                foreach (TimelineClip clip in audioTrack.GetClips())
                 {
-                    rectTransform.sizeDelta = new Vector2(199f, 100f);
+                    AudioPlayableAsset? audioAsset = clip.asset as AudioPlayableAsset;
+                    if (audioAsset == null || audioAsset.clip == null) continue;
+
+                    AudioClip? replacement = LanguageManager.instance.GetClip(audioAsset.clip.name);
+                    if (replacement != null)
+                        audioAsset.clip = replacement;
                 }
             }
-            
-            Transform text5Transform = bookTransform.Find("Canvas/InsideText/Text_5");
-            if (text5Transform != null)
+        }
+
+        [HarmonyPatch(typeof(UnityEngine.Object), "Instantiate", new Type[] { typeof(UnityEngine.Object) })]
+        private static class BookInstantiatePatch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(UnityEngine.Object __result)
             {
-                RectTransform rectTransform = text5Transform.GetComponent<RectTransform>();
-                if (rectTransform != null)
+                if (__result == null) return;
+
+                GameObject? gameObject = null;
+                if (__result is GameObject go)
+                    gameObject = go;
+                else if (__result is Component component)
+                    gameObject = component.gameObject;
+
+                if (gameObject == null) return;
+
+                if (IsClassicBook(gameObject.name))
                 {
-                    rectTransform.sizeDelta = new Vector2(187f, 128f);
+                    ApplySizeDeltaSettings(gameObject.transform);
+                    ApplyAdditionalSizeDeltaSettings(gameObject.transform);
                 }
             }
+        }
+
+        private static void ApplyFinalBookAdjustments(Transform root)
+        {
+            if (root == null) return;
+
+            ApplyFontSizeFixed(root, "Canvas/CoverText/TitleTMP", 31f);
+            ApplySizeDeltaFixed(root, "Canvas/InsideText1/Text_1", 183f, 300f);
+            ApplySizeDeltaFixed(root, "Canvas/InsideText2/Text_0", 191f, 300f);
+            ApplySizeDeltaFixed(root, "Canvas/InsideText2/Text_1", 188f, 300f);
+            ApplySizeDeltaFixed(root, "Canvas/InsideText3/Text_0", 200f, 300f);
+        }
+
+        private static void ApplyFontSizeFixed(Transform parent, string path, float fontSize)
+        {
+            Transform target = parent.Find(path);
+            if (target == null) return;
+
+            ContentSizeFitter csf = target.GetComponent<ContentSizeFitter>();
+            if (csf != null) csf.enabled = false;
+
+            TMP_Text tmp = target.GetComponent<TMP_Text>();
+            if (tmp == null) return;
+            tmp.enableAutoSizing = false;
+            tmp.fontSize = fontSize;
+        }
+
+        private static void ApplySizeDeltaFixed(Transform parent, string path, float width, float height)
+        {
+            Transform target = parent.Find(path);
+            if (target == null) return;
+
+            ContentSizeFitter csf = target.GetComponent<ContentSizeFitter>();
+            if (csf != null) csf.enabled = false;
+
+            RectTransform rt = target.GetComponent<RectTransform>();
+            if (rt != null) rt.sizeDelta = new Vector2(width, height);
         }
 
         private static string GetBookIdentifier(string bookName)

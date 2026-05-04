@@ -79,6 +79,7 @@ namespace TWGSRussifier.Runtime
             ModSceneManager.instance.onMenuSceneLoadOnce += UpdateAudio;
             ModSceneManager.instance.onMenuSceneLoadOnce += LoadTextures;
             ModSceneManager.instance.onMenuSceneLoadOnce += ApplyTextures;
+            ModSceneManager.instance.onGameSceneLoad += UpdateAudio;
             ModSceneManager.instance.onAnySceneLoad += OnLocalizationChanged;
             DontDestroyOnLoad(gameObject);
 
