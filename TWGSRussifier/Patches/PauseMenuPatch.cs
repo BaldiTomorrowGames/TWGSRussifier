@@ -80,6 +80,8 @@ namespace TWGSRussifier
 
         private static void PrepareLocalizationComponents()
         {
+            ApplyPauseMenuPositionFixes();
+
             foreach (KeyValuePair<string, string> pair in localizationKeys)
             {
                 GameObject menuItem = GameObject.Find(pair.Key);
@@ -113,6 +115,19 @@ namespace TWGSRussifier
                             localizer.RefreshLocalization();
                         }
                     }
+                }
+            }
+        }
+
+        private static void ApplyPauseMenuPositionFixes()
+        {
+            GameObject quitConfirmText = GameObject.Find("CoreGameManager(Clone)/PauseMenuScreens/PauseScreen/QuitConfirm/Text");
+            if (quitConfirmText != null)
+            {
+                RectTransform rectTransform = quitConfirmText.GetComponent<RectTransform>();
+                if (rectTransform != null)
+                {
+                    rectTransform.anchoredPosition = new Vector2(0f, 88f);
                 }
             }
         }

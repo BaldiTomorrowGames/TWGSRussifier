@@ -1,12 +1,12 @@
 # TomorrowGames Baldi's Basics Plus Russifier
 
-![Версия](https://img.shields.io/badge/Версия-1.4.0-blue)
+![Версия](https://img.shields.io/badge/Версия-1.5.2-blue)
 ![Статус разработки](https://img.shields.io/badge/Статус-100%25-yellow)
-![Игра](https://img.shields.io/badge/Игра-Baldi's%20Basics%20Plus%200.13.1-green)
+![Игра](https://img.shields.io/badge/Игра-Baldi's%20Basics%20Plus%200.14.3-green)
 
 ## 📝 Описание
 
-Этот мод добавляет русский перевод для игры Baldi's Basics Plus. Проект находится в активной разработке и **код может быть сырым**. На данный момент реализовано 100% задуманного кода.
+Этот мод добавляет русский перевод для игры Baldi's Basics Plus
 
 > ⚠️ **Внимание!** Мод может работать нестабильно и содержать ошибки!
 

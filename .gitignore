@@ -1,0 +1,11 @@
+Dependencies/
+
+# Build artifacts
+bin/
+obj/
+build/
+.vs/
+*.user
+*.suo
+*.cache
+*.log
